@@ -1,4 +1,5 @@
 export function buildCoachSummary(patterns = []) {
+
   if (patterns.includes("neutral-defense")) {
     return "Athlete gave up multiple takedowns from neutral.";
   }
@@ -7,5 +8,10 @@ export function buildCoachSummary(patterns = []) {
     return "Athlete created strong offense from neutral.";
   }
 
+  if (patterns.includes("strong-bottom")) {
+    return "Athlete showed strong bottom position skills.";
+  }
+
   return "No major pattern detected.";
+
 }

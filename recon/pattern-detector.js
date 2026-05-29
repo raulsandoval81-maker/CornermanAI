@@ -10,6 +10,14 @@ export function detectPatterns(matchPayload = {}) {
     e => e.type === "takedown_scored"
   ).length;
 
+  const escapesScored = events.filter(
+  e => e.type === "escape_scored"
+).length;
+
+if (escapesScored >= 2) {
+  patterns.push("strong-bottom");
+}
+
   if (takedownsAllowed >= 3) {
     patterns.push("neutral-defense");
   }

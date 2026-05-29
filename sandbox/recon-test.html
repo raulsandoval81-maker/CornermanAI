@@ -12,16 +12,12 @@ from "../recon/recon-runner.js";
 const result =
   runRecon({
     athlete: "Test Athlete",
-events: [
-  { type: "takedown_allowed" },
-  { type: "takedown_allowed" },
-  { type: "takedown_allowed" },
-  { type: "escape_scored" },
-  { type: "escape_scored" }
-]
-
-});
-
+    events: [
+      { type: "escape_scored" },
+      { type: "escape_scored" }
+    ]
+  });
+  
 document.getElementById("output")
   .textContent =
     JSON.stringify(result, null, 2);

@@ -12,6 +12,10 @@ export function buildPracticeFocus(patterns = []) {
     return "Continue bottom work and first-move escapes.";
   }
 
+  if (patterns.includes("back-exposure-risk")) {
+    return "Bottom defense and nearfall prevention.";
+  }
+
   return "Fundamental position work.";
 
 }

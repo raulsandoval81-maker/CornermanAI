@@ -12,6 +12,10 @@ export function buildCoachSummary(patterns = []) {
     return "Athlete showed strong bottom position skills.";
   }
 
+  if (patterns.includes("back-exposure-risk")) {
+    return "Athlete gave up multiple nearfall exposures.";
+  }
+
   return "No major pattern detected.";
 
 }

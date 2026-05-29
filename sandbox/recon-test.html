@@ -5,23 +5,19 @@
 <pre id="output"></pre>
 
 <script type="module">
+import { runRecon } from "../recon/recon-runner.js";
 
-import { runRecon }
-from "../recon/recon-runner.js";
+const response =
+  await fetch("../payloads/sample-match.json");
+
+const matchPayload =
+  await response.json();
 
 const result =
-  runRecon({
-    athlete: "Test Athlete",
-    events: [
-      { type: "escape_scored" },
-      { type: "escape_scored" }
-    ]
-  });
-  
-document.getElementById("output")
-  .textContent =
-    JSON.stringify(result, null, 2);
+  runRecon(matchPayload);
 
+document.getElementById("output").textContent =
+  JSON.stringify(result, null, 2);
 </script>
 
 </body>

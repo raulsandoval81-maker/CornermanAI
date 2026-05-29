@@ -106,6 +106,10 @@ import {
 } from "../shared/event-log.js";
 
 import { handleRefProgression } from "../shared/progression-engine.js";
+import { runRecon }
+from "../recon/recon-runner.js";
+
+
 const state = createMatchState();
 state.position = "neutral";
 const consoleMode = document.body.dataset.console || "classic";
@@ -1070,6 +1074,19 @@ stopClock({
   stopCameraStream();
 
   const match = buildMatchPayload();
+  console.log("MATCH PAYLOAD", match);
+
+
+  const recon =
+  runRecon(match);
+
+console.log("RECON", recon);
+
+localStorage.setItem(
+  "coach_console_last_recon",
+  JSON.stringify(recon)
+);
+
   const logs = JSON.parse(localStorage.getItem("coach_match_logs") || "[]");
   logs.push(match);
 

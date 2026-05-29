@@ -1,4 +1,5 @@
 export function buildAthleteFeedback(patterns = []) {
+
   if (patterns.includes("neutral-defense")) {
     return "Protect your lead leg and keep your hands inside.";
   }
@@ -11,5 +12,10 @@ export function buildAthleteFeedback(patterns = []) {
     return "Your escapes are creating points. Keep building from bottom.";
   }
 
+  if (patterns.includes("back-exposure-risk")) {
+    return "Fight hands and belly down sooner.";
+  }
+
   return "Stay disciplined and win the next position.";
+
 }

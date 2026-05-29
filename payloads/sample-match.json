@@ -1,0 +1,16 @@
+{
+  "matchId": "sample-001",
+  "athlete": "Test Athlete",
+  "opponent": "Test Opponent",
+  "finalScore": {
+    "athlete": 6,
+    "opponent": 8
+  },
+  "events": [
+    { "type": "takedown_allowed", "period": 1, "time": "1:12" },
+    { "type": "escape_scored", "period": 2, "time": "0:22" },
+    { "type": "takedown_allowed", "period": 2, "time": "0:58" },
+    { "type": "escape_scored", "period": 3, "time": "0:10" },
+    { "type": "takedown_allowed", "period": 3, "time": "0:44" }
+  ]
+}

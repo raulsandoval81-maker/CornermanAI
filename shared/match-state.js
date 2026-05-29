@@ -109,6 +109,7 @@ export function getChoiceOptions(state, round = state.currentRound) {
     if (state.secondPeriodDeferred) {
       return ["top", "bottom", "neutral"];
     }
+
     return ["top", "bottom", "neutral", "defer"];
   }
 
@@ -116,15 +117,14 @@ export function getChoiceOptions(state, round = state.currentRound) {
     return ["top", "bottom", "neutral"];
   }
 
-  // 🔥 FIXED
+  if (round === "TB1" || round === "TB2") {
+    return ["top", "bottom", "neutral"];
+  }
+
   if (round === "UTB") {
     return ["top", "bottom"];
   }
 
-
-if (round === "TB1" || round === "TB2") {
-  return ["top", "bottom", "neutral"];
-}
   return [];
 }
 

@@ -1,0 +1,39 @@
+.bridge-card {
+  width: min(720px, 100%);
+  margin: 0 auto 24px;
+}
+
+.bridge-card button {
+  margin-top: 16px;
+  padding: 15px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: #facc15;
+  color: #111;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.bridge-card button:hover {
+  filter: brightness(1.08);
+}
+
+.bridge-status {
+  margin-top: 14px;
+  color: #aaa;
+}
+
+.match-preview {
+  padding-top: 8px;
+}
+
+.match-preview strong {
+  display: block;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.match-preview p {
+  color: #aaa;
+}

@@ -7,6 +7,7 @@
   <title>Team Dashboard</title>
 
   <link rel="stylesheet" href="../app.css" />
+  <link rel="stylesheet" href="./team-dashboard.css" />
   <link rel="icon" href="data:," />
 </head>
 
@@ -20,8 +21,60 @@
       <h1>Team Dashboard</h1>
 
       <p class="sub">
-        Track team performance, wins, losses, and event momentum.
+        Team performance, scoring trends, and event analytics.
       </p>
+    </section>
+
+    <section class="stats-grid">
+
+      <article class="stat-card">
+        <span>Record</span>
+        <strong id="record">0-0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Win %</span>
+        <strong id="winPct">0%</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Points For</span>
+        <strong id="pointsFor">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Points Against</span>
+        <strong id="pointsAgainst">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Pins</span>
+        <strong id="pins">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Techs</span>
+        <strong id="techs">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Majors</span>
+        <strong id="majors">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Decisions</span>
+        <strong id="decisions">0</strong>
+      </article>
+
+    </section>
+
+    <section class="card">
+      <span>RECENT MATCHES</span>
+
+      <div id="recentMatches">
+        Loading...
+      </div>
     </section>
 
     <section class="grid">
@@ -35,6 +88,8 @@
     </section>
 
   </main>
+
+  <script src="./team-dashboard.js"></script>
 
 </body>
 </html>

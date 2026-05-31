@@ -1,70 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CornermanAI Reports</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link rel="stylesheet" href="reports.css">
+  <title>CornermanAI Reports</title>
+
+  <link rel="stylesheet" href="../app.css" />
+  <link rel="stylesheet" href="./reports.css" />
+  <link rel="icon" href="data:," />
 </head>
 
 <body>
 
-<div class="wrap">
+  <main class="app-shell">
 
-  <h1>📊 Reports Center</h1>
+    <section class="hero">
+      <p class="eyebrow">CornermanAI</p>
 
-  <div class="stats-grid">
+      <h1>Reports Center</h1>
 
-    <div class="stat-card">
-      <span>Matches</span>
-      <strong id="totalMatches">0</strong>
-    </div>
+      <p class="sub">
+        Event summary, athlete reports, pattern signals, and recent match history.
+      </p>
+    </section>
 
-    <div class="stat-card">
-      <span>Wins</span>
-      <strong id="totalWins">0</strong>
-    </div>
+    <section class="stats-grid">
 
-    <div class="stat-card">
-      <span>Losses</span>
-      <strong id="totalLosses">0</strong>
-    </div>
+      <article class="stat-card">
+        <span>Matches</span>
+        <strong id="totalMatches">0</strong>
+      </article>
 
-    <div class="stat-card">
-      <span>Athletes</span>
-      <strong id="totalAthletes">0</strong>
-    </div>
+      <article class="stat-card">
+        <span>Wins</span>
+        <strong id="totalWins">0</strong>
+      </article>
 
-  </div>
+      <article class="stat-card">
+        <span>Losses</span>
+        <strong id="totalLosses">0</strong>
+      </article>
 
-  <div class="selector-card">
+      <article class="stat-card">
+        <span>Athletes</span>
+        <strong id="totalAthletes">0</strong>
+      </article>
 
-    <h2>Athlete Report</h2>
+      <article class="stat-card">
+        <span>Points For</span>
+        <strong id="pointsFor">0</strong>
+      </article>
 
-    <select id="athleteSelect">
-      <option value="">Select Athlete</option>
-    </select>
+      <article class="stat-card">
+        <span>Points Against</span>
+        <strong id="pointsAgainst">0</strong>
+      </article>
 
-  </div>
+    </section>
 
-  <div class="stat-card">
-    <h2>Pattern Report</h2>
-    <div id="patternReport"></div>
-  </div>
+    <section class="card selector-card">
+      <span>ATHLETE REPORT</span>
 
-  <div class="stat-card">
-    <h2>Recent Matches</h2>
-    <div id="recentMatches"></div>
-  </div>
+      <select id="athleteSelect">
+        <option value="">Select Athlete</option>
+      </select>
 
-  <a class="back-btn" href="../console/index.html">
-    ← Back To Command Center
-  </a>
+      <div id="athleteReport">
+        <p>Select an athlete to view report.</p>
+      </div>
+    </section>
 
-</div>
+    <section class="card">
+      <span>PATTERN REPORT</span>
+      <div id="patternReport"></div>
+    </section>
 
-<script src="reports.js"></script>
+    <section class="card">
+      <span>RECENT MATCHES</span>
+      <div id="recentMatches"></div>
+    </section>
+
+    <section class="grid">
+
+      <a class="card" href="../patterns/">
+        <span>INTELLIGENCE</span>
+        <strong>Pattern Engine</strong>
+        <p>Review weighted practice priorities.</p>
+      </a>
+
+      <a class="card" href="../events/team-dashboard.html">
+        <span>DASHBOARD</span>
+        <strong>Team Dashboard</strong>
+        <p>Return to team analytics.</p>
+      </a>
+
+      <a class="card" href="../console/">
+        <span>BACK</span>
+        <strong>Console Command Center</strong>
+        <p>Return to the command center.</p>
+      </a>
+
+    </section>
+
+  </main>
+
+  <script src="./reports.js"></script>
 
 </body>
 </html>

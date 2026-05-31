@@ -1,51 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CornermanAI Recon</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link rel="stylesheet" href="recon.css">
+  <title>CornermanAI Recon</title>
+
+  <link rel="stylesheet" href="../app.css" />
+  <link rel="stylesheet" href="./recon.css" />
+  <link rel="icon" href="data:," />
 </head>
 
 <body>
 
-<div class="wrap">
+  <main class="app-shell">
 
-  <h1>🎯 Recon Center</h1>
+    <section class="hero">
+      <p class="eyebrow">CornermanAI</p>
 
-  <div class="card">
-    <h2>Primary Focus</h2>
-    <div id="primaryFocus">
-      Loading...
-    </div>
-  </div>
+      <h1>Recon Center</h1>
 
-  <div class="card">
-    <h2>Secondary Focus</h2>
-    <div id="secondaryFocus">
-      Loading...
-    </div>
-  </div>
+      <p class="sub">
+        Turn match patterns into coaching focus and practice direction.
+      </p>
+    </section>
 
-  <div class="card">
-    <h2>Recommended Action</h2>
-    <div id="recommendation">
-      Loading...
-    </div>
-  </div>
+    <section class="focus-grid">
 
-  <a class="btn" href="../patterns/index.html">
-    Pattern Engine
-  </a>
+      <article class="focus-card">
+        <span>PRIMARY FOCUS</span>
+        <strong id="primaryFocus">Loading...</strong>
+      </article>
 
-  <a class="btn" href="../console/index.html">
-    Command Center
-  </a>
+      <article class="focus-card">
+        <span>SECONDARY FOCUS</span>
+        <strong id="secondaryFocus">Loading...</strong>
+      </article>
 
-</div>
+    </section>
 
-<script src="recon.js"></script>
+    <section class="card recommendation-card">
+      <span>RECOMMENDED ACTION</span>
+
+      <div id="recommendation">
+        Loading...
+      </div>
+    </section>
+
+    <section class="grid">
+
+      <a class="card" href="../patterns/">
+        <span>INTELLIGENCE</span>
+        <strong>Pattern Engine</strong>
+        <p>Review weighted pattern signals.</p>
+      </a>
+
+      <a class="card" href="../reports/">
+        <span>REPORTS</span>
+        <strong>Reports Center</strong>
+        <p>Review event and athlete reports.</p>
+      </a>
+
+      <a class="card" href="../console/">
+        <span>BACK</span>
+        <strong>Console Command Center</strong>
+        <p>Return to the main command center.</p>
+      </a>
+
+    </section>
+
+  </main>
+
+  <script src="./recon.js"></script>
 
 </body>
 </html>

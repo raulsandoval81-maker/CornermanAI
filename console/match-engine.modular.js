@@ -1,6 +1,11 @@
 import { createDOM }
 from "./modules/match-dom.js";
 
+
+import {
+  initializeMatchConfirmAccordion
+} from "./modules/match-confirm.js";
+
 import {
   setStatus,
   showFinishFlash,
@@ -1149,3 +1154,4 @@ updateRefButtonLabels({
 });
 
 initializeAthleteDetailModal();
+initializeMatchConfirmAccordion();

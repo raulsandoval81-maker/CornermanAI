@@ -29,6 +29,9 @@ import {
   formatSide,
   sideClass
 } from "../shared/event-log.js";
+import {
+  initializeMatchConfirmAccordion
+} from "./modules/match-confirm.js";
 
 import { handleRefProgression } from "../shared/progression-engine.js";
 const state = createMatchState();
@@ -1330,5 +1333,7 @@ renderControls();
 renderAll();
 saveLocalDraft();
 setMode("live");
+
 updateStartButton("Start", true);
 updateRefButtonLabels();
+initializeMatchConfirmAccordion();

@@ -238,3 +238,52 @@
 body.arena-mode .overlay-arena video {
   height: 70vh;
 }
+.match-setup-summary {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #0c0c0c;
+  color: #facc15;
+  font-weight: 800;
+}
+
+.setup-edit-btn {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+.match-setup-summary {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #0c0c0c;
+  color: #fff;
+  display: grid;
+  gap: 4px;
+}
+
+.match-setup-summary strong {
+  color: #facc15;
+}
+
+.match-setup-summary span,
+.match-setup-summary em {
+  color: #aaa;
+  font-style: normal;
+}
+
+.setup-edit-btn {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.hidden {
+  display: none !important;
+}

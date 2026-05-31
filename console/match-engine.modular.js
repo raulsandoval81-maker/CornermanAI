@@ -105,6 +105,10 @@ import {
   sideClass
 } from "../shared/event-log.js";
 
+import {
+  initializeAthleteDetailModal
+} from "./modules/athlete-detail-modal.js";
+
 import { handleRefProgression } from "../shared/progression-engine.js";
 import { runRecon }
 from "../recon/recon-runner.js";
@@ -1127,14 +1131,21 @@ renderControls({
   MATCH_FORMATS,
   state
 });
+
 renderAll();
+
 saveLocalDraft();
+
 setMode("live");
+
 updateStartButton({
   startBtn,
   text: "Start",
   disabled: true
 });
+
 updateRefButtonLabels({
   state
 });
+
+initializeAthleteDetailModal();

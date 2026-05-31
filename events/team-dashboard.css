@@ -1,0 +1,43 @@
+.stats-grid {
+  width: min(1000px, 100%);
+  margin: 0 auto 24px;
+
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+
+  gap: 16px;
+}
+
+.stat-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.stat-card span {
+  display: block;
+  color: #facc15;
+  font-size: .75rem;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.stat-card strong {
+  font-size: 2rem;
+}
+
+.match-row {
+  padding: 14px 0;
+  border-top: 1px solid #222;
+}
+
+.match-row:first-child {
+  border-top: 0;
+}
+
+.match-row p {
+  margin: 6px 0 0;
+  color: #aaa;
+}

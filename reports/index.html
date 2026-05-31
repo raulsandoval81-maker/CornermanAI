@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CornermanAI Reports</title>
+
+<link rel="stylesheet" href="reports.css">
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <h1>📊 Reports Center</h1>
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <span>Matches</span>
+      <strong id="totalMatches">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Wins</span>
+      <strong id="totalWins">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Losses</span>
+      <strong id="totalLosses">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Athletes</span>
+      <strong id="totalAthletes">0</strong>
+    </div>
+
+  </div>
+
+  <div class="selector-card">
+
+    <h2>Athlete Report</h2>
+
+    <select id="athleteSelect">
+      <option value="">Select Athlete</option>
+    </select>
+
+  </div>
+
+  <div class="stat-card">
+    <h2>Pattern Report</h2>
+    <div id="patternReport"></div>
+  </div>
+
+  <div class="stat-card">
+    <h2>Recent Matches</h2>
+    <div id="recentMatches"></div>
+  </div>
+
+  <a class="back-btn" href="../console/index.html">
+    ← Back To Command Center
+  </a>
+
+</div>
+
+<script src="reports.js"></script>
+
+</body>
+</html>

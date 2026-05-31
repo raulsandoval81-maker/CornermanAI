@@ -1,0 +1,64 @@
+.selector-card {
+  width: min(600px, 100%);
+  margin: 0 auto 24px;
+  color: #f8fafc;
+}
+
+.selector-card select {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #3a3a3a;
+  background: #050505;
+  color: #ffffff;
+}
+
+.stats-grid {
+  width: min(1000px, 100%);
+  margin: 0 auto 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: #0b0b0b;
+  border: 1px solid #2a2a2a;
+  border-radius: 18px;
+  padding: 18px;
+  color: #f8fafc;
+}
+
+.stat-card span {
+  display: block;
+  color: #facc15;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.stat-card strong {
+  display: block;
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.match-row {
+  padding: 14px 0;
+  border-top: 1px solid #2a2a2a;
+  color: #f8fafc;
+}
+
+.match-row:first-child {
+  border-top: 0;
+}
+
+.match-row p {
+  margin: 6px 0 0;
+  color: #d4d4d8;
+}

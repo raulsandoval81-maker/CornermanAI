@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Athlete Dashboard</title>
+
+  <link rel="stylesheet" href="../app.css" />
+  <link rel="stylesheet" href="./athlete-dashboard.css" />
+  <link rel="icon" href="data:," />
+</head>
+
+<body>
+
+  <main class="app-shell">
+
+    <section class="hero">
+      <p class="eyebrow">CornermanAI</p>
+
+      <h1>Athlete Dashboard</h1>
+
+      <p class="sub">
+        Athlete performance, scoring trends, and match history.
+      </p>
+    </section>
+
+    <section class="card selector-card">
+
+      <span>ATHLETE</span>
+
+      <select id="athleteSelect">
+        <option value="">
+          Select Athlete
+        </option>
+      </select>
+
+    </section>
+
+    <section class="stats-grid">
+
+      <article class="stat-card">
+        <span>Record</span>
+        <strong id="record">0-0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Win %</span>
+        <strong id="winPct">0%</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Points For</span>
+        <strong id="pointsFor">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Points Against</span>
+        <strong id="pointsAgainst">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Takedowns</span>
+        <strong id="takedowns">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Escapes</span>
+        <strong id="escapes">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Reversals</span>
+        <strong id="reversals">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Nearfall</span>
+        <strong id="nearfall">0</strong>
+      </article>
+
+    </section>
+
+    <section class="card">
+
+      <span>RECENT MATCHES</span>
+
+      <div id="matchHistory">
+        Select an athlete.
+      </div>
+
+    </section>
+
+    <section class="grid">
+
+      <a class="card" href="../console/">
+        <span>BACK</span>
+        <strong>Console Command Center</strong>
+        <p>Return to the command center.</p>
+      </a>
+
+    </section>
+
+  </main>
+
+  <script src="./athlete-dashboard.js"></script>
+
+</body>
+</html>

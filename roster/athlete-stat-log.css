@@ -1,0 +1,93 @@
+.stat-form {
+  width: min(720px, 100%);
+  margin: 0 auto 24px;
+}
+
+.stat-form form {
+  display: grid;
+  gap: 14px;
+}
+
+.stat-form label {
+  color: #facc15;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stat-form input,
+.stat-form select,
+.stat-form textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #080808;
+  color: #fff;
+  font: inherit;
+}
+
+.stat-form input:focus,
+.stat-form select:focus,
+.stat-form textarea:focus {
+  outline: none;
+  border-color: #facc15;
+}
+
+.stat-form textarea {
+  resize: vertical;
+}
+
+.stat-form button {
+  margin-top: 10px;
+  padding: 15px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: #facc15;
+  color: #111;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.stat-form button:hover {
+  filter: brightness(1.08);
+}
+.match-history {
+  width: min(720px, 100%);
+  margin: 0 auto 24px;
+}
+
+.empty-state {
+  color: #888;
+  margin: 0;
+}
+
+.match-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid #242424;
+}
+
+.match-row:first-child {
+  border-top: 0;
+}
+
+.match-row strong {
+  display: block;
+  color: #fff;
+}
+
+.match-row p {
+  margin: 6px 0 0;
+  color: #aaa;
+}
+
+.match-row span {
+  color: #facc15;
+  font-weight: 800;
+  white-space: nowrap;
+}

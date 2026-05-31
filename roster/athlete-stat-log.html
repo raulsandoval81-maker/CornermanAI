@@ -4,9 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Athlete Dashboard</title>
+  <title>Athlete Stat Log</title>
 
   <link rel="stylesheet" href="../app.css" />
+  <link rel="stylesheet" href="./athlete-stat-log.css" />
   <link rel="icon" href="data:," />
 </head>
 
@@ -17,11 +18,78 @@
     <section class="hero">
       <p class="eyebrow">CornermanAI</p>
 
-      <h1>Athlete Dashboard</h1>
+      <h1>Athlete Stat Log</h1>
 
       <p class="sub">
-        Review athlete performance, patterns, strengths, and weaknesses.
+        Log match results and core scoring statistics.
       </p>
+    </section>
+
+    <section class="card stat-form">
+
+      <form id="matchForm">
+
+        <label>Athlete</label>
+        <input type="text" id="athlete" required>
+
+        <label>Opponent</label>
+        <input type="text" id="opponent" required>
+
+        <label>Tournament</label>
+        <input type="text" id="tournament">
+
+        <label>Weight</label>
+        <input type="text" id="weight">
+
+        <label>Result</label>
+        <select id="result">
+          <option value="Win">Win</option>
+          <option value="Loss">Loss</option>
+        </select>
+
+        <label>Method</label>
+        <select id="method">
+          <option value="Decision">Decision</option>
+          <option value="Major">Major</option>
+          <option value="Tech">Tech</option>
+          <option value="Pin">Pin</option>
+          <option value="Forfeit">Forfeit</option>
+        </select>
+
+        <label>Points For</label>
+        <input type="number" id="pointsFor" value="0">
+
+        <label>Points Against</label>
+        <input type="number" id="pointsAgainst" value="0">
+
+        <label>Takedowns</label>
+        <input type="number" id="takedowns" value="0">
+
+        <label>Escapes</label>
+        <input type="number" id="escapes" value="0">
+
+        <label>Reversals</label>
+        <input type="number" id="reversals" value="0">
+
+        <label>Nearfall</label>
+        <input type="number" id="nearfall" value="0">
+
+        <label>Coach Notes</label>
+        <textarea id="notes" rows="4"></textarea>
+
+        <button type="submit">
+          Save Match
+        </button>
+
+      </form>
+
+    </section>
+
+    <section class="card">
+      <span>STATUS</span>
+      <strong id="status">
+        No matches saved.
+      </strong>
     </section>
 
     <section class="grid">
@@ -33,8 +101,17 @@
       </a>
 
     </section>
+    <section class="card match-history">
+  <span>RECENT MATCHES</span>
+
+  <div id="matchHistory">
+    <p class="empty-state">No saved matches yet.</p>
+  </div>
+</section>
 
   </main>
+
+  <script src="./athlete-stat-log.js"></script>
 
 </body>
 </html>

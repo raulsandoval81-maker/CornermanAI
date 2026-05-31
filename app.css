@@ -1,0 +1,89 @@
+/* ==========================
+   CORNERMAN COMMAND CENTER
+========================== */
+
+.app-shell{
+  min-height:100vh;
+  padding:40px 24px;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:32px;
+}
+
+.eyebrow{
+  color:#facc15;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  margin-bottom:8px;
+}
+
+.hero h1{
+  font-size:3rem;
+  margin:0;
+}
+
+.sub{
+  color:#999;
+  margin-top:10px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:18px;
+}
+
+.card{
+  background:#111;
+  border:1px solid #222;
+  border-radius:18px;
+  padding:20px;
+  text-decoration:none;
+  color:#fff;
+  transition:.2s;
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  border-color:#facc15;
+}
+
+.card span{
+  display:block;
+  color:#facc15;
+  font-size:.75rem;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  font-weight:700;
+}
+
+.card strong{
+  display:block;
+  font-size:1.3rem;
+  margin-bottom:10px;
+}
+
+.card p{
+  color:#aaa;
+  line-height:1.4;
+}
+
+.primary{
+  border:2px solid #facc15;
+}
+
+.locked{
+  opacity:.65;
+}
+
+footer{
+  margin-top:40px;
+  text-align:center;
+  color:#666;
+  font-size:.85rem;
+}

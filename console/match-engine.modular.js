@@ -1,6 +1,14 @@
 import { createDOM }
 from "./modules/match-dom.js";
 
+import {
+  getTournamentRoster,
+  getTournamentEntry
+} from "../data/tournament-roster.js";
+
+import {
+  WEIGHT_CLASSES
+} from "../data/weight-classes.js";
 
 import {
   initializeMatchConfirmAccordion
@@ -142,7 +150,9 @@ const reviewPreview = document.getElementById("reviewPreview");
 const liveBtn = document.getElementById("liveMode");
 const reviewBtn = document.getElementById("reviewMode");
 
+const athleteSelect = document.getElementById("athleteSelect");
 const matchSetupEl = document.getElementById("matchSetup");
+const weightGroupSelect = document.getElementById("weightGroupSelect");
 const confirmMatchSetupBtn = document.getElementById("confirmMatchSetup");
 
 const eventNameInput = document.getElementById("eventNameInput");
@@ -206,6 +216,16 @@ const summarySuggestedResultEl = document.getElementById("summarySuggestedResult
 const sandmanColorSelect = document.getElementById("sandmanColor");
 
 /* HELPERS */
+
+const DEFAULT_FORMAT_BY_WEIGHT_GROUP = {
+  youth: "youth_1min",
+  juniorHighBoys: "jv_90sec",
+  juniorHighGirls: "jv_90sec",
+  highSchoolBoys: "varsity_championship",
+  highSchoolGirls: "varsity_championship",
+  collegeMen: "college_3_2_2",
+  collegeWomen: "college_3_2_2"
+};
 
 /* ROUND FLOW */
 function handleRoundComplete() {
@@ -396,6 +416,26 @@ syncSummaryButtons({
 });
 
 }
+function loadTournamentRosterSelect() {
+  if (!athleteSelect) return;
+
+  const roster = getTournamentRoster();
+
+  athleteSelect.innerHTML = `
+    <option value="">Select Athlete</option>
+  `;
+
+  roster.forEach(entry => {
+    const option = document.createElement("option");
+
+    option.value = entry.entryId;
+    option.textContent =
+      `${entry.name} · ${entry.weight} · ${entry.division}`;
+
+    athleteSelect.appendChild(option);
+  });
+}
+
 function buildMatchPayload(videoUrl = "") {
   return {
     id: Date.now(),
@@ -461,6 +501,8 @@ function setMode(newMode) {
 liveBtn?.addEventListener("click", () => setMode("live"));
 reviewBtn?.addEventListener("click", () => setMode("review"));
 
+
+
 /* FORMAT */
 matchFormatSelect?.addEventListener("change", e => {
   setMatchFormat(state, e.target.value);
@@ -478,6 +520,77 @@ matchFormatSelect?.addEventListener("change", e => {
   renderAll();
   saveLocalDraft();
 });
+
+
+weightGroupSelect?.addEventListener("change", () => {
+  loadWeightClasses(weightGroupSelect.value);
+});
+
+athleteSelect?.addEventListener("change", () => {
+  const entry = getTournamentEntry(athleteSelect.value);
+  if (!entry) return;
+
+  const side = sandmanColorSelect?.value || "green";
+
+  eventNameInput.value = entry.eventName;
+  weightGroupSelect.value = entry.weightGroup;
+
+  loadWeightClasses(entry.weightGroup);
+  weightClassInput.value = entry.weight;
+const formatKey =
+  DEFAULT_FORMAT_BY_WEIGHT_GROUP[entry.weightGroup];
+
+if (formatKey) {
+  matchFormatSelect.value = formatKey;
+  setMatchFormat(state, formatKey);
+}
+
+
+
+  if (side === "red") {
+    opponentNameInput.value = entry.name;
+    redTeamInput.value = entry.team;
+
+    athleteNameInput.value = "";
+    greenTeamInput.value = "";
+  } else {
+    athleteNameInput.value = entry.name;
+    greenTeamInput.value = entry.team;
+
+    opponentNameInput.value = "";
+    redTeamInput.value = "";
+  }
+
+  renderAll();
+  saveLocalDraft();
+});
+
+
+
+
+function loadWeightClasses(group) {
+  if (!weightClassInput) return;
+
+  weightClassInput.innerHTML = `
+    <option value="">
+      Select Weight
+    </option>
+  `;
+
+  const weights =
+    WEIGHT_CLASSES[group] || [];
+
+  weights.forEach(weight => {
+    const option =
+      document.createElement("option");
+
+    option.value = String(weight);
+    option.textContent = `${weight} lb`;
+
+    weightClassInput.appendChild(option);
+  });
+}
+
 
 /* MATCH SETUP */
 confirmMatchSetupBtn?.addEventListener("click", () => {
@@ -1153,5 +1266,7 @@ updateRefButtonLabels({
   state
 });
 
+
 initializeAthleteDetailModal();
+loadTournamentRosterSelect();
 initializeMatchConfirmAccordion();

@@ -36,34 +36,56 @@
       <input id="eventNameInput" type="text" placeholder="Dual / Tournament / Practice" />
     </label>
 
-    <label>Weight
-      <input id="weightClassInput" type="text" placeholder="Weight class" />
-    </label>
+<label>Tournament Roster
 
-    <label>Red Team
-      <input id="redTeamInput" type="text" placeholder="Red team" />
-    </label>
+    <select id="athleteSelect">
+    <option value="">Select Athlete</option>
+  </select>
+</label>
 
-    <label>Red Wrestler
-      <input id="opponentName" type="text" placeholder="Red wrestler" />
-    </label>
+<label>Sandman Side
+  <select id="sandmanColor">
+    <option value="green">Sandman = Green</option>
+    <option value="red">Sandman = Red</option>
+  </select>
+</label>
 
-    <label>Green Team
-      <input id="greenTeamInput" type="text" placeholder="Green team" />
-    </label>
+<label>Weight Group
+  <select id="weightGroupSelect">
+    <option value="">Select Group</option>
+    <option value="youth">Youth</option>
+    <option value="juniorHighBoys">Junior High Boys</option>
+    <option value="juniorHighGirls">Junior High Girls</option>
+    <option value="highSchoolBoys">High School Boys</option>
+    <option value="highSchoolGirls">High School Girls</option>
+    <option value="collegeMen">College Men</option>
+    <option value="collegeWomen">College Women</option>
+  </select>
+</label>
 
-    <label>Green Wrestler
-      <input id="athleteName" type="text" placeholder="Green wrestler" />
-    </label>
+<label>Weight
+  <select id="weightClassInput">
+    <option value="">Select Weight</option>
+  </select>
+</label>
 
-    <!-- 🔥 Sandman Side Selection -->
-    <label>Sandman Side
-      <select id="sandmanColor">
-        <option value="green">Sandman = Green</option>
-        <option value="red">Sandman = Red</option>
-      </select>
-    </label>
-  </div>
+<label>Custom Weight
+  <input
+    id="customWeightClassInput"
+    type="text"
+    placeholder="Only if not listed"
+  />
+</label>
+<label>Opponent Team
+  <input id="redTeamInput" type="text" placeholder="Opponent team" />
+</label>
+
+<label>Opponent Wrestler
+  <input id="opponentName" type="text" placeholder="Opponent wrestler" />
+</label>
+
+<input id="greenTeamInput" type="hidden" />
+<input id="athleteName" type="hidden" />
 
   <button id="confirmMatchSetup" type="button">Confirm Match</button>
 </section>
@@ -145,7 +167,7 @@
     <div class="control-dock">
       <button id="startRecord" class="clock-start" type="button">Start</button>
       <button id="pauseClock" class="clock-pause" type="button">Pause</button>
-      <button id="stopRecord" class="clock-stop" type="button">Stop</button>
+      <button id="stopRecord" class="clock-stop" type="button">End</button>
       <button id="toggleMatchActions" type="button">Actions</button>
       <button id="arenaModeToggle" type="button">Arena</button>
     </div>

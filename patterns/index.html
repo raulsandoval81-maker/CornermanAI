@@ -1,40 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CornermanAI Patterns</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link rel="stylesheet" href="patterns.css">
+  <title>CornermanAI Patterns</title>
+
+  <link rel="stylesheet" href="../app.css" />
+  <link rel="stylesheet" href="./patterns.css" />
+  <link rel="icon" href="data:," />
 </head>
 
 <body>
 
-<div class="wrap">
+  <main class="app-shell">
 
-  <h1>🧠 Pattern Engine</h1>
+    <section class="hero">
+      <p class="eyebrow">CornermanAI</p>
 
-  <div class="card">
-    <h2>Top Patterns</h2>
-    <div id="patterns"></div>
-  </div>
+      <h1>Pattern Engine</h1>
 
-  <div class="card">
-    <h2>Training Recommendation</h2>
-    <div id="recommendation"></div>
-  </div>
+      <p class="sub">
+        Detect repeated scoring signals and turn match data into practice focus.
+      </p>
+    </section>
 
-  <a class="btn" href="../reports/index.html">
-    Reports
-  </a>
+    <section class="card">
+      <span>TOP PATTERNS</span>
+      <div id="patterns"></div>
+    </section>
 
-  <a class="btn" href="../console/index.html">
-    Command Center
-  </a>
+    <section class="card">
+      <span>TRAINING RECOMMENDATION</span>
+      <div id="recommendation"></div>
+    </section>
 
-</div>
+    <section class="grid">
 
-<script src="patterns.js"></script>
+      <a class="card" href="../events/team-dashboard.html">
+        <span>DASHBOARD</span>
+        <strong>Team Dashboard</strong>
+        <p>Review team-level scoring data.</p>
+      </a>
+
+      <a class="card" href="../athletes/athlete-dashboard.html">
+        <span>DASHBOARD</span>
+        <strong>Athlete Dashboard</strong>
+        <p>Review athlete-level scoring data.</p>
+      </a>
+
+      <a class="card" href="../reports/index.html">
+        <span>REPORTS</span>
+        <strong>Reports</strong>
+        <p>Review saved match summaries.</p>
+      </a>
+
+      <a class="card" href="../console/">
+        <span>BACK</span>
+        <strong>Console Command Center</strong>
+        <p>Return to the main command center.</p>
+      </a>
+
+    </section>
+
+  </main>
+
+  <script src="./patterns.js"></script>
 
 </body>
 </html>

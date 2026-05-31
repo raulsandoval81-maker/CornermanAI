@@ -1,6 +1,6 @@
 const matches =
   JSON.parse(
-    localStorage.getItem("cornermanMatches") || "[]"
+localStorage.getItem("cornerman_matches")
   );
 
 loadTeamReport();

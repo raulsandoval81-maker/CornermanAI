@@ -1,31 +1,5 @@
-body {
-  margin: 0;
-  background: #050505;
-  color: #fff;
-  font-family: Arial, sans-serif;
-}
-
-.wrap {
-  max-width: 900px;
-  margin: auto;
-  padding: 24px;
-}
-
-h1,
-h2 {
-  margin-top: 0;
-}
-
-.card {
-  background: #101010;
-  border: 1px solid #2a2a2a;
-  border-radius: 18px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
 .pattern-row {
-  padding: 12px 0;
+  padding: 14px 0;
   border-top: 1px solid #222;
 }
 
@@ -34,17 +8,8 @@ h2 {
 }
 
 .pattern-row strong {
+  display: block;
   color: #facc15;
-}
-
-.btn {
-  display: inline-block;
-  margin-right: 10px;
-  margin-top: 10px;
-  padding: 12px 18px;
-  text-decoration: none;
-  color: #fff;
-  background: #111;
-  border: 1px solid #333;
-  border-radius: 12px;
+  margin-bottom: 4px;
+  font-size: 1rem;
 }

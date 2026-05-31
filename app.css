@@ -1,13 +1,32 @@
 /* ==========================
-   CORNERMAN COMMAND CENTER
+   GLOBAL
+========================== */
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#050505;
+  color:#fff;
+  font-family:Arial,sans-serif;
+}
+
+/* ==========================
+   APP SHELL
 ========================== */
 
 .app-shell{
   min-height:100vh;
-  padding:40px 24px;
   max-width:1200px;
   margin:0 auto;
+  padding:40px 24px;
 }
+
+/* ==========================
+   HERO
+========================== */
 
 .hero{
   text-align:center;
@@ -23,8 +42,8 @@
 }
 
 .hero h1{
-  font-size:3rem;
   margin:0;
+  font-size:3rem;
 }
 
 .sub{
@@ -32,19 +51,28 @@
   margin-top:10px;
 }
 
+/* ==========================
+   GRID
+========================== */
+
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  grid-template-columns:
+    repeat(auto-fit,minmax(260px,1fr));
   gap:18px;
 }
+
+/* ==========================
+   CARDS
+========================== */
 
 .card{
   background:#111;
   border:1px solid #222;
   border-radius:18px;
   padding:20px;
-  text-decoration:none;
   color:#fff;
+  text-decoration:none;
   transition:.2s;
 }
 
@@ -57,9 +85,9 @@
   display:block;
   color:#facc15;
   font-size:.75rem;
+  font-weight:700;
   text-transform:uppercase;
   margin-bottom:10px;
-  font-weight:700;
 }
 
 .card strong{
@@ -73,6 +101,10 @@
   line-height:1.4;
 }
 
+/* ==========================
+   STATES
+========================== */
+
 .primary{
   border:2px solid #facc15;
 }
@@ -80,6 +112,58 @@
 .locked{
   opacity:.65;
 }
+
+/* ==========================
+   BUTTONS
+========================== */
+
+button{
+  cursor:pointer;
+  border:0;
+  border-radius:12px;
+  padding:14px 18px;
+  font-weight:700;
+}
+
+button:hover{
+  opacity:.95;
+}
+
+/* ==========================
+   FORMS
+========================== */
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #333;
+  background:#080808;
+  color:#fff;
+  font:inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  outline:none;
+  border-color:#facc15;
+}
+
+label{
+  display:block;
+  margin-bottom:6px;
+  color:#facc15;
+  font-size:.8rem;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+/* ==========================
+   FOOTER
+========================== */
 
 footer{
   margin-top:40px;

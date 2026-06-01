@@ -62,10 +62,9 @@ function loadAthleteSelect() {
     const option =
       document.createElement("option");
 
-    option.value = name;
-    option.textContent = name;
-
-    select.appendChild(option);
+option.value = name.toLowerCase();
+option.textContent = name;
+      select.appendChild(option);
   });
 
   select.addEventListener("change", () => {

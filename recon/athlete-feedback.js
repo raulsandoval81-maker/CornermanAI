@@ -17,5 +17,44 @@ export function buildAthleteFeedback(patterns = []) {
   }
 
   return "Stay disciplined and win the next position.";
+}
 
+export function buildAthleteFeedbackPayload({
+  athlete = "Athlete",
+  latestMatch = {},
+  patterns = []
+} = {}) {
+
+  return {
+    type: "athlete-feedback",
+
+    source:
+      "cornerman-intelligence",
+
+    athlete,
+
+    match: {
+      opponent:
+        latestMatch.opponent || "Opponent",
+
+      result:
+        latestMatch.result || "Result",
+
+      method:
+        latestMatch.method || "Decision",
+
+      score:
+        `${latestMatch.pointsFor || 0}-${latestMatch.pointsAgainst || 0}`
+    },
+
+    patterns,
+
+    feedback:
+      buildAthleteFeedback(patterns),
+
+    bridgeReady: true,
+
+    createdAt:
+      new Date().toISOString()
+  };
 }

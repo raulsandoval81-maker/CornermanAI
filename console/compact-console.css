@@ -252,3 +252,46 @@
 .hidden {
   display: none !important;
 }
+/* Setup spacing */
+
+.setup-panel,
+.match-setup,
+.setup-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.setup-panel label,
+.match-setup label,
+.setup-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* Inputs */
+
+.setup-panel input,
+.setup-panel select,
+.match-setup input,
+.match-setup select {
+  margin-top: 2px;
+}
+
+/* Confirm button breathing room */
+
+#confirmMatchBtn,
+.confirm-match-btn {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+/* HUD spacing */
+
+.match-header,
+.match-summary,
+.hud-wrap {
+  margin-top: 20px;
+}

@@ -445,25 +445,57 @@ function buildMatchPayload(videoUrl = "") {
     weightClass: weightClassInput?.value.trim() || "",
     formatKey: state.formatKey,
     formatLabel: state.format.label,
-    athlete: athleteNameInput?.value.trim() || "Athlete B",
-    opponent: opponentNameInput?.value.trim() || "Athlete A",
-    greenTeam: greenTeamInput?.value.trim() || "",
-    redTeam: redTeamInput?.value.trim() || "",
+
+    athlete:
+      athleteNameInput?.value.trim()
+      || "Athlete B",
+
+    opponent:
+      opponentNameInput?.value.trim()
+      || "Athlete A",
+
+    greenTeam:
+      greenTeamInput?.value.trim() || "",
+
+    redTeam:
+      redTeamInput?.value.trim() || "",
+
     athleteScore: state.athleteScore,
     opponentScore: state.opponentScore,
+
     currentRound: state.currentRound,
     roundStarts: state.roundStarts,
     choiceHistory: state.choiceHistory,
+
     position: state.position,
+
     winner: state.winner,
     resultType: state.resultType,
+
     clock: formatTime(state.time),
     timeRemaining: state.time,
+
     rounds: getVisibleRounds(state, events),
     events,
-    notes: document.getElementById("coachNotes")?.value.trim() || "",
-    videoUrl,
-    savedAt: new Date().toISOString(),
+
+    notes:
+      document
+        .getElementById("coachNotes")
+        ?.value.trim() || "",
+
+
+    videoUrl:
+      document
+        .getElementById("videoUrlInput")
+        ?.value.trim() || "",
+
+    videoHost: "youtube",
+    videoVisibility: "private",
+    uploadedAt: "",
+
+    savedAt:
+      new Date().toISOString(),
+
     source: "coach-console"
   };
 }

@@ -171,19 +171,3 @@ footer{
   color:#666;
   font-size:.85rem;
 }
-.footer {
-  text-align: center;
-  padding: 32px 16px;
-  opacity: 0.8;
-}
-
-.footer p {
-  margin: 0;
-  font-weight: 700;
-}
-
-.footer small {
-  display: block;
-  margin-top: 6px;
-  opacity: 0.75;
-}

@@ -1,4 +1,8 @@
-export const TOURNAMENT_ROSTER = [
+
+const STORAGE_KEY =
+  "cornerman_tournament_roster";
+
+const DEFAULT_ROSTER = [
   {
     entryId: "maximus-varsity-215",
     athleteId: "maximus",
@@ -28,9 +32,40 @@ export const TOURNAMENT_ROSTER = [
 ];
 
 export function getTournamentRoster() {
-  return TOURNAMENT_ROSTER.filter(entry => entry.checkedIn);
+  const saved =
+    localStorage.getItem(STORAGE_KEY);
+
+  if (!saved) {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(DEFAULT_ROSTER)
+    );
+
+    return DEFAULT_ROSTER;
+  }
+
+  return JSON.parse(saved);
+}
+
+export function saveTournamentRoster(roster) {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(roster)
+  );
+}
+
+export function addTournamentEntry(entry) {
+  const roster =
+    getTournamentRoster();
+
+  roster.push(entry);
+
+  saveTournamentRoster(roster);
 }
 
 export function getTournamentEntry(entryId) {
-  return TOURNAMENT_ROSTER.find(entry => entry.entryId === entryId) || null;
+  return getTournamentRoster()
+    .find(entry =>
+      entry.entryId === entryId
+    ) || null;
 }

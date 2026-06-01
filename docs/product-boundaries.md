@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Protect the separation between Core, Intelligence, and Sandman.
+Protect the separation between Core, Intelligence, and Sandman Bridge.
 
 The goal is to allow:
 
@@ -40,6 +40,7 @@ Question answered:
 Owns:
 
 * Recon
+* Reports
 * Pattern Engine
 * Practice Recommendations
 * Opponent Trends
@@ -56,9 +57,33 @@ Question answered:
 
 "What does it mean?"
 
+Execution Spine:
+
+Recon
+↓
+Reports
+↓
+Patterns
+↓
+Recommendations
+
+Questions:
+
+Recon
+→ What do I see?
+
+Reports
+→ What happened?
+
+Patterns
+→ What keeps happening?
+
+Recommendations
+→ What should I do next?
+
 ---
 
-# Sandman
+# Sandman Bridge
 
 Owns:
 
@@ -74,7 +99,9 @@ Rule:
 
 Sandman develops athletes.
 
-Sandman may consume Core data and Intelligence data.
+Sandman Bridge transports competition data into Sandman.
+
+Sandman Bridge may consume Core data and Intelligence data.
 
 Question answered:
 
@@ -92,7 +119,7 @@ Match Engine owns:
 * Tournament Rosters
 * Matches
 * Stats
-* Videos
+* Video References
 
 The Match Engine remains neutral.
 
@@ -104,41 +131,90 @@ It only stores reality.
 
 ---
 
+# Video Doctrine
+
+Videos are stored externally.
+
+Preferred provider:
+
+* YouTube
+
+Cornerman stores:
+
+* videoUrl
+* videoTitle (optional)
+* videoId (optional)
+
+Cornerman does not store raw video files long-term.
+
+Flow:
+
+Console
+↓
+Video Capture
+↓
+YouTube
+↓
+videoUrl
+↓
+Match History
+
+---
+
 # Product Views
 
-Cornerman Core
+## Cornerman Core
 
 Tournament Builder
-→ Tournament Roster
-→ Console
-→ Video
-→ Match Stats
+↓
+Tournament Roster
+↓
+Console
+↓
+Video
+↓
+Match Stats
+↓
+Match History
 
-Cornerman Plus
+---
+
+## Cornerman Plus
 
 Core
 +
 Recon
 +
+Reports
++
 Pattern Engine
 +
 Advanced Intelligence
 
-Sandman
+---
+
+## Sandman
 
 Weekend Clipboard
-→ Tournament Roster
-→ Console
-→ Intelligence
-→ XP
-→ Athlete Development
+↓
+Tournament Builder
+↓
+Tournament Roster
+↓
+Console
+↓
+Match Stats
+↓
+XP
+↓
+Athlete Development
 
 ---
 
 # Rule
 
 Capture.
-Then interpret.
-Then develop.
+Interpret.
+Develop.
 
 Never combine all three layers into one page.

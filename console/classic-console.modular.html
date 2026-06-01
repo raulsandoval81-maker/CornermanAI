@@ -91,33 +91,42 @@
       <span id="eventNameDisplay">Event: —</span>
       <span id="weightClassDisplay">Weight: —</span>
     </div>
+<div class="header-side red">
 
-    <div class="match-header match-hud">
-      <div class="header-side red">
-        <div class="team-row red-text" id="redTeam">Team</div>
-        <div class="athlete-row">
-          <strong id="redDisplayName">Athlete A</strong>
-        </div>
-        <strong id="opponentScore" class="hud-score">0</strong>
-      </div>
+  <div class="athlete-row">
+    <strong id="redDisplayName">Athlete A</strong>
+  </div>
 
-      <div class="header-round">
+  <div class="team-row red-text" id="redTeam">
+    Team
+  </div>
+
+  <strong id="opponentScore" class="hud-score">0</strong>
+
+</div>
+
+    <div class="header-round">
         <span>ROUND</span>
         <strong id="currentRound">R1</strong>
         <strong id="clock">2:00</strong>
         <div id="positionIndicator" class="position-indicator">NEUTRAL</div>
       </div>
 
-      <div class="header-side green">
-        <div class="team-row green-text" id="greenTeam">Team</div>
-        <div class="athlete-row">
-          <strong id="greenDisplayName">Athlete B</strong>
-        </div>
-        <strong id="athleteScore" class="hud-score">0</strong>
-      </div>
-    </div>
+<div class="header-side green">
 
-    <div id="chooserPanel" class="choice-panel hidden">
+  <div class="athlete-row">
+    <strong id="greenDisplayName">Athlete B</strong>
+  </div>
+
+  <div class="team-row green-text" id="greenTeam">
+    Team
+  </div>
+
+  <strong id="athleteScore" class="hud-score">0</strong>
+
+</div>
+
+      <div id="chooserPanel" class="choice-panel hidden">
       <strong>WHO HAS CHOICE?</strong>
       <button id="greenChooserBtn" type="button">GREEN</button>
       <button id="redChooserBtn" type="button">RED</button>
@@ -291,6 +300,6 @@
 </main>
 
 <div id="finishFlash" class="finish-flash"></div>
-<script type="module" src="./match-engine.modular.js"></script>
+<script type="module" src="./console/match-engine.modular.js"></script>
 </body>
 </html>

@@ -159,6 +159,8 @@ const eventNameInput = document.getElementById("eventNameInput");
 const weightClassInput = document.getElementById("weightClassInput");
 const eventNameDisplay = document.getElementById("eventNameDisplay");
 const weightClassDisplay = document.getElementById("weightClassDisplay");
+const manualEntryToggle = document.getElementById("manualEntryToggle");
+const manualEntryFields = document.getElementById("manualEntryFields");
 
 const redTeamInput = document.getElementById("redTeamInput");
 const greenTeamInput = document.getElementById("greenTeamInput");

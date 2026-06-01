@@ -12,17 +12,101 @@
 </head>
 
 <body>
+
   <main class="app-shell">
 
-    <section class="hero">
-      <p class="eyebrow">CornermanAI</p>
-      <h1>Tournament Manager</h1>
-      <p class="sub">Import console matches into tournament analytics.</p>
-    </section>
+<section class="card">
+  <span>TOURNAMENT ROSTER</span>
+  <strong>Add Athlete To Event</strong>
+
+  <div class="setup-grid">
+
+    <label>
+      Event
+      <input
+        id="eventNameInput"
+        type="text"
+        placeholder="Tournament / Dual"
+      />
+    </label>
+
+    <label>
+      Athlete Name
+      <input
+        id="athleteNameInput"
+        type="text"
+        placeholder="Athlete name"
+      />
+    </label>
+
+    <label>
+      Team
+      <input
+        id="teamNameInput"
+        type="text"
+        placeholder="Team name"
+      />
+    </label>
+
+    <label>
+      Weight Group
+
+      <select id="weightGroupSelect">
+        <option value="">Select Group</option>
+
+        <option value="youth">Youth</option>
+        <option value="juniorHighBoys">Junior High Boys</option>
+        <option value="juniorHighGirls">Junior High Girls</option>
+        <option value="highSchoolBoys">High School Boys</option>
+        <option value="highSchoolGirls">High School Girls</option>
+        <option value="collegeMen">College Men</option>
+        <option value="collegeWomen">College Women</option>
+      </select>
+    </label>
+
+    <label>
+      Weight
+
+      <select id="weightInput">
+        <option value="">
+          Select Weight
+        </option>
+      </select>
+    </label>
+
+  </div>
+
+  <button
+    id="addTournamentAthleteBtn"
+    type="button"
+  >
+    Add To Tournament Roster
+  </button>
+
+  <p
+    id="rosterStatus"
+    class="bridge-status"
+  >
+    Waiting for athlete.
+  </p>
+
+</section>
+
+<section class="card">
+  <span>ACTIVE TOURNAMENT ROSTER</span>
+
+  <div id="tournamentRosterList">
+    No athletes added yet.
+  </div>
+</section>
 
     <section class="card bridge-card">
       <span>BRIDGE</span>
-      <strong>Import Last Console Match</strong>
+
+      <strong>
+        Import Last Console Match
+      </strong>
+
       <p>
         Pulls the latest saved live-console payload into the tournament match log.
       </p>
@@ -31,46 +115,92 @@
         Import Last Console Match
       </button>
 
-      <p id="importStatus" class="bridge-status">
+      <p
+        id="importStatus"
+        class="bridge-status"
+      >
         Waiting for console payload.
       </p>
     </section>
 
     <section class="card">
       <span>LAST CONSOLE MATCH</span>
+
       <div id="lastConsoleMatch">
         No console match found.
       </div>
     </section>
 
     <section class="grid">
-      <a class="card" href="../roster/athlete-stat-log.html">
+
+      <a
+        class="card"
+        href="../roster/athlete-stat-log.html"
+      >
         <span>LOG</span>
-        <strong>Athlete Stat Log</strong>
-        <p>Manual fallback for entering match results.</p>
+
+        <strong>
+          Athlete Stat Log
+        </strong>
+
+        <p>
+          Manual fallback for entering match results.
+        </p>
       </a>
 
-      <a class="card" href="../events/team-dashboard.html">
+      <a
+        class="card"
+        href="../events/team-dashboard.html"
+      >
         <span>DASHBOARD</span>
-        <strong>Team Dashboard</strong>
-        <p>View imported team analytics.</p>
+
+        <strong>
+          Team Dashboard
+        </strong>
+
+        <p>
+          View imported team analytics.
+        </p>
       </a>
 
-      <a class="card" href="../athletes/athlete-dashboard.html">
+      <a
+        class="card"
+        href="../athletes/athlete-dashboard.html"
+      >
         <span>DASHBOARD</span>
-        <strong>Athlete Dashboard</strong>
-        <p>View imported athlete analytics.</p>
+
+        <strong>
+          Athlete Dashboard
+        </strong>
+
+        <p>
+          View imported athlete analytics.
+        </p>
       </a>
 
-      <a class="card" href="../console/">
+      <a
+        class="card"
+        href="../console/"
+      >
         <span>BACK</span>
-        <strong>Console Command Center</strong>
-        <p>Return to the command center.</p>
+
+        <strong>
+          Console Command Center
+        </strong>
+
+        <p>
+          Return to the command center.
+        </p>
       </a>
+
     </section>
 
   </main>
 
-  <script src="./tournament-manager.js"></script>
+  <script
+    type="module"
+    src="./tournament-manager.js"
+  ></script>
+
 </body>
 </html>

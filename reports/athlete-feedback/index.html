@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Athlete Feedback</title>
+
+  <link rel="stylesheet" href="../../app.css" />
+  <link rel="stylesheet" href="./athlete-feedback.css" />
+</head>
+
+<body>
+
+  <main class="app-shell">
+
+    <section class="hero">
+      <p class="eyebrow">CornermanAI</p>
+
+      <h1>Athlete Feedback</h1>
+
+      <p class="sub">
+        Development payload generated from match intelligence.
+      </p>
+    </section>
+
+    <section class="card">
+      <span>ATHLETE</span>
+      <h2 id="athleteName">Loading...</h2>
+    </section>
+
+    <section class="card">
+      <span>LATEST MATCH</span>
+      <div id="matchInfo"></div>
+    </section>
+
+    <section class="card">
+      <span>FEEDBACK</span>
+      <div id="feedbackInfo"></div>
+    </section>
+
+    <section class="card">
+      <span>SUGGESTED CARDS</span>
+      <div id="cardInfo"></div>
+    </section>
+
+  </main>
+
+  <script type="module" src="./athlete-feedback.js"></script>
+
+</body>
+</html>

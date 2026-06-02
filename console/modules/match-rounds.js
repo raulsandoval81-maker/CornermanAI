@@ -26,7 +26,45 @@ export function handleRoundComplete({
 
   const result =
     advanceRound(state);
+if (
+  state.currentRound === "UTB" &&
+  !result.advanced
+) {
+  const topSide =
+    state.roundStarts?.UTB === "green_top"
+      ? "athlete"
+      : "opponent";
 
+  const bottomSide =
+    topSide === "athlete"
+      ? "opponent"
+      : "athlete";
+
+  const bottomScored =
+    events.some(event =>
+      event.round === "UTB" &&
+      event.side === bottomSide &&
+      ["esc1", "rev2"].includes(event.code)
+    );
+
+  if (bottomScored) {
+    state.winner = bottomSide;
+  } else {
+    state.winner = topSide;
+  }
+
+  state.resultType = "decision";
+
+  setStatus("Ultimate tiebreaker complete — open Match Summary");
+
+  matchSummaryModal?.classList.remove("hidden");
+
+  syncAutoResult();
+  renderAll();
+  saveLocalDraft();
+
+  return;
+}
   if (
     result.round === "2" &&
     !state.secondPeriodFirstChooser
@@ -41,7 +79,30 @@ export function handleRoundComplete({
 
     return;
   }
+const isTied =
+  state.athleteScore === state.opponentScore;
 
+if (
+  !result.advanced &&
+  isTied
+) {
+  setStatus(
+    "Regulation tied — overtime required"
+  );
+
+  matchSummaryModal
+    ?.classList.add("hidden");
+
+  updateStartButton({
+    text: "Start OT",
+    disabled: false
+  });
+
+  renderAll();
+  saveLocalDraft();
+
+  return;
+}
   if (!result.advanced) {
     setStatus(
       "Match complete — open Match Summary"

@@ -217,6 +217,8 @@ const manualNextRoundBtn = document.getElementById("nextRound");
 const matchSummaryModal = document.getElementById("matchSummaryModal");
 const closeMatchSummaryBtn = document.getElementById("closeMatchSummary");
 const finishBtn = document.getElementById("endMatch");
+const saveMatchLogBtn = document.getElementById("saveMatchLogBtn");
+
 
 const reviewWinnerEl = document.getElementById("reviewWinner");
 const reviewResultEl = document.getElementById("reviewResult");
@@ -512,6 +514,40 @@ function saveLocalDraft() {
     "coach_console_active_match",
     JSON.stringify(buildMatchPayload())
   );
+}
+function saveMatchToHistory() {
+  console.log("SAVE MATCH TO HISTORY FIRED");
+const match = buildMatchPayload();
+
+  const matches = JSON.parse(
+    localStorage.getItem("cornerman_matches") || "[]"
+  );
+const alreadySaved =
+  matches.some(saved =>
+    saved.athlete === match.athlete &&
+    saved.opponent === match.opponent &&
+    saved.eventName === match.eventName &&
+    saved.weightClass === match.weightClass &&
+    saved.athleteScore === match.athleteScore &&
+    saved.opponentScore === match.opponentScore &&
+    saved.currentRound === match.currentRound
+  );
+
+if (alreadySaved) {
+  setStatus("Match already saved.");
+  return match;
+}
+  matches.push({
+    ...match,
+    savedToMatchLogAt: new Date().toISOString()
+  });
+
+  localStorage.setItem(
+    "cornerman_matches",
+    JSON.stringify(matches)
+  );
+
+  return match;
 }
 
 /* MODE */
@@ -907,6 +943,8 @@ updateStartButton({
 });
 
   setStatus("Match reset — confirm match");
+saveMatchLogBtn.disabled = false;
+saveMatchLogBtn.textContent = "Save to Match Log";
 
   renderAll();
   saveLocalDraft();
@@ -1213,6 +1251,14 @@ document.querySelectorAll("[data-finish-type]").forEach(btn => {
     saveLocalDraft();
   });
 });
+saveMatchLogBtn?.addEventListener("click", () => {
+  saveMatchToHistory();
+
+  saveMatchLogBtn.disabled = true;
+  saveMatchLogBtn.textContent = "Saved";
+
+  setStatus("Saved to match log.");
+});
 
 /* FINISH & SAVE */
 finishBtn?.addEventListener("click", () => {
@@ -1235,8 +1281,7 @@ stopClock({
   }
 
   stopCameraStream();
-
-  const match = buildMatchPayload();
+const match = saveMatchToHistory();
   console.log("MATCH PAYLOAD", match);
 
 
@@ -1249,12 +1294,6 @@ localStorage.setItem(
   "coach_console_last_recon",
   JSON.stringify(recon)
 );
-
-  const logs = JSON.parse(localStorage.getItem("coach_match_logs") || "[]");
-  logs.push(match);
-
-  localStorage.setItem("coach_match_logs", JSON.stringify(logs));
-  localStorage.setItem("coach_console_last_match", JSON.stringify(match));
 
   matchSummaryModal?.classList.add("hidden");
 

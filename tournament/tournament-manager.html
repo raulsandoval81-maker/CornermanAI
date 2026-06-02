@@ -15,112 +15,132 @@
 
   <main class="app-shell">
 
-<section class="card">
-  <span>TOURNAMENT ROSTER</span>
-  <strong>Add Athlete To Event</strong>
+    <section class="card">
+      <span>CURRENT EVENT</span>
+      <strong>Create Event Once</strong>
 
-  <div class="setup-grid">
+      <div class="setup-grid">
 
-    <label>
-      Event
-      <input
-        id="eventNameInput"
-        type="text"
-        placeholder="Tournament / Dual"
-      />
-    </label>
+        <label>
+          Event
+          <input
+            id="eventNameInput"
+            type="text"
+            placeholder="Tournament / Dual"
+          />
+        </label>
 
-    <label>
-      Athlete Name
-      <input
-        id="athleteNameInput"
-        type="text"
-        placeholder="Athlete name"
-      />
-    </label>
+        <label>
+          Date
+          <input
+            id="tournamentDateInput"
+            type="date"
+          />
+        </label>
 
-    <label>
-      Team
-      <input
-        id="teamNameInput"
-        type="text"
-        placeholder="Team name"
-      />
-    </label>
+        <label>
+          Location
+          <input
+            id="tournamentLocationInput"
+            type="text"
+            placeholder="Location"
+          />
+        </label>
 
-    <label>
-      Weight Group
+      </div>
 
-      <select id="weightGroupSelect">
-        <option value="">Select Group</option>
+      <button
+        id="saveTournamentEventBtn"
+        type="button"
+      >
+        Save Event
+      </button>
 
-        <option value="youth">Youth</option>
-        <option value="juniorHighBoys">Junior High Boys</option>
-        <option value="juniorHighGirls">Junior High Girls</option>
-        <option value="highSchoolBoys">High School Boys</option>
-        <option value="highSchoolGirls">High School Girls</option>
-        <option value="collegeMen">College Men</option>
-        <option value="collegeWomen">College Women</option>
-      </select>
-    </label>
+      <div id="currentTournament">
+        No tournament event created yet.
+      </div>
+    </section>
 
-    <label>
-      Weight
+    <section class="card">
+      <span>ATTENDANCE</span>
+      <strong>Add Athlete To Event</strong>
 
-      <select id="weightInput">
-        <option value="">
-          Select Weight
-        </option>
-      </select>
-    </label>
+      <div class="setup-grid">
 
-  </div>
+        <label>
+          Athlete Name
+          <input
+            id="athleteNameInput"
+            type="text"
+            placeholder="Athlete name"
+          />
+        </label>
 
-  <button
-    id="addTournamentAthleteBtn"
-    type="button"
-  >
-    Add To Tournament Roster
-  </button>
+        <label>
+          Team
+          <input
+            id="teamNameInput"
+            type="text"
+            placeholder="Team name"
+          />
+        </label>
 
-  <p
-    id="rosterStatus"
-    class="bridge-status"
-  >
-    Waiting for athlete.
-  </p>
+        <label>
+          Weight Group
 
-</section>
+          <select id="weightGroupSelect">
+            <option value="">Select Group</option>
 
-<section class="card">
-  <span>ACTIVE TOURNAMENT ROSTER</span>
+            <option value="youth">Youth</option>
+            <option value="juniorHighBoys">Junior High Boys</option>
+            <option value="juniorHighGirls">Junior High Girls</option>
+            <option value="highSchoolBoys">High School Boys</option>
+            <option value="highSchoolGirls">High School Girls</option>
+            <option value="collegeMen">College Men</option>
+            <option value="collegeWomen">College Women</option>
+          </select>
+        </label>
 
-  <div id="tournamentRosterList">
-    No athletes added yet.
-  </div>
-</section>
+        <label>
+          Weight
 
-    <section class="card bridge-card">
-      <span>BRIDGE</span>
+          <select id="weightInput">
+            <option value="">
+              Select Weight
+            </option>
+          </select>
+        </label>
 
-      <strong>
-        Import Last Console Match
-      </strong>
+      </div>
 
-      <p>
-        Pulls the latest saved live-console payload into the tournament match log.
-      </p>
-
-      <button id="importLastMatchBtn">
-        Import Last Console Match
+      <button
+        id="addTournamentAthleteBtn"
+        type="button"
+      >
+        Add To Tournament Roster
       </button>
 
       <p
-        id="importStatus"
+        id="rosterStatus"
         class="bridge-status"
       >
-        Waiting for console payload.
+        Waiting for event.
       </p>
+    </section>
+
+    <section class="card">
+      <span>ACTIVE TOURNAMENT ROSTER</span>
+
+      <button
+        id="archiveTournamentBtn"
+        type="button"
+      >
+        Archive Event
+      </button>
+
+      <div id="tournamentRosterList">
+        No athletes added yet.
+      </div>
     </section>
 
     <section class="card">

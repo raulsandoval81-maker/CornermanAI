@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Match Import Bridge</title>
+
+  <link rel="stylesheet" href="../app.css" />
+  <link rel="icon" href="data:," />
+</head>
+
+<body>
+
+  <main class="app-shell">
+
+    <section class="hero">
+      <p class="eyebrow">CornermanAI</p>
+
+      <h1>Match Import Bridge</h1>
+
+      <p class="sub">
+        Move completed console matches into reports and development systems.
+      </p>
+    </section>
+
+    <section class="card">
+      <span>BRIDGE</span>
+
+      <strong>
+        Import Console Match
+      </strong>
+
+      <p>
+        This page will handle match movement from live console capture into Cornerman reports.
+      </p>
+
+      <button id="importLastMatchBtn">
+        Import Last Console Match
+      </button>
+
+      <p
+        id="importStatus"
+        class="bridge-status"
+      >
+        Waiting for console payload.
+      </p>
+    </section>
+
+    <section class="card">
+      <span>LAST CONSOLE MATCH</span>
+
+      <div id="lastConsoleMatch">
+        No console match found.
+      </div>
+    </section>
+
+    <section class="grid">
+
+      <a
+        class="card"
+        href="../tournament/tournament-manager.html"
+      >
+        <span>BACK</span>
+
+        <strong>
+          Tournament Manager
+        </strong>
+
+        <p>
+          Return to event and attendance setup.
+        </p>
+      </a>
+
+      <a
+        class="card"
+        href="../events/team-dashboard.html"
+      >
+        <span>DASHBOARD</span>
+
+        <strong>
+          Team Dashboard
+        </strong>
+
+        <p>
+          View imported team analytics.
+        </p>
+      </a>
+
+      <a
+        class="card"
+        href="../athletes/athlete-dashboard.html"
+      >
+        <span>DASHBOARD</span>
+
+        <strong>
+          Athlete Dashboard
+        </strong>
+
+        <p>
+          View imported athlete analytics.
+        </p>
+      </a>
+
+    </section>
+
+  </main>
+
+  <script
+    type="module"
+    src="./match-import.js"
+  ></script>
+
+</body>
+</html>

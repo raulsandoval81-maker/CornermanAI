@@ -13,6 +13,20 @@ const CONSOLE_MATCH_KEY =
 const TOURNAMENT_MATCHES_KEY =
   "cornerman_matches";
 
+  const TOURNAMENT_HISTORY_KEY =
+  "cornerman_tournament_history";
+
+
+/* =========================
+   TOURNAMENT EVENT
+========================= */
+
+let currentTournament = {
+  name: "",
+  date: "",
+  location: ""
+};
+
 /* =========================
    DOM
 ========================= */
@@ -50,14 +64,35 @@ const rosterStatus =
 const tournamentRosterList =
   document.getElementById("tournamentRosterList");
 
-  
+  const tournamentDateInput =
+  document.getElementById("tournamentDateInput");
 
-/* =========================
+const tournamentLocationInput =
+  document.getElementById("tournamentLocationInput");
+
+const saveTournamentEventBtn =
+  document.getElementById("saveTournamentEventBtn");
+
+const currentTournamentEl =
+  document.getElementById("currentTournament");
+
+  const archiveTournamentBtn =
+  document.getElementById(
+    "archiveTournamentBtn"
+  );
+
+
+  /* =========================
    INIT
 ========================= */
 
 renderLastConsoleMatch();
 renderTournamentRoster();
+loadCurrentTournament();
+renderCurrentTournament();
+setRosterStatus(
+  "Tournament event saved."
+);
 
 importBtn?.addEventListener(
   "click",
@@ -78,13 +113,129 @@ addTournamentAthleteBtn?.addEventListener(
   addAthleteToTournamentRoster
 );
 
+saveTournamentEventBtn?.addEventListener(
+  "click",
+  saveTournamentEvent
+);
+
+archiveTournamentBtn?.addEventListener(
+  "click",
+  archiveCurrentTournament
+);
+
 /* =========================
    TOURNAMENT ROSTER
 ========================= */
+function saveTournamentEvent() {
+  currentTournament = {
+    name: eventNameInput?.value.trim() || "",
+    date: tournamentDateInput?.value || "",
+    location: tournamentLocationInput?.value.trim() || ""
+  };
+
+  if (!currentTournament.name) {
+    setRosterStatus("Enter tournament name first.");
+    return;
+  }
+
+  localStorage.setItem(
+    "cornerman_current_tournament",
+    JSON.stringify(currentTournament)
+  );
+
+  renderCurrentTournament();
+}
+function loadCurrentTournament() {
+  const saved =
+    localStorage.getItem(
+      "cornerman_current_tournament"
+    );
+
+  if (!saved) return;
+
+  try {
+    currentTournament =
+      JSON.parse(saved);
+
+    eventNameInput.value =
+      currentTournament.name || "";
+
+    tournamentDateInput.value =
+      currentTournament.date || "";
+
+    tournamentLocationInput.value =
+      currentTournament.location || "";
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+function archiveCurrentTournament() {
+
+  if (!currentTournament.name) {
+    setRosterStatus(
+      "No active tournament to archive."
+    );
+    return;
+  }
+
+  const roster =
+    getTournamentRoster();
+
+  const history =
+    JSON.parse(
+      localStorage.getItem(
+        TOURNAMENT_HISTORY_KEY
+      ) || "[]"
+    );
+
+  history.push({
+    id: Date.now(),
+
+    event: {
+      ...currentTournament
+    },
+
+    roster,
+
+    archivedAt:
+      new Date().toISOString()
+  });
+
+  localStorage.setItem(
+    TOURNAMENT_HISTORY_KEY,
+    JSON.stringify(history)
+  );
+
+  localStorage.removeItem(
+    "cornerman_current_tournament"
+  );
+
+  localStorage.removeItem(
+    "cornerman_tournament_roster"
+  );
+
+  currentTournament = {
+    name: "",
+    date: "",
+    location: ""
+  };
+
+  eventNameInput.value = "";
+  tournamentDateInput.value = "";
+  tournamentLocationInput.value = "";
+
+  renderCurrentTournament();
+  renderTournamentRoster();
+
+  setRosterStatus(
+    "Tournament archived successfully."
+  );
+}
 
 function addAthleteToTournamentRoster() {
   const eventName =
-    eventNameInput?.value.trim() || "";
+  currentTournament.name || "";
 
   const athleteName =
     athleteNameInput?.value.trim() || "";
@@ -151,6 +302,23 @@ function addAthleteToTournamentRoster() {
 
   renderTournamentRoster();
 }
+function renderCurrentTournament() {
+  if (!currentTournamentEl) return;
+
+  if (!currentTournament.name) {
+    currentTournamentEl.innerHTML =
+      "<p>No tournament event created yet.</p>";
+    return;
+  }
+
+  currentTournamentEl.innerHTML = `
+    <strong>${currentTournament.name}</strong>
+    <p>${currentTournament.date || "No date"} · ${currentTournament.location || "No location"}</p>
+  `;
+}
+
+
+
 
 function renderTournamentRoster() {
   if (!tournamentRosterList) return;
@@ -215,155 +383,6 @@ function setRosterStatus(message) {
     rosterStatus.textContent =
       message;
   }
-}
-
-/* =========================
-   MATCH IMPORT BRIDGE
-========================= */
-
-function importLastConsoleMatch() {
-  const consoleMatch =
-    getLastConsoleMatch();
-
-  if (!consoleMatch) {
-    setImportStatus(
-      "No console match found. Run and save a match first."
-    );
-
-    return;
-  }
-
-  const matches =
-    getTournamentMatches();
-
-  const alreadyImported =
-    matches.some(match =>
-      String(match.sourceId) ===
-      String(consoleMatch.id)
-    );
-
-  if (alreadyImported) {
-    setImportStatus(
-      "This console match is already imported."
-    );
-
-    return;
-  }
-
-  const importedMatch =
-    convertConsoleMatch(consoleMatch);
-
-  matches.push(importedMatch);
-
-  localStorage.setItem(
-    TOURNAMENT_MATCHES_KEY,
-    JSON.stringify(matches)
-  );
-
-  setImportStatus(
-    `Imported: ${importedMatch.athlete} vs ${importedMatch.opponent} — ${importedMatch.result} by ${importedMatch.method}`
-  );
-
-  renderLastConsoleMatch();
-}
-
-function getLastConsoleMatch() {
-  const raw =
-    localStorage.getItem(CONSOLE_MATCH_KEY);
-
-  if (!raw) return null;
-
-  try {
-    return JSON.parse(raw);
-  } catch (error) {
-    console.error(
-      "Bad console match payload:",
-      error
-    );
-
-    return null;
-  }
-}
-
-function getTournamentMatches() {
-  return JSON.parse(
-    localStorage.getItem(
-      TOURNAMENT_MATCHES_KEY
-    ) || "[]"
-  );
-}
-
-function convertConsoleMatch(consoleMatch) {
-  return {
-    id: Date.now(),
-    sourceId: consoleMatch.id,
-    source: "coach-console-import",
-
-    athlete:
-      consoleMatch.athlete || "Athlete",
-
-    opponent:
-      consoleMatch.opponent || "Opponent",
-
-    tournament:
-      consoleMatch.eventName || "",
-
-    weight:
-      consoleMatch.weightClass || "",
-
-    result:
-      consoleMatch.winner === "athlete"
-        ? "Win"
-        : "Loss",
-
-    method:
-      normalizeMethod(
-        consoleMatch.resultType
-      ),
-
-    pointsFor:
-      Number(
-        consoleMatch.athleteScore || 0
-      ),
-
-    pointsAgainst:
-      Number(
-        consoleMatch.opponentScore || 0
-      ),
-
-    takedowns:
-      countEvents(
-        consoleMatch,
-        "athlete",
-        "TD"
-      ),
-
-    escapes:
-      countEvents(
-        consoleMatch,
-        "athlete",
-        "ESC"
-      ),
-
-    reversals:
-      countEvents(
-        consoleMatch,
-        "athlete",
-        "REV"
-      ),
-
-    nearfall:
-      countNearfall(
-        consoleMatch,
-        "athlete"
-      ),
-
-    notes:
-      consoleMatch.notes || "",
-
-    importedAt:
-      new Date().toISOString()
-  };
 }
 
 function normalizeMethod(method) {

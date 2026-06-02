@@ -86,7 +86,6 @@ const currentTournamentEl =
    INIT
 ========================= */
 
-renderLastConsoleMatch();
 renderTournamentRoster();
 loadCurrentTournament();
 renderCurrentTournament();
@@ -94,10 +93,6 @@ setRosterStatus(
   "Tournament event saved."
 );
 
-importBtn?.addEventListener(
-  "click",
-  importLastConsoleMatch
-);
 
 weightGroupSelect?.addEventListener(
   "change",

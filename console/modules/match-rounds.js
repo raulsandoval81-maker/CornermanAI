@@ -1,7 +1,3 @@
-import {
-  handleRoundComplete as handleRoundFlow
-}
-from "./modules/match-rounds.js";
 
 export function handleRoundComplete({
   state,
@@ -210,3 +206,6 @@ export function bindRoundChoiceControls({
       });
     });
 }
+export {
+  handleRoundComplete as handleRoundFlow
+};

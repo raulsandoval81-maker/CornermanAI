@@ -57,20 +57,28 @@ function renderMatches() {
     .slice()
     .reverse()
     .slice(0, 10)
-    .map(match => `
-      <div class="match-row">
-        <strong>
-          ${match.athlete || "Athlete"}
-        </strong>
 
-        <p>
-          ${match.result || "Result"}
-          by
-          ${match.method || "Decision"}
-          (${match.pointsFor || 0}-${match.pointsAgainst || 0})
-        </p>
-      </div>
-    `)
+
+.map(match => `
+  <div class="match-row">
+    <strong>
+      ${match.athlete || "Athlete"}
+    </strong>
+
+    <p>
+      ${match.result || "Result"}
+      by
+      ${match.method || "Decision"}
+      (${match.pointsFor || 0}-${match.pointsAgainst || 0})
+    </p>
+
+    <a href="../history/match-detail?id=${match.id}">
+      View Match
+    </a>
+  </div>
+`)
+
+
     .join("");
 }
 

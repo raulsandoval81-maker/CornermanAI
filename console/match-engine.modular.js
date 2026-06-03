@@ -448,6 +448,27 @@ function loadTournamentRosterSelect() {
 }
 
 function buildMatchPayload(videoUrl = "") {
+    const takedowns =
+    countMatchEvents("athlete", "TD");
+
+  const escapes =
+    countMatchEvents("athlete", "ESC");
+
+  const reversals =
+    countMatchEvents("athlete", "REV");
+
+  const nearfall =
+    countNearfallEvents("athlete");
+
+  const result =
+    state.winner === "athlete"
+      ? "Win"
+      : state.winner === "opponent"
+        ? "Loss"
+        : "Result";
+
+  const method =
+    getResultLabel(state.resultType) || "Decision";
   return {
     id: Date.now(),
     eventName: eventNameInput?.value.trim() || "",
@@ -481,6 +502,20 @@ function buildMatchPayload(videoUrl = "") {
     winner: state.winner,
     resultType: state.resultType,
 
+        result,
+    method,
+
+    pointsFor:
+      state.athleteScore,
+
+    pointsAgainst:
+      state.opponentScore,
+
+    takedowns,
+    escapes,
+    reversals,
+    nearfall,
+
     clock: formatTime(state.time),
     timeRemaining: state.time,
 
@@ -507,6 +542,23 @@ function buildMatchPayload(videoUrl = "") {
 
     source: "coach-console"
   };
+}
+function countMatchEvents(side, shortCode) {
+  return events.filter(event =>
+    event.side === side &&
+    String(event.short || event.code || "")
+      .toUpperCase()
+      .startsWith(shortCode)
+  ).length;
+}
+
+function countNearfallEvents(side) {
+  return events.filter(event =>
+    event.side === side &&
+    String(event.short || event.code || "")
+      .toUpperCase()
+      .startsWith("NF")
+  ).length;
 }
 
 function saveLocalDraft() {

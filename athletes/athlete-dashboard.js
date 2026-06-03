@@ -341,7 +341,7 @@ function renderAthletePatterns(athleteMatches) {
 
     <div class="match-row">
       <strong>Scoring Pattern</strong>
-      <p>${takedowns >= 3 ? "Takedowns are driving offense." : "Needs more first-score attacks."}</p>
+      <p>${getScoringPattern(takedowns, pointsFor)}</p>
     </div>
 
     <div class="match-row">
@@ -379,6 +379,22 @@ function renderAthleteRecommendations(athleteMatches) {
       <p>${recommendation}</p>
     </div>
   `;
+}
+
+function getScoringPattern(takedowns, pointsFor) {
+  if (takedowns >= 3) {
+    return "Takedowns are driving offense.";
+  }
+
+  if (takedowns >= 1 && pointsFor >= 6) {
+    return "Offense is creating scoring volume.";
+  }
+
+  if (pointsFor > 0) {
+    return "Athlete is finding ways to score.";
+  }
+
+  return "Needs more first-score attacks.";
 }
 
 function getStrength({

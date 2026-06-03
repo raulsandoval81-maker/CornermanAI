@@ -11,6 +11,28 @@ export function buildMatchPayload({
   greenTeamInput,
   redTeamInput
 }) {
+  const takedowns =
+    countMatchEvents(events, "athlete", "TD");
+
+  const escapes =
+    countMatchEvents(events, "athlete", "ESC");
+
+  const reversals =
+    countMatchEvents(events, "athlete", "REV");
+
+  const nearfall =
+    countNearfallEvents(events, "athlete");
+
+  const result =
+    state.winner === "athlete"
+      ? "Win"
+      : state.winner === "opponent"
+        ? "Loss"
+        : "Result";
+
+  const method =
+    formatResultType(state.resultType);
+
   return {
     id: Date.now(),
 
@@ -45,6 +67,20 @@ export function buildMatchPayload({
 
     opponentScore:
       state.opponentScore,
+
+    result,
+    method,
+
+    pointsFor:
+      state.athleteScore,
+
+    pointsAgainst:
+      state.opponentScore,
+
+    takedowns,
+    escapes,
+    reversals,
+    nearfall,
 
     currentRound:
       state.currentRound,
@@ -89,10 +125,41 @@ export function buildMatchPayload({
       "coach-console"
   };
 }
+
+function countMatchEvents(events, side, shortCode) {
+  return (events || []).filter(event =>
+    event.side === side &&
+    String(event.short || event.code || "")
+      .toUpperCase()
+      .startsWith(shortCode)
+  ).length;
+}
+
+function countNearfallEvents(events, side) {
+  return (events || []).filter(event =>
+    event.side === side &&
+    String(event.short || event.code || "")
+      .toUpperCase()
+      .startsWith("NF")
+  ).length;
+}
+
+function formatResultType(resultType) {
+  const labels = {
+    decision: "Decision",
+    major: "Major",
+    tech: "Tech Fall",
+    pin: "Pin",
+    dq: "DQ",
+    forfeit: "Forfeit"
+  };
+
+  return labels[resultType] || "Decision";
+}
+
 export function saveLocalDraft({
   buildMatchPayload
 } = {}) {
-
   const payloadBuilder =
     buildMatchPayload ||
     window.buildMatchPayload;
@@ -106,7 +173,6 @@ export function saveLocalDraft({
     )
   );
 }
-
 
 export function saveFinishedMatch({
   match

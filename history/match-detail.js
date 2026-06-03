@@ -274,13 +274,8 @@ coachTakeaway.innerHTML = `
   </p>
 `;
 function getKeyMoment(events) {
-
-  if (!events.length) {
-    return "No key moment recorded.";
-  }
-
   const scoringEvents =
-    events.filter(event =>
+    (events || []).filter(event =>
       Number(event.points || 0) > 0
     );
 
@@ -288,18 +283,24 @@ function getKeyMoment(events) {
     return "No scoring sequence found.";
   }
 
-  const biggest =
-    scoringEvents.sort(
-      (a, b) =>
-        Number(b.points || 0) -
-        Number(a.points || 0)
-    )[0];
+  const bestSequence =
+    scoringEvents
+      .slice(0, 3)
+      .map(event =>
+        event.short || event.code || "Score"
+      )
+      .join(" → ");
 
-  return `
-    ${biggest.short || biggest.code || "Score"}
-    (+${biggest.points || 0})
-    at
-    ${biggest.clock || "0:00"}
-  `;
+  const totalPoints =
+    scoringEvents
+      .slice(0, 3)
+      .reduce(
+        (total, event) =>
+          total + Number(event.points || 0),
+        0
+      );
+
+  return `${bestSequence} created ${totalPoints} points of separation.`;
 }
+
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opponent Dashboard</title>
+  <link rel="stylesheet" href="../app.css">
+</head>
+<body>
+
+<main class="app-shell">
+
+  <section class="card">
+    <span>OPPONENT</span>
+    <strong>Opponent Dashboard</strong>
+    <p>
+      Review opponent tendencies and scouting notes.
+    </p>
+  </section>
+
+  <section class="card">
+
+
+<label>
+  Opponent
+</label>
+
+<select id="opponentSelect">
+  <option value="">
+    Select Opponent
+  </option>
+</select>
+
+
+  </section>
+
+  <section class="card">
+    <span>TENDENCIES</span>
+    <div id="opponentDetails">
+      Select an opponent.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>COACH NOTES</span>
+    <div id="coachNotes">
+      No notes available.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>BACK</span>
+    <a href="../console/">
+      Console Command Center
+    </a>
+  </section>
+
+</main>
+
+<script src="./opponent-dashboard.js"></script>
+
+</body>
+</html>

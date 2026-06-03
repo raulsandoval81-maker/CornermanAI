@@ -35,6 +35,9 @@ const match =
     String(item.id) === String(matchId)
   );
 
+  const matchSummary =
+  document.getElementById("matchSummary");
+
 if (!match) {
   matchTitle.textContent =
     "Match Detail";
@@ -67,6 +70,7 @@ function renderMatch(match) {
   `;
 
   renderTimeline(match.events || []);
+renderSummary(match);
 
   matchNotes.textContent =
     match.notes || "No notes.";
@@ -96,7 +100,62 @@ function renderTimeline(events) {
       `)
       .join("");
 }
+function renderSummary(match) {
 
+  const firstScore =
+    (match.events || []).find(event =>
+      Number(event.points || 0) > 0
+    );
+
+  const firstScoreText =
+    firstScore
+      ? `${firstScore.short || firstScore.code || "Score"} (+${firstScore.points || 0})`
+      : "No scoring recorded";
+
+  const takedowns =
+    match.takedowns || 0;
+
+  const nearfall =
+    match.nearfall || 0;
+
+  let winningFactor =
+    "Match data still limited.";
+
+  if (takedowns >= 2) {
+    winningFactor =
+      "Neutral offense created repeated scoring opportunities.";
+  }
+
+  if (nearfall >= 2) {
+    winningFactor =
+      "Turns and exposure points created separation.";
+  }
+
+  matchSummary.innerHTML = `
+    <p>
+      <strong>First Score:</strong>
+      ${firstScoreText}
+    </p>
+
+    <p>
+      <strong>Offensive Output:</strong>
+      ${takedowns} Takedowns ·
+      ${nearfall} Nearfall Scores
+    </p>
+
+    <p>
+      <strong>Winning Factor:</strong>
+      ${winningFactor}
+    </p>
+
+    <p>
+      <strong>Result:</strong>
+      ${match.result || "Result"}
+      by
+      ${match.method || "Decision"}
+    </p>
+  `;
+}
 function formatEventTime(event) {
   if (event.clock) return event.clock;
   if (event.time) return event.time;

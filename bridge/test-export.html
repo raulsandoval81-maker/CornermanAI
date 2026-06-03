@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Bridge Export Test</h1>
+  <pre id="output">Running...</pre>
+
+  <script type="module">
+    import {
+      exportToSandman
+    } from "./sandman-import.js";
+
+    const payload =
+      exportToSandman({
+        athlete: "Max",
+        latestMatch: {
+          result: "Loss",
+          opponent: "Troy"
+        },
+        patterns: [
+          "strong-bottom",
+          "back-exposure-risk"
+        ]
+      });
+
+    console.log("Sandman Export Test", payload);
+
+    document.getElementById("output").textContent =
+      JSON.stringify(payload, null, 2);
+  </script>
+</body>
+</html>

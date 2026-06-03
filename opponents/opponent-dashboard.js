@@ -1,134 +1,447 @@
-const STORAGE_KEY =
-"cornerman_recon";
+const RECON_KEY =
+  "cornerman_recon";
+
+const MATCHES_KEY =
+  "cornerman_matches";
 
 const opponentSelect =
-document.getElementById(
-"opponentSelect"
-);
+  document.getElementById("opponentSelect");
 
 const opponentDetails =
-document.getElementById(
-"opponentDetails"
-);
+  document.getElementById("opponentDetails");
+
+const matchesVsUsEl =
+  document.getElementById("matchesVsUs");
+
+  const reconHistory =
+  document.getElementById("reconHistory");
 
 const coachNotes =
-document.getElementById(
-"coachNotes"
-);
+  document.getElementById("coachNotes");
+
+  const reconSummary =
+  document.getElementById("reconSummary");
+
+
+  const recommendations =
+  document.getElementById("recommendations");
 
 let reconNotes = [];
+let matches = [];
 
 init();
 
 function init() {
+  reconNotes =
+    JSON.parse(
+      localStorage.getItem(RECON_KEY) || "[]"
+    );
 
-reconNotes =
-JSON.parse(
-localStorage.getItem(STORAGE_KEY) || "[]"
-);
+  matches =
+    JSON.parse(
+      localStorage.getItem(MATCHES_KEY) || "[]"
+    );
 
-loadOpponents();
+  loadOpponents();
 
-opponentSelect?.addEventListener(
-"change",
-buildDashboard
-);
+  opponentSelect?.addEventListener(
+    "change",
+    buildDashboard
+  );
 }
 
 function loadOpponents() {
+  const names =
+    [...new Set(
+      reconNotes
+        .map(note => note.opponent)
+        .filter(Boolean)
+    )].sort();
 
-const names =
-[...new Set(
-reconNotes
-.map(note =>
-note.opponent
-)
-.filter(Boolean)
-)].sort();
-
-opponentSelect.innerHTML = `     <option value="">
-      Select Opponent     </option>
+  opponentSelect.innerHTML = `
+    <option value="">
+      Select Opponent
+    </option>
   `;
 
-names.forEach(name => {
+  names.forEach(name => {
+    const option =
+      document.createElement("option");
 
+    option.value = name;
+    option.textContent = name;
 
-const option =
-  document.createElement("option");
-
-option.value = name;
-option.textContent = name;
-
-opponentSelect.appendChild(option);
-
-
-});
+    opponentSelect.appendChild(option);
+  });
 }
 
 function buildDashboard() {
+  const opponent =
+    opponentSelect?.value || "";
 
-const opponent =
-opponentSelect?.value;
+  if (!opponent) {
+    opponentDetails.innerHTML =
+      "Select an opponent.";
 
-if (!opponent) {
+    matchesVsUsEl.innerHTML =
+      "No matches found.";
 
+       reconSummary.innerHTML =
+    "No patterns found.";
 
-opponentDetails.innerHTML =
-  "Select an opponent.";
+    coachNotes.innerHTML =
+      "No notes available.";
 
-coachNotes.innerHTML =
-  "No notes available.";
+    return;
+  }
 
-return;
+  const notes =
+    reconNotes.filter(note =>
+      normalize(note.opponent) === normalize(opponent)
+    );
 
+  const latest =
+    notes
+      .slice()
+      .reverse()[0];
+
+  const matchesVsUs =
+    matches.filter(match =>
+      normalize(match.opponent) === normalize(opponent)
+    );
+
+  const winsVsOpponent =
+    matchesVsUs.filter(match =>
+      match.result === "Win"
+    ).length;
+
+  const lossesVsOpponent =
+    matchesVsUs.filter(match =>
+      match.result === "Loss"
+    ).length;
+
+  renderMatchesVsUs(matchesVsUs);
+  renderReconSummary(notes);
+
+  renderRecommendations(
+  latest,
+  notes );
+
+  if (!latest) {
+    opponentDetails.innerHTML =
+      "<p>No recon notes found for this opponent.</p>";
+
+    coachNotes.innerHTML =
+      "No notes available.";
+
+    return;
+  }
+
+  opponentDetails.innerHTML = `
+    <p>
+      <strong>Record Against Us:</strong>
+      ${winsVsOpponent}-${lossesVsOpponent}
+    </p>
+
+    <p>
+      <strong>Matches Against Us:</strong>
+      ${matchesVsUs.length}
+    </p>
+
+    <p>
+      <strong>Preferred Stance:</strong>
+      ${latest.preferredStance || "-"}
+    </p>
+
+    <p>
+      <strong>Favorite Tie:</strong>
+      ${latest.favoriteTie || "-"}
+    </p>
+
+    <p>
+      <strong>Favorite Shot:</strong>
+      ${latest.favoriteShot || "-"}
+    </p>
+
+    <p>
+      <strong>Favorite Finish:</strong>
+      ${latest.favoriteFinish || "-"}
+    </p>
+
+    <p>
+      <strong>Favorite Escape:</strong>
+      ${latest.favoriteEscape || "-"}
+    </p>
+
+    <p>
+      <strong>Best Turn:</strong>
+      ${latest.bestTurn || "-"}
+    </p>
+  `;
+
+  coachNotes.innerHTML =
+    latest.coachNotes ||
+    "No notes available.";
+    renderReconHistory(notes);
 
 }
 
-const notes =
-reconNotes.filter(note =>
-note.opponent === opponent
-);
+function renderMatchesVsUs(matchesVsUs) {
+  if (!matchesVsUsEl) return;
 
-const latest =
-notes
-.slice()
-.reverse()[0];
+  if (!matchesVsUs.length) {
+    matchesVsUsEl.innerHTML =
+      "No matches found.";
+    return;
+  }
 
-if (!latest) return;
+  matchesVsUsEl.innerHTML =
+    matchesVsUs
+      .slice()
+      .reverse()
+      .map(match => `
+        <div class="match-row">
 
-opponentDetails.innerHTML = ` <p> <strong>Preferred Stance:</strong>
-${latest.preferredStance || "-"} </p>
+          <strong>
+            ${match.athlete || "Athlete"}
+          </strong>
+
+          <p>
+            ${match.result || "Result"}
+            by
+            ${match.method || "Decision"}
+            (${match.pointsFor || 0}-${match.pointsAgainst || 0})
+          </p>
+
+          <a href="../history/match-detail?id=${match.id}">
+            View Match
+          </a>
+
+        </div>
+      `)
+      .join("");
+}
+
+function normalize(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function renderReconSummary(notes) {
+
+  if (!reconSummary) return;
+
+  reconSummary.innerHTML = `
+    <p>
+      <strong>Recon Entries:</strong>
+      ${notes.length}
+    </p>
+
+    <p>
+      <strong>Preferred Stance:</strong>
+      ${getMostCommon(
+        notes,
+        "preferredStance"
+      )}
+    </p>
+
+    <p>
+      <strong>Favorite Tie:</strong>
+      ${getMostCommon(
+        notes,
+        "favoriteTie"
+      )}
+    </p>
+
+    <p>
+      <strong>Favorite Shot:</strong>
+      ${getMostCommon(
+        notes,
+        "favoriteShot"
+      )}
+    </p>
+
+    <p>
+      <strong>Favorite Escape:</strong>
+      ${getMostCommon(
+        notes,
+        "favoriteEscape"
+      )}
+    </p>
+
+    <p>
+      <strong>Best Turn:</strong>
+      ${getMostCommon(
+        notes,
+        "bestTurn"
+      )}
+    </p>
+  `;
+}
+function renderReconHistory(notes) {
+  if (!reconHistory) return;
+
+  if (!notes.length) {
+    reconHistory.innerHTML =
+      "No recon history.";
+    return;
+  }
+
+  reconHistory.innerHTML =
+    notes
+      .slice()
+      .reverse()
+      .map(note => `
+        <div class="match-row">
+          <strong>
+          ${formatDate(note.createdAt, note.id)}
+          </strong>
+
+          <p>
+            ${note.coachNotes || "No note."}
+          </p>
+        </div>
+      `)
+      .join("");
+}
 
 
-<p>
-  <strong>Favorite Tie:</strong>
-  ${latest.favoriteTie || "-"}
-</p>
+function getMostCommon(notes, field) {
 
-<p>
-  <strong>Favorite Shot:</strong>
-  ${latest.favoriteShot || "-"}
-</p>
+  const counts = {};
 
-<p>
-  <strong>Favorite Finish:</strong>
-  ${latest.favoriteFinish || "-"}
-</p>
+  notes.forEach(note => {
 
-<p>
-  <strong>Favorite Escape:</strong>
-  ${latest.favoriteEscape || "-"}
-</p>
+    const value =
+      String(note[field] || "")
+        .trim();
 
-<p>
-  <strong>Best Turn:</strong>
-  ${latest.bestTurn || "-"}
-</p>
+    if (!value) return;
 
+    counts[value] =
+      (counts[value] || 0) + 1;
 
-`;
+  });
 
-coachNotes.innerHTML =
-latest.coachNotes ||
-"No notes available.";
+  const sorted =
+    Object.entries(counts)
+      .sort(
+        (a, b) => b[1] - a[1]
+      );
+
+  if (!sorted.length) {
+    return "-";
+  }
+
+  return `${sorted[0][0]} (${sorted[0][1]})`;
+}
+function formatDate(value, fallbackId) {
+  const raw =
+    value || fallbackId;
+
+  const date =
+    new Date(
+      typeof raw === "number"
+        ? raw
+        : raw
+    );
+
+  if (Number.isNaN(date.getTime())) {
+    return "No date";
+  }
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      month: "2-digit",
+      day: "2-digit"
+    }
+  );
+}
+function renderRecommendations(
+  latest,
+  notes
+) {
+
+  if (!recommendations) return;
+
+  let primaryThreat =
+    latest?.favoriteShot ||
+    "Unknown";
+
+  let matchPlan =
+    "Stay disciplined and wrestle your system.";
+
+  let tieStrategy =
+    "Win hand fighting.";
+
+  let conditioningNote =
+    "Maintain pressure.";
+
+  const shot =
+    String(
+      latest?.favoriteShot || ""
+    ).toLowerCase();
+
+  const tie =
+    String(
+      latest?.favoriteTie || ""
+    ).toLowerCase();
+
+  const note =
+    String(
+      latest?.coachNotes || ""
+    ).toLowerCase();
+
+  if (shot.includes("sweep")) {
+    matchPlan =
+      "Keep lead leg back and circle away from sweep side.";
+  }
+
+  if (shot.includes("double")) {
+    matchPlan =
+      "Control distance and defend level changes.";
+  }
+
+  if (tie.includes("inside")) {
+    tieStrategy =
+      "Clear inside ties immediately.";
+  }
+
+  if (tie.includes("collar")) {
+    tieStrategy =
+      "Control head position and clear collar ties.";
+  }
+
+  if (
+    note.includes("third") ||
+    note.includes("fade") ||
+    note.includes("break")
+  ) {
+    conditioningNote =
+      "Increase pace late in the match.";
+  }
+
+  recommendations.innerHTML = `
+    <p>
+      <strong>Primary Threat:</strong>
+      ${primaryThreat}
+    </p>
+
+    <p>
+      <strong>Match Plan:</strong>
+      ${matchPlan}
+    </p>
+
+    <p>
+      <strong>Tie Strategy:</strong>
+      ${tieStrategy}
+    </p>
+
+    <p>
+      <strong>Conditioning Note:</strong>
+      ${conditioningNote}
+    </p>
+  `;
 }

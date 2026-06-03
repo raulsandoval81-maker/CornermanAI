@@ -7,6 +7,8 @@ const params =
 const matchId =
   params.get("id");
 
+
+
 const matchTitle =
   document.getElementById("matchTitle");
 
@@ -38,7 +40,20 @@ const match =
   const matchSummary =
   document.getElementById("matchSummary");
 
-if (!match) {
+
+  if (!matchId) {
+  matchTitle.textContent =
+    "Match Detail";
+
+  matchDetail.innerHTML =
+    "<p>No match selected. Go back to Match History and open a match.</p>";
+
+  matchTimeline.innerHTML =
+    "<p>No events.</p>";
+
+  matchNotes.textContent =
+    "No notes.";
+} else if (!match) {
   matchTitle.textContent =
     "Match Detail";
 
@@ -53,7 +68,6 @@ if (!match) {
 } else {
   renderMatch(match);
 }
-
 function renderMatch(match) {
   matchTitle.textContent =
     `${match.athlete} vs ${match.opponent}`;
@@ -190,17 +204,18 @@ function renderMatchNavigation(match) {
   nav.className =
     "match-row";
 
-  nav.innerHTML = `
-    ${previousMatch
-      ? `<a href="./match-detail.html?id=${previousMatch.id}">← Previous Match</a>`
-      : `<span>← Previous Match</span>`
-    }
+nav.innerHTML = `
+  ${previousMatch
+    
+    ? `<a href="./match-detail.html?id=${previousMatch.id}">← ${previousMatch.athlete} vs ${previousMatch.opponent}</a>`
+    : `<span>← No previous match</span>`
+  }
 
-    ${nextMatch
-      ? `<a href="./match-detail.html?id=${nextMatch.id}">Next Match →</a>`
-      : `<span>Next Match →</span>`
-    }
-  `;
+  ${nextMatch
+    ? `<a href="./match-detail?id=${nextMatch.id}">${nextMatch.athlete} vs ${nextMatch.opponent} →</a>`
+    : `<span>No next match →</span>`
+  }
+`;
 
   matchDetail.appendChild(nav);
 }

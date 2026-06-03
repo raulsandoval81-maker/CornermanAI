@@ -52,7 +52,7 @@ matches
       </p>
 
       <a
-        href="./match-detail.html?id=${match.id}"
+      href="./match-detail?id=${match.id}"
       >
         Open Match
       </a>

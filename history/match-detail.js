@@ -71,6 +71,7 @@ function renderMatch(match) {
 
   renderTimeline(match.events || []);
 renderSummary(match);
+renderMatchNavigation(match);
 
   matchNotes.textContent =
     match.notes || "No notes.";
@@ -170,4 +171,36 @@ function formatEventPoints(event) {
   return points > 0
     ? `+${points}`
     : "";
+}
+function renderMatchNavigation(match) {
+  const currentIndex =
+    matches.findIndex(item =>
+      String(item.id) === String(match.id)
+    );
+
+  const previousMatch =
+    matches[currentIndex - 1];
+
+  const nextMatch =
+    matches[currentIndex + 1];
+
+  const nav =
+    document.createElement("div");
+
+  nav.className =
+    "match-row";
+
+  nav.innerHTML = `
+    ${previousMatch
+      ? `<a href="./match-detail.html?id=${previousMatch.id}">← Previous Match</a>`
+      : `<span>← Previous Match</span>`
+    }
+
+    ${nextMatch
+      ? `<a href="./match-detail.html?id=${nextMatch.id}">Next Match →</a>`
+      : `<span>Next Match →</span>`
+    }
+  `;
+
+  matchDetail.appendChild(nav);
 }

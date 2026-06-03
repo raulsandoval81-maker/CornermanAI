@@ -198,19 +198,28 @@ function renderHistory(athleteMatches) {
       .slice()
       .reverse()
       .map(match => `
-        <div class="match-row">
-          <strong>
-            ${match.opponent || "Opponent"}
-          </strong>
+<div class="match-row">
 
-          <p>
-            ${match.result || "Result"}
-            by
-            ${match.method || "Decision"}
-            (${match.pointsFor || 0}-${match.pointsAgainst || 0})
-          </p>
-        </div>
-      `)
+  <strong>
+    ${match.opponent || "Opponent"}
+  </strong>
+
+  <p>
+    ${match.result || "Result"}
+    by
+    ${match.method || "Decision"}
+    (${match.pointsFor || 0}-${match.pointsAgainst || 0})
+  </p>
+
+  <a
+    href="../history/match-detail?id=${match.id}"
+  >
+    View Match
+  </a>
+
+</div>
+
+        `)
       .join("");
 }
 

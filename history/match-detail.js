@@ -18,6 +18,9 @@ const matchDetail =
 const matchTimeline =
   document.getElementById("matchTimeline");
 
+  const coachTakeaway =
+  document.getElementById("coachTakeaway");
+
 const matchNotes =
   document.getElementById("matchNotes");
 
@@ -85,6 +88,7 @@ function renderMatch(match) {
 
   renderTimeline(match.events || []);
 renderSummary(match);
+renderCoachTakeaway(match);
 renderMatchNavigation(match);
 
   matchNotes.textContent =
@@ -218,4 +222,84 @@ nav.innerHTML = `
 `;
 
   matchDetail.appendChild(nav);
+}
+function renderCoachTakeaway(match) {
+  const takedowns =
+    Number(match.takedowns || 0);
+
+  const nearfall =
+    Number(match.nearfall || 0);
+
+  const pointsAgainst =
+    Number(match.pointsAgainst || 0);
+
+  let win =
+    "Athlete created scoring opportunities.";
+
+  let fix =
+    "Keep improving position control.";
+
+  if (takedowns >= 2) {
+    win =
+      "Neutral attacks created the match advantage.";
+  }
+
+  if (nearfall >= 2) {
+    win =
+      "Top pressure and turns created separation.";
+  }
+
+  if (pointsAgainst > 0) {
+    fix =
+      "Clean up defensive reactions after scoring exchanges.";
+  }
+
+const keyMoment =
+  getKeyMoment(match.events || []);
+
+coachTakeaway.innerHTML = `
+  <p>
+    <strong>Key Moment:</strong>
+    ${keyMoment}
+  </p>
+
+  <p>
+    <strong>1 Win:</strong>
+    ${win}
+  </p>
+
+  <p>
+    <strong>1 Fix:</strong>
+    ${fix}
+  </p>
+`;
+function getKeyMoment(events) {
+
+  if (!events.length) {
+    return "No key moment recorded.";
+  }
+
+  const scoringEvents =
+    events.filter(event =>
+      Number(event.points || 0) > 0
+    );
+
+  if (!scoringEvents.length) {
+    return "No scoring sequence found.";
+  }
+
+  const biggest =
+    scoringEvents.sort(
+      (a, b) =>
+        Number(b.points || 0) -
+        Number(a.points || 0)
+    )[0];
+
+  return `
+    ${biggest.short || biggest.code || "Score"}
+    (+${biggest.points || 0})
+    at
+    ${biggest.clock || "0:00"}
+  `;
+}
 }

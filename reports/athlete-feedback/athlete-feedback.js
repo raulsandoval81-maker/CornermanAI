@@ -1,6 +1,6 @@
 import {
   exportToSandman
-} from "../../bridge/sandman-export.js";
+} from "../../bridge/sandman-import.js";
 
 const payload =
   exportToSandman({

@@ -28,8 +28,26 @@ historyList.innerHTML =
 matches
 .slice()
 .reverse()
-.map(match => ` <div class="match-row">
 
+.map(match => {
+  const videoButton = match.videoUrl
+    ? `
+      <a
+        href="${match.videoUrl}"
+        target="_blank"
+        rel="noopener"
+      >
+        🎥 Watch Video
+      </a>
+    `
+    : `
+      <span class="muted">
+        No video
+      </span>
+    `;
+
+  return `
+    <div class="match-row">
 
       <strong>
         ${match.athlete}
@@ -52,14 +70,16 @@ matches
       </p>
 
       <a
-      href="./match-detail?id=${match.id}"
+        href="./match-detail?id=${match.id}"
       >
         Open Match
       </a>
 
-    </div>
-  `)
-  .join("");
+      ${videoButton}
 
+    </div>
+  `;
+})
+.join("");
 
 }

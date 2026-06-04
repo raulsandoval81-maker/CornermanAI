@@ -75,16 +75,36 @@ function renderMatch(match) {
   matchTitle.textContent =
     `${match.athlete} vs ${match.opponent}`;
 
-  matchDetail.innerHTML = `
-    <p><strong>Event:</strong> ${match.eventName || "—"}</p>
-    <p><strong>Weight:</strong> ${match.weightClass || "—"}</p>
-    <p><strong>Result:</strong> ${match.result || "Result"} by ${match.method || "Decision"}</p>
-    <p><strong>Score:</strong> ${match.pointsFor || 0} - ${match.pointsAgainst || 0}</p>
-    <p><strong>Takedowns:</strong> ${match.takedowns || 0}</p>
-    <p><strong>Escapes:</strong> ${match.escapes || 0}</p>
-    <p><strong>Reversals:</strong> ${match.reversals || 0}</p>
-    <p><strong>Nearfall:</strong> ${match.nearfall || 0}</p>
-  `;
+const videoLink =
+  match.videoUrl
+    ? `
+      <p>
+        <a
+          href="${match.videoUrl}"
+          target="_blank"
+          rel="noopener"
+        >
+          🎥 Watch Video
+        </a>
+      </p>
+    `
+    : `
+      <p class="muted">
+        No video attached
+      </p>
+    `;
+
+matchDetail.innerHTML = `
+  <p><strong>Event:</strong> ${match.eventName || "—"}</p>
+  <p><strong>Weight:</strong> ${match.weightClass || "—"}</p>
+  <p><strong>Result:</strong> ${match.result || "Result"} by ${match.method || "Decision"}</p>
+  <p><strong>Score:</strong> ${match.pointsFor || 0} - ${match.pointsAgainst || 0}</p>
+  <p><strong>Takedowns:</strong> ${match.takedowns || 0}</p>
+  <p><strong>Escapes:</strong> ${match.escapes || 0}</p>
+  <p><strong>Reversals:</strong> ${match.reversals || 0}</p>
+  <p><strong>Nearfall:</strong> ${match.nearfall || 0}</p>
+  ${videoLink}
+`;
 
   renderTimeline(match.events || []);
 renderSummary(match);

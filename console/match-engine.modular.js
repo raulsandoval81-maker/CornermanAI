@@ -534,7 +534,7 @@ videoUrl:
     document.querySelector("[name='videoUrl']")?.value ||
     ""
   ).trim(),
-  
+
     videoHost: "youtube",
     videoVisibility: "unlisted",
     uploadedAt: "",
@@ -1306,7 +1306,17 @@ document.querySelectorAll("[data-finish-type]").forEach(btn => {
   });
 });
 saveMatchLogBtn?.addEventListener("click", () => {
-  saveMatchToHistory();
+  console.log(
+    "VIDEO INPUT BEFORE SAVE:",
+    document.getElementById("videoUrlInput")?.value
+  );
+
+  const match = saveMatchToHistory();
+
+  console.log(
+    "MATCH VIDEO URL AFTER SAVE:",
+    match.videoUrl
+  );
 
   saveMatchLogBtn.disabled = true;
   saveMatchLogBtn.textContent = "Saved";

@@ -580,7 +580,7 @@ function saveMatchToHistory() {
         ?.value
         ?.trim() || ""
   };
-  
+
   const matches = JSON.parse(
     localStorage.getItem("cornerman_matches") || "[]"
   );
@@ -596,9 +596,34 @@ const alreadySaved =
   );
 
 if (alreadySaved) {
-  setStatus("Match already saved.");
+  const index = matches.findIndex(saved =>
+    saved.athlete === match.athlete &&
+    saved.opponent === match.opponent &&
+    saved.eventName === match.eventName &&
+    saved.weightClass === match.weightClass &&
+    saved.athleteScore === match.athleteScore &&
+    saved.opponentScore === match.opponentScore &&
+    saved.currentRound === match.currentRound
+  );
+
+  if (index >= 0) {
+    matches[index] = {
+      ...matches[index],
+      videoUrl: match.videoUrl,
+      notes: match.notes,
+      updatedAt: new Date().toISOString()
+    };
+
+    localStorage.setItem(
+      "cornerman_matches",
+      JSON.stringify(matches)
+    );
+  }
+
+  setStatus("Match updated.");
   return match;
 }
+
   matches.push({
     ...match,
     savedToMatchLogAt: new Date().toISOString()

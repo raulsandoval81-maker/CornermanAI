@@ -528,11 +528,13 @@ function buildMatchPayload(videoUrl = "") {
         ?.value.trim() || "",
 
 
-    videoUrl:
-      document
-        .getElementById("videoUrlInput")
-        ?.value.trim() || "",
-
+videoUrl:
+  (
+    document.querySelector("#videoUrlInput")?.value ||
+    document.querySelector("[name='videoUrl']")?.value ||
+    ""
+  ).trim(),
+  
     videoHost: "youtube",
     videoVisibility: "unlisted",
     uploadedAt: "",

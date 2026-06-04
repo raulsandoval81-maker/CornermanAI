@@ -534,7 +534,7 @@ function buildMatchPayload(videoUrl = "") {
         ?.value.trim() || "",
 
     videoHost: "youtube",
-    videoVisibility: "private",
+    videoVisibility: "unlisted",
     uploadedAt: "",
 
     savedAt:

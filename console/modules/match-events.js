@@ -1,3 +1,101 @@
+function buildYouTubeTimestampUrl(videoUrl, seconds) {
+  if (!videoUrl || typeof seconds !== "number") return "";
+
+  const safeSeconds =
+    Math.max(0, Math.floor(seconds));
+
+  const cleanUrl =
+    videoUrl.trim();
+
+  if (!cleanUrl) return "";
+
+  const shortsMatch =
+    cleanUrl.match(/youtube\.com\/shorts\/([^?&/]+)/);
+
+  if (shortsMatch?.[1]) {
+    return `https://www.youtube.com/watch?v=${shortsMatch[1]}&t=${safeSeconds}s`;
+  }
+
+  const separator =
+    cleanUrl.includes("?") ? "&" : "?";
+
+  return `${cleanUrl}${separator}t=${safeSeconds}s`;
+}
+
+function getSavedVideoUrl() {
+  try {
+    return (
+      document.querySelector("#videoUrlInput")?.value ||
+      JSON.parse(localStorage.getItem("coach_console_active_match") || "{}")
+        ?.videoUrl ||
+      JSON.parse(localStorage.getItem("coach_console_last_match") || "{}")
+        ?.videoUrl ||
+      ""
+    ).trim();
+  } catch {
+    return "";
+  }
+}
+
+function seekLocalVideo({
+  event,
+  getVideoTarget
+}) {
+  const video =
+    getVideoTarget?.();
+
+  if (!video || typeof event.videoTime !== "number") return;
+
+  video.currentTime =
+    event.videoTime;
+
+  video.play();
+}
+
+function getEventText({
+  event,
+  formatRoundLabel,
+  formatSide
+}) {
+  if (event.type === "round_start") {
+    return `${formatRoundLabel(event.round)} · START · ${event.position}`;
+  }
+
+  return `${event.clock} · ${formatRoundLabel(event.round)} · ${formatSide(event.side)} · ${event.label}${event.points ? " +" + event.points : ""}`;
+}
+
+function appendYouTubeLink({
+  parent,
+  event,
+  videoUrl
+}) {
+  if (!videoUrl || typeof event.videoTime !== "number") return;
+
+  const watchLink =
+    document.createElement("a");
+
+  watchLink.href =
+    buildYouTubeTimestampUrl(videoUrl, event.videoTime);
+
+  watchLink.target =
+    "_blank";
+
+  watchLink.rel =
+    "noopener noreferrer";
+
+  watchLink.textContent =
+    " 🎥";
+
+  watchLink.title =
+    "Open YouTube video at this moment";
+
+  watchLink.addEventListener("click", clickEvent => {
+    clickEvent.stopPropagation();
+  });
+
+  parent.appendChild(watchLink);
+}
+
 export function renderEventList({
   target,
   events,
@@ -11,37 +109,45 @@ export function renderEventList({
 
   target.innerHTML = "";
 
+  const videoUrl =
+    getSavedVideoUrl();
+
   const list =
     events.slice().reverse();
 
   const visible =
     limit ? list.slice(0, limit) : list;
 
-  visible.forEach(e => {
+  visible.forEach(event => {
     const div =
       document.createElement("div");
 
     div.className =
-      `event ${e.side ? sideClass(e.side) : ""}`;
+      `event ${event.side ? sideClass(event.side) : ""}`;
 
-    if (e.type === "round_start") {
-      div.textContent =
-        `${formatRoundLabel(e.round)} · START · ${e.position}`;
-    } else {
-      div.textContent =
-        `${e.clock} · ${formatRoundLabel(e.round)} · ${formatSide(e.side)} · ${e.label}${e.points ? " +" + e.points : ""}`;
-    }
+    const label =
+      document.createElement("span");
+
+    label.textContent =
+      getEventText({
+        event,
+        formatRoundLabel,
+        formatSide
+      });
+
+    div.appendChild(label);
+
+    appendYouTubeLink({
+      parent: div,
+      event,
+      videoUrl
+    });
 
     div.addEventListener("click", () => {
-      const video =
-        getVideoTarget();
-
-      if (!video || typeof e.videoTime !== "number") return;
-
-      video.currentTime =
-        e.videoTime;
-
-      video.play();
+      seekLocalVideo({
+        event,
+        getVideoTarget
+      });
     });
 
     target.appendChild(div);
@@ -123,43 +229,38 @@ export function renderBoutBoardTarget({
 
       eventsWrap.appendChild(empty);
     } else {
-      roundEvents.forEach(e => {
+      roundEvents.forEach(event => {
         const chip =
           document.createElement("span");
 
-        if (e.type === "round_start") {
+        if (event.type === "round_start") {
           chip.className =
             "flow-stamp setup";
 
           chip.textContent =
-            `START ${e.position}`;
+            `START ${event.position}`;
         } else {
           chip.className =
             "flow-stamp " +
-            (e.side === "athlete" ? "green" : "red");
+            (event.side === "athlete" ? "green" : "red");
 
           const label =
-            e.short || e.code.toUpperCase();
+            event.short || event.code.toUpperCase();
 
           chip.textContent =
-            e.points
-              ? `${label} +${e.points}`
+            event.points
+              ? `${label} +${event.points}`
               : label;
 
           chip.title =
-            `${e.clock} • ${formatSide(e.side)} • ${e.label}`;
+            `${event.clock} • ${formatSide(event.side)} • ${event.label}`;
         }
 
         chip.addEventListener("click", () => {
-          const video =
-            getVideoTarget();
-
-          if (!video || typeof e.videoTime !== "number") return;
-
-          video.currentTime =
-            e.videoTime;
-
-          video.play();
+          seekLocalVideo({
+            event,
+            getVideoTarget
+          });
         });
 
         eventsWrap.appendChild(chip);
@@ -248,43 +349,38 @@ export function renderBoutRailTarget({
     eventsWrap.className =
       "rail-events";
 
-    (grouped[round] || []).forEach(e => {
+    (grouped[round] || []).forEach(event => {
       const chip =
         document.createElement("span");
 
-      if (e.type === "round_start") {
+      if (event.type === "round_start") {
         chip.className =
           "rail-chip setup";
 
         chip.textContent =
-          `START ${e.position}`;
+          `START ${event.position}`;
       } else {
         chip.className =
           "rail-chip " +
-          (e.side === "athlete" ? "green" : "red");
+          (event.side === "athlete" ? "green" : "red");
 
         const eventLabel =
-          e.short || e.code.toUpperCase();
+          event.short || event.code.toUpperCase();
 
         chip.textContent =
-          e.points
-            ? `${eventLabel} +${e.points}`
+          event.points
+            ? `${eventLabel} +${event.points}`
             : eventLabel;
 
         chip.title =
-          `${e.clock} • ${formatSide(e.side)} • ${e.label}`;
+          `${event.clock} • ${formatSide(event.side)} • ${event.label}`;
       }
 
       chip.addEventListener("click", () => {
-        const video =
-          getVideoTarget();
-
-        if (!video || typeof e.videoTime !== "number") return;
-
-        video.currentTime =
-          e.videoTime;
-
-        video.play();
+        seekLocalVideo({
+          event,
+          getVideoTarget
+        });
       });
 
       eventsWrap.appendChild(chip);

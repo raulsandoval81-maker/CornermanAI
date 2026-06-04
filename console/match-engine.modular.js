@@ -571,7 +571,14 @@ function saveLocalDraft() {
 }
 function saveMatchToHistory() {
   console.log("SAVE MATCH TO HISTORY FIRED");
-const match = buildMatchPayload();
+const match = {
+  ...buildMatchPayload(),
+  videoUrl:
+    document
+      .getElementById("videoUrlInput")
+      ?.value
+      ?.trim() || ""
+};
 
   const matches = JSON.parse(
     localStorage.getItem("cornerman_matches") || "[]"

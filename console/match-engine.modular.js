@@ -46,7 +46,8 @@ from "./modules/match-timer.js";
 import {
   stopCameraStream,
   pauseVideoCapture,
-  resumeVideoCapture
+  resumeVideoCapture,
+  loadReplayFromCurrentChunks
 }
 from "./modules/match-video.js";
 
@@ -914,19 +915,31 @@ redChooserBtn?.addEventListener("click", () => {
 
 /* PAUSE */
 pauseBtn?.addEventListener("click", () => {
-stopClock({
-  state,
-  setStatus,
-  saveLocalDraft,
-  statusText: "Match paused"
-});
 
-  pauseVideoCapture();
-updateStartButton({
-  startBtn,
-  text: "Resume",
-  disabled: false
-});
+  stopClock({
+    state,
+    setStatus,
+    saveLocalDraft,
+    statusText: "Match paused"
+  });
+
+  pauseVideoCapture({
+    getMediaRecorder: () => mediaRecorder
+  });
+
+  loadReplayFromCurrentChunks({
+    getChunks: () => chunks,
+    reviewPreview,
+    setStatus
+  });
+
+  setMode("review");
+
+  updateStartButton({
+    startBtn,
+    text: "Resume",
+    disabled: false
+  });
 
 });
 

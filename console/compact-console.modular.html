@@ -42,6 +42,14 @@
   </select>
 </label>
 
+<label>Manual Athlete Name
+  <input
+    id="manualAthleteName"
+    type="text"
+    placeholder="Only if athlete is not in roster"
+  />
+</label>
+
 <label>Athlete Side
 <select id="sandmanColor">
   <option value="green">Athlete = Green</option>
@@ -133,11 +141,25 @@
 
 </div>
 
-    <div id="chooserPanel" class="choice-panel hidden">
-      <strong>WHO HAS CHOICE?</strong>
-      <button id="greenChooserBtn" type="button">GREEN</button>
-      <button id="redChooserBtn" type="button">RED</button>
-    </div>
+<div id="chooserPanel" class="choice-panel hidden">
+  <strong>WHO HAS CHOICE?</strong>
+
+  <button
+    id="greenChooserBtn"
+    class="chooser-green"
+    type="button"
+  >
+    GREEN
+  </button>
+
+  <button
+    id="redChooserBtn"
+    class="chooser-red"
+    type="button"
+  >
+    RED
+  </button>
+</div>
 
     <div id="choicePanel" class="choice-panel hidden">
       <strong id="choiceOwnerLabel">CHOICE</strong>

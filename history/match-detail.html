@@ -1,53 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>Match Detail</title>
-  <link rel="stylesheet" href="../app.css">
+
+  <link
+    rel="stylesheet"
+    href="../app.css"
+  />
 </head>
+
 <body>
+
 <main class="app-shell">
 
-  <section class="card">
-    <span>HISTORY</span>
-    <strong id="matchTitle">Match Detail</strong>
+  <section class="hero">
+    <p class="eyebrow">
+      CORE
+    </p>
+
+    <h1 id="matchTitle">
+      Match Detail
+    </h1>
+
+    <p class="sub">
+      Study one match: result, timeline, video evidence, and coach takeaway.
+    </p>
+
     <p>
-  <a href="./match-history.html">
-    ← Back to Match History
-  </a>
-</p>
-    <div id="matchDetail">Loading match...</div>
+      <a href="./match-history.html">
+        ← Back to Match History
+      </a>
+    </p>
   </section>
 
   <section class="card">
-    <span>TIMELINE</span>
-    <div id="matchTimeline">No events.</div>
-  </section>
-<section class="card">
-  <span>SUMMARY</span>
-  <div id="matchSummary">
-    Loading summary...
-  </div>
-</section>
-<section class="card">
-  <span>COACH TAKEAWAY</span>
-  <div id="coachTakeaway">
-    Loading takeaway...
-  </div>
-</section>
-  <section class="card">
-    <span>NOTES</span>
-    <div id="matchNotes">No notes.</div>
+    <span>
+      DETAILS
+    </span>
+
+    <strong>
+      Match Summary
+    </strong>
+
+    <div id="matchDetail">
+      Loading match...
+    </div>
   </section>
 
   <section class="card">
-    <span>BACK</span>
-    <a href="./match-history.html">Match History</a>
+    <span>
+      TIMELINE
+    </span>
+
+    <strong>
+      Match Events
+    </strong>
+
+    <div id="matchTimeline">
+      No events.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>
+      SUMMARY
+    </span>
+
+    <strong>
+      Match Intelligence
+    </strong>
+
+    <div id="matchSummary">
+      Loading summary...
+    </div>
+  </section>
+
+  <section class="card">
+    <span>
+      COACH TAKEAWAY
+    </span>
+
+    <strong>
+      1 Win / 1 Fix
+    </strong>
+
+    <div id="coachTakeaway">
+      Loading takeaway...
+    </div>
+  </section>
+
+  <section class="card">
+    <span>
+      NOTES
+    </span>
+
+    <strong>
+      Coach Notes
+    </strong>
+
+    <div id="matchNotes">
+      No notes.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>
+      MEDIA
+    </span>
+
+    <strong>
+      Media Library
+    </strong>
+
+    <p>
+      Manage uploaded videos and linked match media.
+    </p>
+
+    <a href="../media/media-index.html">
+      Open Media Library
+    </a>
+  </section>
+
+  <section class="card">
+    <span>
+      BACK
+    </span>
+
+    <a href="./match-history.html">
+      Match History
+    </a>
   </section>
 
 </main>
 
 <script src="./match-detail.js"></script>
+
 </body>
 </html>

@@ -13,6 +13,15 @@ const mediaList =
 const mediaStats =
   document.getElementById("mediaStats");
 
+const mediaSearch =
+  document.getElementById("mediaSearch");
+
+const mediaEventFilter =
+  document.getElementById("mediaEventFilter");
+
+const mediaStatusFilter =
+  document.getElementById("mediaStatusFilter");
+
 render();
 
 function getMatches() {
@@ -27,6 +36,58 @@ function render() {
 
   const matches =
     getMatches();
+
+  populateEventFilter(media);
+
+  const query =
+    (mediaSearch?.value || "")
+      .toLowerCase()
+      .trim();
+
+  const selectedEvent =
+    mediaEventFilter?.value || "";
+
+  const status =
+    mediaStatusFilter?.value || "all";
+
+  const visibleMedia =
+    media.filter(item => {
+      const searchText =
+        `
+          ${item.title || ""}
+          ${item.videoUrl || ""}
+          ${item.linkedMatchId || ""}
+          ${item.linkedAthlete || ""}
+          ${item.linkedOpponent || ""}
+          ${item.linkedEvent || ""}
+        `
+          .toLowerCase();
+
+      const searchMatch =
+        !query ||
+        searchText.includes(query);
+
+      const eventMatch =
+        !selectedEvent ||
+        item.linkedEvent === selectedEvent;
+
+      const statusMatch =
+        status === "all" ||
+        (
+          status === "linked" &&
+          item.linkedMatchId
+        ) ||
+        (
+          status === "unlinked" &&
+          !item.linkedMatchId
+        );
+
+      return (
+        searchMatch &&
+        eventMatch &&
+        statusMatch
+      );
+    });
 
   const linkedCount =
     media.filter(item =>
@@ -48,24 +109,58 @@ function render() {
     return;
   }
 
+  if (!visibleMedia.length) {
+    mediaList.innerHTML =
+      "<p>No media found.</p>";
+    return;
+  }
+
   mediaList.innerHTML =
-    media
+    visibleMedia
       .map(item => {
         const matchOptions =
           matches
             .map(match => `
               <option value="${match.id}">
                 ${match.athlete} vs ${match.opponent}
+                — ${match.eventName || "No Event"}
                 — ${match.result || "Result"}
                 ${match.pointsFor || 0}-${match.pointsAgainst || 0}
               </option>
             `)
             .join("");
 
+        const linkedLabel =
+          item.linkedMatchId
+            ? `
+              <p>
+                <strong>Linked Match:</strong>
+                ${item.linkedAthlete || "Athlete"}
+                vs
+                ${item.linkedOpponent || "Opponent"}
+              </p>
+
+              <p>
+                <strong>Event:</strong>
+                ${item.linkedEvent || "—"}
+              </p>
+
+              <p>
+                <strong>Match ID:</strong>
+                ${item.linkedMatchId}
+              </p>
+            `
+            : `
+              <p>
+                Unlinked
+              </p>
+            `;
+
         const linkedControls =
           item.linkedMatchId
             ? `
               <div class="media-actions">
+
                 <a
                   href="../history/match-detail.html?id=${item.linkedMatchId}"
                 >
@@ -78,12 +173,17 @@ function render() {
                 >
                   Unlink
                 </button>
+
               </div>
             `
             : `
               <div class="media-actions">
+
                 <select id="matchSelect-${item.id}">
-                  <option value="">Select Match</option>
+                  <option value="">
+                    Select Match
+                  </option>
+
                   ${matchOptions}
                 </select>
 
@@ -93,6 +193,7 @@ function render() {
                 >
                   Link Media To Match
                 </button>
+
               </div>
             `;
 
@@ -107,18 +208,14 @@ function render() {
               ${item.videoUrl || ""}
             </p>
 
-            <p>
-              ${
-                item.linkedMatchId
-                  ? `Linked Match: ${item.linkedMatchId}`
-                  : "Unlinked"
-              }
-            </p>
+            ${linkedLabel}
 
             <p>
               ${
                 item.createdAt
-                  ? new Date(item.createdAt).toLocaleString()
+                  ? new Date(
+                      item.createdAt
+                    ).toLocaleString()
                   : ""
               }
             </p>
@@ -145,10 +242,46 @@ function render() {
       .join("");
 }
 
+function populateEventFilter(media) {
+  if (!mediaEventFilter) return;
+
+  const currentValue =
+    mediaEventFilter.value;
+
+  const events =
+    [
+      ...new Set(
+        media
+          .map(item => item.linkedEvent)
+          .filter(Boolean)
+      )
+    ];
+
+  mediaEventFilter.innerHTML = `
+    <option value="">
+      All Events
+    </option>
+
+    ${events
+      .map(event => `
+        <option value="${event}">
+          ${event}
+        </option>
+      `)
+      .join("")
+    }
+  `;
+
+  mediaEventFilter.value =
+    currentValue;
+}
+
 window.linkMediaToMatch =
   function linkMediaToMatch(mediaId) {
     const select =
-      document.getElementById(`matchSelect-${mediaId}`);
+      document.getElementById(
+        `matchSelect-${mediaId}`
+      );
 
     const matchId =
       select?.value || "";
@@ -166,31 +299,47 @@ window.linkMediaToMatch =
 
     const mediaIndex =
       media.findIndex(item =>
-        String(item.id) === String(mediaId)
+        String(item.id) ===
+        String(mediaId)
       );
 
     const matchIndex =
       matches.findIndex(match =>
-        String(match.id) === String(matchId)
+        String(match.id) ===
+        String(matchId)
       );
 
-    if (mediaIndex < 0 || matchIndex < 0) {
-      alert("Media or match not found.");
+    if (
+      mediaIndex < 0 ||
+      matchIndex < 0
+    ) {
+      alert(
+        "Media or match not found."
+      );
       return;
     }
+
+    const match =
+      matches[matchIndex];
 
     media[mediaIndex] = {
       ...media[mediaIndex],
       linkedMatchId: matchId,
-      linkedAt: new Date().toISOString()
+      linkedAthlete: match.athlete || "",
+      linkedOpponent: match.opponent || "",
+      linkedEvent: match.eventName || "",
+      linkedAt:
+        new Date().toISOString()
     };
 
     matches[matchIndex] = {
       ...matches[matchIndex],
-      videoUrl: media[mediaIndex].videoUrl,
+      videoUrl:
+        media[mediaIndex].videoUrl,
       videoHost: "youtube",
       videoVisibility: "unlisted",
-      videoAttachedAt: new Date().toISOString()
+      videoAttachedAt:
+        new Date().toISOString()
     };
 
     saveMedia(media);
@@ -213,24 +362,33 @@ window.unlinkMedia =
 
     const mediaIndex =
       media.findIndex(item =>
-        String(item.id) === String(mediaId)
+        String(item.id) ===
+        String(mediaId)
       );
 
-    if (mediaIndex < 0) return;
+    if (mediaIndex < 0) {
+      return;
+    }
 
     const linkedMatchId =
-      media[mediaIndex].linkedMatchId;
+      media[mediaIndex]
+        .linkedMatchId;
 
     media[mediaIndex] = {
       ...media[mediaIndex],
       linkedMatchId: "",
-      unlinkedAt: new Date().toISOString()
+      linkedAthlete: "",
+      linkedOpponent: "",
+      linkedEvent: "",
+      unlinkedAt:
+        new Date().toISOString()
     };
 
     if (linkedMatchId) {
       const matchIndex =
         matches.findIndex(match =>
-          String(match.id) === String(linkedMatchId)
+          String(match.id) ===
+          String(linkedMatchId)
         );
 
       if (matchIndex >= 0) {
@@ -240,7 +398,8 @@ window.unlinkMedia =
           videoHost: "",
           videoVisibility: "",
           videoAttachedAt: "",
-          videoUnlinkedAt: new Date().toISOString()
+          videoUnlinkedAt:
+            new Date().toISOString()
         };
 
         localStorage.setItem(
@@ -254,3 +413,18 @@ window.unlinkMedia =
 
     render();
   };
+
+mediaSearch?.addEventListener(
+  "input",
+  render
+);
+
+mediaEventFilter?.addEventListener(
+  "change",
+  render
+);
+
+mediaStatusFilter?.addEventListener(
+  "change",
+  render
+);

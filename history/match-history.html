@@ -1,40 +1,168 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+
+<meta
+ name="viewport"
+ content="width=device-width, initial-scale=1.0"
+/>
 
   <title>Match History</title>
 
-  <link rel="stylesheet" href="../app.css">
+  <link
+    rel="stylesheet"
+    href="../app.css"
+  />
 </head>
 
 <body>
 
 <main class="app-shell">
 
-  <section class="card">
-    <span>HISTORY</span>
+  <section class="hero">
 
-    <strong>
-      Match History
-    </strong>
 
-    <p>
-      Review saved matches.
-    </p>
+<p class="eyebrow">
+  CORE
+</p>
 
-    <div id="historyList">
-      No matches saved.
-    </div>
+<h1>
+  Match History
+</h1>
+
+<p class="sub">
+  Review matches, video evidence, and athlete performance.
+</p>
+
+
   </section>
 
   <section class="card">
-    <span>BACK</span>
 
-    <a href="../console/">
-      Console Command Center
-    </a>
+
+<span>
+  SEARCH
+</span>
+
+<strong>
+  Filters
+</strong>
+
+<div class="form-stack">
+
+  <input
+    id="historySearch"
+    type="text"
+    placeholder="Search athlete or opponent"
+  />
+
+  <select id="eventFilter">
+    <option value="">
+      All Events
+    </option>
+  </select>
+
+  <select id="videoFilter">
+    <option value="all">
+      All Video Status
+    </option>
+
+    <option value="withVideo">
+      With Video
+    </option>
+
+    <option value="needsVideo">
+      Needs Video
+    </option>
+  </select>
+
+</div>
+
+
+  </section>
+
+  <section class="card">
+
+
+<span>
+  SUMMARY
+</span>
+
+<strong>
+  Match Snapshot
+</strong>
+
+<div id="historyStats">
+
+  <p>Total Matches: 0</p>
+
+  <p>With Video: 0</p>
+
+  <p>Needs Video: 0</p>
+
+</div>
+
+
+  </section>
+
+  <section class="card">
+
+
+<span>
+  RECENT MATCHES
+</span>
+
+<strong>
+  Match Records
+</strong>
+
+<div id="historyList">
+
+  No matches saved.
+
+</div>
+
+
+  </section>
+
+  <section class="card">
+
+
+<span>
+  MEDIA
+</span>
+
+<strong>
+  Media Library
+</strong>
+
+<p>
+  Manage uploaded videos,
+  linked matches,
+  and future media assets.
+</p>
+
+<a href="../media/media-index.html">
+  Open Media Library
+</a>
+
+
+  </section>
+
+  <section class="card">
+
+
+<span>
+  BACK
+</span>
+
+<a href="../console/">
+  Console Command Center
+</a>
+
+
   </section>
 
 </main>

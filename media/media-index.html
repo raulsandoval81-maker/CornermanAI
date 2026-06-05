@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+
   <meta
     name="viewport"
-    content="width=device-width,initial-scale=1"
+    content="width=device-width, initial-scale=1"
   />
 
   <title>Media Library</title>
@@ -19,21 +20,91 @@
 
   <main class="page">
 
-    <h1>
-      Media Library
-    </h1>
+    <section class="hero">
+      <p class="eyebrow">
+        MEDIA
+      </p>
 
-    <p>
-      Organize uploaded match videos and future media assets.
-    </p>
+      <h1>
+        Media Library
+      </h1>
 
-    <section id="mediaStats"></section>
+      <p class="sub">
+        Organize uploaded match videos, linked matches, and future media assets.
+      </p>
+    </section>
 
-    <section id="mediaList"></section>
+    <section class="card">
+      <span>
+        SEARCH
+      </span>
 
-    <a href="../index.html">
-      Back
-    </a>
+      <strong>
+        Media Filters
+      </strong>
+
+      <div class="form-stack">
+        <input
+          id="mediaSearch"
+          type="text"
+          placeholder="Search athlete, opponent, event, title, URL, or match ID"
+        />
+
+        <select id="mediaEventFilter">
+          <option value="">
+            All Events
+          </option>
+        </select>
+
+        <select id="mediaStatusFilter">
+          <option value="all">
+            All Media
+          </option>
+
+          <option value="linked">
+            Linked
+          </option>
+
+          <option value="unlinked">
+            Unlinked
+          </option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card">
+      <span>
+        SUMMARY
+      </span>
+
+      <strong>
+        Media Snapshot
+      </strong>
+
+      <div id="mediaStats"></div>
+    </section>
+
+    <section class="card">
+      <span>
+        LIBRARY
+      </span>
+
+      <strong>
+        Uploaded Media
+      </strong>
+
+      <div id="mediaList"></div>
+    </section>
+
+    <section class="card">
+      <span>
+        BACK
+      </span>
+
+      <a href="../console/">
+        Console Command Center
+      </a>
+    </section>
 
   </main>
 

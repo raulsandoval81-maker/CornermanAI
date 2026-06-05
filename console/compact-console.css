@@ -295,3 +295,87 @@
 .hud-wrap {
   margin-top: 20px;
 }
+.chooser-green {
+  background: rgba(0, 180, 0, 0.20);
+  border: 2px solid #00ff66;
+  color: #00ff66;
+  font-weight: 700;
+}
+
+.chooser-green:hover {
+  background: rgba(0, 255, 100, 0.35);
+}
+
+.chooser-red {
+  background: rgba(255, 0, 0, 0.20);
+  border: 2px solid #ff4444;
+  color: #ff4444;
+  font-weight: 700;
+}
+
+.chooser-red:hover {
+  background: rgba(255, 0, 0, 0.35);
+}
+#chooserPanel #greenChooserBtn,
+.choice-panel #greenChooserBtn {
+  background: rgba(0, 180, 0, 0.28) !important;
+  border: 2px solid #00ff66 !important;
+  color: #00ff66 !important;
+  font-weight: 900 !important;
+}
+
+#chooserPanel #greenChooserBtn:hover,
+.choice-panel #greenChooserBtn:hover {
+  background: rgba(0, 255, 100, 0.38) !important;
+}
+
+#chooserPanel #redChooserBtn,
+.choice-panel #redChooserBtn {
+  background: rgba(255, 0, 0, 0.28) !important;
+  border: 2px solid #ff4444 !important;
+  color: #ff4444 !important;
+  font-weight: 900 !important;
+}
+
+#chooserPanel #redChooserBtn:hover,
+.choice-panel #redChooserBtn:hover {
+  background: rgba(255, 0, 0, 0.38) !important;
+}
+.choice-panel.green-active {
+  background: rgba(0,255,100,.15);
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 12px rgba(0,255,100,.25);
+}
+.choice-panel.red-active {
+  background: rgba(255,0,0,.15);
+  border: 2px solid #ff4444;
+  box-shadow: 0 0 12px rgba(255,0,0,.25);
+}
+#choicePanel.green-choice {
+  background: rgba(0,255,100,.20) !important;
+  border: 2px solid #00ff66 !important;
+  box-shadow: 0 0 16px rgba(0,255,100,.35) !important;
+}
+
+#choicePanel.red-choice {
+  background: rgba(255,0,0,.20) !important;
+  border: 2px solid #ff4444 !important;
+  box-shadow: 0 0 16px rgba(255,0,0,.35) !important;
+}.choice-option-btn:hover {
+  background: rgba(250,204,21,.15);
+}
+
+.choice-option-btn.selected {
+  background: #facc15;
+  color: #000;
+}
+#choicePanel button[data-choice] {
+  border: 2px solid #facc15 !important;
+  color: #facc15 !important;
+  font-weight: 900 !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+}
+
+#choicePanel button[data-choice]:hover {
+  background: rgba(250, 204, 21, 0.18) !important;
+}

@@ -786,6 +786,20 @@ confirmMatchSetupBtn?.addEventListener("click", () => {
   state.sandmanSide =
     chosenColor === "green" ? "athlete" : "opponent";
 
+  const manualAthleteNameInput =
+    document.getElementById("manualAthleteName");
+
+  const manualAthlete =
+    manualAthleteNameInput?.value.trim();
+
+  if (
+    manualAthlete &&
+    !athleteNameInput?.value.trim()
+  ) {
+    athleteNameInput.value =
+      manualAthlete;
+  }
+
   updateIdentityStrip({
     greenDisplayName,
     athleteNameInput,
@@ -920,14 +934,24 @@ setStatus(`${formatRoundLabel(state.currentRound)} started`);
 });
 greenChooserBtn?.addEventListener("click", () => {
   setSecondPeriodFirstChooser(state, "athlete");
+
+  choicePanel?.classList.remove("red-choice");
+  choicePanel?.classList.add("green-choice");
+
   chooserPanel?.classList.add("hidden");
+
   renderAll();
   saveLocalDraft();
 });
 
 redChooserBtn?.addEventListener("click", () => {
   setSecondPeriodFirstChooser(state, "opponent");
+
+  choicePanel?.classList.remove("green-choice");
+  choicePanel?.classList.add("red-choice");
+
   chooserPanel?.classList.add("hidden");
+
   renderAll();
   saveLocalDraft();
 });

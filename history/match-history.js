@@ -70,7 +70,7 @@ matches
       </p>
 
       <a
-        href="./match-detail?id=${match.id}"
+        href="./match-detail.html?id=${match.id}"
       >
         Open Match
       </a>

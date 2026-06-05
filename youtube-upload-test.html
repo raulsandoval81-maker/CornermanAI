@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>YouTube Upload Test</title>
+</head>
+<body>
+  <h1>YouTube Upload Test</h1>
+
+  <button id="connectBtn">Connect YouTube Upload</button>
+
+  <br><br>
+
+  <input type="file" id="videoFile" accept="video/*" />
+
+  <button id="uploadBtn">Upload Test Video</button>
+
+  <pre id="output">Not connected.</pre>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    const CLIENT_ID =
+      "350252883005-es358ngtiv3ur8he2ode3vcidaahd1gd.apps.googleusercontent.com";
+
+    const SCOPES =
+      "https://www.googleapis.com/auth/youtube.upload";
+
+    let accessToken = "";
+    let tokenClient;
+
+    function log(message) {
+      document.getElementById("output").textContent =
+        typeof message === "string"
+          ? message
+          : JSON.stringify(message, null, 2);
+    }
+
+    window.onload = () => {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: tokenResponse => {
+          if (!tokenResponse.access_token) {
+            log("No access token returned.");
+            return;
+          }
+
+          accessToken = tokenResponse.access_token;
+          log("Connected for YouTube upload.");
+        }
+      });
+
+      document.getElementById("connectBtn").onclick = () => {
+        tokenClient.requestAccessToken();
+      };
+
+      document.getElementById("uploadBtn").onclick = uploadVideo;
+    };
+
+    async function uploadVideo() {
+      if (!accessToken) {
+        log("Connect YouTube first.");
+        return;
+      }
+
+      const file =
+        document.getElementById("videoFile").files[0];
+
+      if (!file) {
+        log("Choose a video file first.");
+        return;
+      }
+
+      log("Uploading...");
+
+      const metadata = {
+        snippet: {
+          title: "CornermanAI Upload Test",
+          description: "Test upload from CornermanAI 4A.2",
+          tags: ["CornermanAI", "test"]
+        },
+        status: {
+          privacyStatus: "unlisted"
+        }
+      };
+
+      const boundary = "cornerman_upload_boundary";
+
+      const body = new Blob([
+        `--${boundary}\r\n`,
+        "Content-Type: application/json; charset=UTF-8\r\n\r\n",
+        JSON.stringify(metadata),
+        "\r\n",
+        `--${boundary}\r\n`,
+        `Content-Type: ${file.type || "video/webm"}\r\n\r\n`,
+        file,
+        "\r\n",
+        `--${boundary}--`
+      ], {
+        type: `multipart/related; boundary=${boundary}`
+      });
+
+      const res = await fetch(
+        "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=multipart&part=snippet,status",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          },
+          body
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        log(data);
+        return;
+      }
+
+      const videoUrl =
+        `https://www.youtube.com/watch?v=${data.id}`;
+
+log({
+  status: "Upload complete",
+  videoId: data.id,
+  videoUrl
+});
+
+localStorage.setItem(
+  "cornerman_last_uploaded_video_url",
+  videoUrl
+);
+
+
+const media =
+  JSON.parse(
+    localStorage.getItem("cornerman_media") || "[]"
+  );
+
+media.unshift({
+  id: data.id,
+  title: "CornermanAI Upload Test",
+  videoId: data.id,
+  videoUrl,
+  source: "youtube",
+  linkedMatchId: "",
+  createdAt: new Date().toISOString()
+});
+
+localStorage.setItem(
+  "cornerman_media",
+  JSON.stringify(media)
+);
+
+localStorage.setItem(
+  "cornerman_pending_video_url",
+  videoUrl
+);
+      }
+  </script>
+</body>
+</html>

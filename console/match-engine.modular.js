@@ -219,6 +219,7 @@ const matchSummaryModal = document.getElementById("matchSummaryModal");
 const closeMatchSummaryBtn = document.getElementById("closeMatchSummary");
 const finishBtn = document.getElementById("endMatch");
 const saveMatchLogBtn = document.getElementById("saveMatchLogBtn");
+const attachLastUploadBtn = document.getElementById("attachLastUploadBtn");
 
 
 const reviewWinnerEl = document.getElementById("reviewWinner");
@@ -570,6 +571,24 @@ function saveLocalDraft() {
     JSON.stringify(buildMatchPayload())
   );
 }
+
+function attachUploadedVideoUrl(videoUrl) {
+  const videoInput =
+    document.getElementById("videoUrlInput");
+
+  if (!videoInput || !videoUrl) return;
+
+  videoInput.value =
+    videoUrl;
+
+  saveLocalDraft();
+
+  setStatus("YouTube URL attached.");
+}
+
+window.attachUploadedVideoUrl =
+  attachUploadedVideoUrl;
+
 function saveMatchToHistory() {
   console.log("SAVE MATCH TO HISTORY FIRED");
 
@@ -1370,6 +1389,19 @@ saveMatchLogBtn?.addEventListener("click", () => {
   setStatus("Saved to match log.");
 });
 
+attachLastUploadBtn?.addEventListener("click", () => {
+  const videoUrl =
+    localStorage.getItem(
+      "cornerman_last_uploaded_video_url"
+    );
+
+  if (!videoUrl) {
+    setStatus("No uploaded video URL found.");
+    return;
+  }
+
+  attachUploadedVideoUrl(videoUrl);
+});
 /* FINISH & SAVE */
 finishBtn?.addEventListener("click", () => {
 stopClock({

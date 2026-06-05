@@ -1,0 +1,54 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+#mediaStats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+#mediaStats p {
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  margin: 0;
+}
+
+.media-row {
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.media-row strong {
+  display: block;
+  margin-bottom: .5rem;
+}
+
+.media-row p {
+  margin: .4rem 0;
+}
+
+.media-row a,
+.media-row button {
+  display: inline-block;
+  margin-top: .5rem;
+  margin-right: .5rem;
+}
+
+.media-row select {
+  margin-top: .75rem;
+  padding: .5rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.muted {
+  opacity: .65;
+}

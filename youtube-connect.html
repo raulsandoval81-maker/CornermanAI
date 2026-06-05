@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Cornerman YouTube Connect</title>
+</head>
+<body>
+  <h1>CornermanAI YouTube Connect</h1>
+
+  <button id="connectBtn">Connect YouTube</button>
+
+  <pre id="output">Not connected.</pre>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+const CLIENT_ID =
+  "350252883005-es358ngtiv3ur8he2ode3vcidaahd1gd.apps.googleusercontent.com";
+  
+    const SCOPES =
+      "https://www.googleapis.com/auth/youtube.readonly";
+
+    let tokenClient;
+
+    window.onload = () => {
+      tokenClient =
+        google.accounts.oauth2.initTokenClient({
+          client_id: CLIENT_ID,
+          scope: SCOPES,
+          callback: async tokenResponse => {
+
+            if (!tokenResponse.access_token) {
+              document.getElementById("output").textContent =
+                "No access token returned.";
+              return;
+            }
+
+            const res =
+              await fetch(
+                "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true",
+                {
+                  headers: {
+                    Authorization:
+                      `Bearer ${tokenResponse.access_token}`
+                  }
+                }
+              );
+
+            const data =
+              await res.json();
+
+            document.getElementById("output").textContent =
+              JSON.stringify(data, null, 2);
+          }
+        });
+
+      document.getElementById("connectBtn")
+        .onclick = () =>
+          tokenClient.requestAccessToken();
+    };
+  </script>
+</body>
+</html>

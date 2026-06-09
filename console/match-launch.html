@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Launch Match</title>
+
+  <link
+    rel="stylesheet"
+    href="../app.css"
+  />
+</head>
+
+<body>
+
+<main class="app-shell">
+
+  <section class="hero">
+    <p class="eyebrow">
+      CORE
+    </p>
+
+    <h1>
+      Launch Match
+    </h1>
+
+    <p class="sub">
+      Prepare match information or start immediately.
+    </p>
+  </section>
+
+  <section class="card">
+    <span>
+      TOURNAMENT CONTEXT
+    </span>
+
+    <strong>
+      Current Event
+    </strong>
+
+    <div id="currentTournamentContext">
+      No active tournament context.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>
+      MATCH SETUP
+    </span>
+
+    <strong>
+      Match Information
+    </strong>
+
+    <div class="form-stack">
+
+      <label>
+        Event
+        <input
+          id="eventNameInput"
+          type="text"
+          placeholder="Dual / Tournament / Practice"
+        />
+      </label>
+
+      <label>
+        Tournament Roster
+        <select id="athleteSelect">
+          <option value="">
+            Select Athlete
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Manual Athlete Name
+        <input
+          id="manualAthleteName"
+          type="text"
+          placeholder="Only if athlete is not in roster"
+        />
+      </label>
+
+      <label>
+        Athlete Side
+        <select id="sandmanColor">
+          <option value="green">
+            Athlete = Green
+          </option>
+
+          <option value="red">
+            Athlete = Red
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Weight Group
+        <select id="weightGroupSelect">
+          <option value="">
+            Select Group
+          </option>
+
+          <option value="youth">
+            Youth
+          </option>
+
+          <option value="juniorHighBoys">
+            Junior High Boys
+          </option>
+
+          <option value="juniorHighGirls">
+            Junior High Girls
+          </option>
+
+          <option value="highSchoolBoys">
+            High School Boys
+          </option>
+
+          <option value="highSchoolGirls">
+            High School Girls
+          </option>
+
+          <option value="collegeMen">
+            College Men
+          </option>
+
+          <option value="collegeWomen">
+            College Women
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Weight
+        <select id="weightClassInput">
+          <option value="">
+            Select Weight
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Custom Weight
+        <input
+          id="customWeightClassInput"
+          type="text"
+          placeholder="Only if not listed"
+        />
+      </label>
+
+      <label>
+        Opponent Team
+        <input
+          id="redTeamInput"
+          type="text"
+          placeholder="Opponent team"
+        />
+      </label>
+
+      <label>
+        Opponent Wrestler
+        <input
+          id="opponentName"
+          type="text"
+          placeholder="Opponent wrestler"
+        />
+      </label>
+
+    </div>
+
+    <button
+      id="startMatchBtn"
+      type="button"
+    >
+      Start Match
+    </button>
+  </section>
+
+  <section class="card">
+    <span>
+      FAST START
+    </span>
+
+    <strong>
+      Practice Mode
+    </strong>
+
+    <p>
+      Skip setup and start scoring immediately.
+      Match information can be updated later.
+    </p>
+
+    <button
+      id="fastStartBtn"
+      type="button"
+    >
+      Start Fast Match
+    </button>
+  </section>
+
+  <section class="card">
+    <span>
+      BACK
+    </span>
+
+    <a href="./">
+      Console Command Center
+    </a>
+  </section>
+
+</main>
+
+<script
+  type="module"
+  src="./match-launch.js"
+></script>
+
+</body>
+</html>

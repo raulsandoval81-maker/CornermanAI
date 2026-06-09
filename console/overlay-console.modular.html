@@ -28,73 +28,74 @@
 
 <div id="status" class="status-line">Live mode</div>
 
-<section id="matchSetup" class="match-setup-card">
-  <h2>Confirm Match</h2>
+<section class="review-board">
 
-  <div class="setup-grid">
-    <label>Event
-      <input id="eventNameInput" type="text" placeholder="Dual / Tournament / Practice" />
-    </label>
+  <div class="summary-final-score">
+    <strong>Final Score</strong>
+    <div id="summaryScore">RED 0 — GREEN 0</div>
+    <div id="summarySuggestedResult">Suggested: —</div>
+  </div>
 
+  <section class="bout-card review-result-card">
+    <h2>Match Result</h2>
+    <div class="result-display">
+      <div id="reviewWinner">Winner: —</div>
+      <div id="reviewResult">Result: —</div>
+    </div>
+  </section>
 
+  <section class="video-card review-video-card">
+    <h2>Video Review</h2>
+    <video id="reviewPreview" controls playsinline></video>
+  </section>
 
-<label>Tournament Roster
-    <select id="athleteSelect">
-    <option value="">Select Athlete</option>
-  </select>
-</label>
+  <section class="log-card review-timeline-card">
+    <h2>Timeline</h2>
+    <div id="eventLog"></div>
+  </section>
 
+  <section class="bout-board-card review-bout-board">
+    <h3>Bout Board Flow</h3>
+    <div id="reviewBoutBoard" class="bout-board"></div>
+  </section>
 
+  <section class="notes-card">
+    <label>Coach Notes</label>
+    <textarea id="coachNotes" placeholder="1 win. 1 fix."></textarea>
+  </section>
 
-<label>Athlete Side
-<select id="sandmanColor">
-  <option value="green">Athlete = Green</option>
-  <option value="red">Athlete = Red</option>
-</select>
-</label>
+  <section class="notes-card">
+    <label>Video URL</label>
+    <input
+      id="videoUrlInput"
+      type="url"
+      placeholder="Paste YouTube link"
+    />
+  </section>
 
+  <section class="post-match-card">
+    <h2>Post-Match Pipeline</h2>
 
-<label>Weight Group
-  <select id="weightGroupSelect">
-    <option value="">Select Group</option>
-    <option value="youth">Youth</option>
-    <option value="juniorHighBoys">Junior High Boys</option>
-    <option value="juniorHighGirls">Junior High Girls</option>
-    <option value="highSchoolBoys">High School Boys</option>
-    <option value="highSchoolGirls">High School Girls</option>
-    <option value="collegeMen">College Men</option>
-    <option value="collegeWomen">College Women</option>
-  </select>
-</label>
+    <div class="post-match-actions">
+      <button id="saveMatchLogBtn" type="button">
+        Save to Match Log
+      </button>
 
-<label>Weight
-  <select id="weightClassInput">
-    <option value="">Select Weight</option>
-  </select>
-</label>
+      <button type="button" disabled>
+        Send Athlete Feedback
+      </button>
 
-<label>Custom Weight
-  <input
-    id="customWeightClassInput"
-    type="text"
-    placeholder="Only if not listed"
-  />
-</label>
+      <button type="button" disabled>
+        View Stats Report
+      </button>
+    </div>
 
-<label>Opponent Team
-  <input id="redTeamInput" type="text" placeholder="Opponent team" />
-</label>
+    <p>
+      Future layer only. Coach Console remains the source of truth for now.
+    </p>
+  </section>
 
-<label>Opponent Wrestler
-  <input id="opponentName" type="text" placeholder="Opponent wrestler" />
-</label>
-
-<input id="greenTeamInput" type="hidden" />
-<input id="athleteName" type="hidden" />
-
-    <button id="confirmMatchSetup" type="button">Confirm Match</button>
 </section>
-
   <section class="match-card round-flow-card">
     <div class="match-meta-strip">
       <span id="eventNameDisplay">Event: —</span>

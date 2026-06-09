@@ -24,7 +24,9 @@ const TOURNAMENT_MATCHES_KEY =
 let currentTournament = {
   name: "",
   date: "",
-  location: ""
+  location: "",
+  bracketRound: "",
+  consolePreference: "compact"
 };
 
 /* =========================
@@ -69,6 +71,13 @@ const tournamentRosterList =
 
 const tournamentLocationInput =
   document.getElementById("tournamentLocationInput");
+
+
+const bracketRoundInput = 
+  document.getElementById( "bracketRoundInput"   );
+
+  const consolePreferenceInput =
+  document.getElementById( "consolePreferenceInput" );
 
 const saveTournamentEventBtn =
   document.getElementById("saveTournamentEventBtn");
@@ -122,11 +131,15 @@ archiveTournamentBtn?.addEventListener(
    TOURNAMENT ROSTER
 ========================= */
 function saveTournamentEvent() {
-  currentTournament = {
-    name: eventNameInput?.value.trim() || "",
-    date: tournamentDateInput?.value || "",
-    location: tournamentLocationInput?.value.trim() || ""
-  };
+currentTournament = {
+  name: eventNameInput?.value.trim() || "",
+  date: tournamentDateInput?.value || "",
+  location: tournamentLocationInput?.value.trim() || "",
+  bracketRound:
+    bracketRoundInput?.value || "",
+  consolePreference:
+    consolePreferenceInput?.value || "compact"
+};
 
   if (!currentTournament.name) {
     setRosterStatus("Enter tournament name first.");
@@ -146,6 +159,11 @@ function loadCurrentTournament() {
       "cornerman_current_tournament"
     );
 
+    if (consolePreferenceInput) {
+  consolePreferenceInput.value =
+    currentTournament.consolePreference || "compact";
+}
+
   if (!saved) return;
 
   try {
@@ -157,6 +175,11 @@ function loadCurrentTournament() {
 
     tournamentDateInput.value =
       currentTournament.date || "";
+
+      if (bracketRoundInput) {
+  bracketRoundInput.value =
+    currentTournament.bracketRound || "";
+}
 
     tournamentLocationInput.value =
       currentTournament.location || "";
@@ -210,15 +233,24 @@ function archiveCurrentTournament() {
     "cornerman_tournament_roster"
   );
 
-  currentTournament = {
-    name: "",
-    date: "",
-    location: ""
-  };
+currentTournament = {
+  name: "",
+  date: "",
+  location: "",
+  bracketRound: "",
+  consolePreference: "compact"
+};
 
   eventNameInput.value = "";
   tournamentDateInput.value = "";
   tournamentLocationInput.value = "";
+if (bracketRoundInput) {
+  bracketRoundInput.value = "";
+}
+if (consolePreferenceInput) {
+  consolePreferenceInput.value =
+    "compact";
+}
 
   renderCurrentTournament();
   renderTournamentRoster();
@@ -306,10 +338,26 @@ function renderCurrentTournament() {
     return;
   }
 
-  currentTournamentEl.innerHTML = `
-    <strong>${currentTournament.name}</strong>
-    <p>${currentTournament.date || "No date"} · ${currentTournament.location || "No location"}</p>
-  `;
+currentTournamentEl.innerHTML = `
+  <strong>${currentTournament.name}</strong>
+
+  <p>
+    ${currentTournament.date || "No date"}
+    ·
+    ${currentTournament.location || "No location"}
+  </p>
+
+  <p>
+    Bracket:
+    ${currentTournament.bracketRound || "General Event"}
+  </p>
+
+  <p>
+    Console:
+    ${currentTournament.consolePreference || "compact"}
+  </p>
+`;
+
 }
 
 

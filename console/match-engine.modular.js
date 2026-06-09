@@ -1488,6 +1488,60 @@ arenaModeToggle?.addEventListener("click", () => {
   const isArena = document.body.classList.contains("arena-mode");
   arenaModeToggle.textContent = isArena ? "Normal" : "Arena";
 });
+function loadPendingMatchSetup() {
+  const pendingMatch =
+    JSON.parse(
+      localStorage.getItem(
+        "cornerman_pending_match"
+      ) || "{}"
+    );
+
+  if (!pendingMatch.source) return;
+
+  eventNameInput.value =
+    pendingMatch.eventName || "";
+
+  athleteNameInput.value =
+    pendingMatch.athleteName || "Athlete B";
+
+  opponentNameInput.value =
+    pendingMatch.opponentName || "Athlete A";
+
+  redTeamInput.value =
+    pendingMatch.opponentTeam || "";
+
+  weightClassInput.value =
+    pendingMatch.weightClass || "";
+
+  sandmanColorSelect.value =
+    pendingMatch.athleteSide || "green";
+
+  matchConfirmed = true;
+
+  matchSetupEl?.classList.add("hidden");
+
+  lockMatchSetup({
+  locked: true,
+  eventNameInput,
+  weightClassInput,
+  redTeamInput,
+  greenTeamInput,
+  athleteNameInput,
+  opponentNameInput,
+  matchFormatSelect
+});
+
+  updateStartButton({
+    startBtn,
+    text: "Start",
+    disabled: false
+  });
+
+  setStatus(
+    "Match loaded from launcher"
+  );
+}
+loadPendingMatchSetup();
 
 /* INIT */
 renderControls({
@@ -1501,12 +1555,13 @@ renderAll();
 saveLocalDraft();
 
 setMode("live");
-
-updateStartButton({
-  startBtn,
-  text: "Start",
-  disabled: true
-});
+if (!matchConfirmed) {
+  updateStartButton({
+    startBtn,
+    text: "Start",
+    disabled: true
+  });
+}
 
 updateRefButtonLabels({
   state

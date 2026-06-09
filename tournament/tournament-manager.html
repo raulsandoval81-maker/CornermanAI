@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>Tournament Manager</title>
 
@@ -13,217 +17,333 @@
 
 <body>
 
-  <main class="app-shell">
+<main class="app-shell">
 
-    <section class="card">
-      <span>CURRENT EVENT</span>
-      <strong>Create Event Once</strong>
+  <section class="card">
+    <span>
+      CURRENT EVENT
+    </span>
 
-      <div class="setup-grid">
+    <strong>
+      Create Event Once
+    </strong>
 
-        <label>
-          Event
-          <input
-            id="eventNameInput"
-            type="text"
-            placeholder="Tournament / Dual"
-          />
-        </label>
+    <div class="setup-grid">
 
-        <label>
-          Date
-          <input
-            id="tournamentDateInput"
-            type="date"
-          />
-        </label>
+      <label>
+        Event
 
-        <label>
-          Location
-          <input
-            id="tournamentLocationInput"
-            type="text"
-            placeholder="Location"
-          />
-        </label>
+        <input
+          id="eventNameInput"
+          type="text"
+          placeholder="Tournament / Dual"
+        />
+      </label>
 
-      </div>
+      <label>
+        Date
 
-      <button
-        id="saveTournamentEventBtn"
-        type="button"
-      >
-        Save Event
-      </button>
+        <input
+          id="tournamentDateInput"
+          type="date"
+        />
+      </label>
 
-      <div id="currentTournament">
-        No tournament event created yet.
-      </div>
-    </section>
+      <label>
+        Location
 
-    <section class="card">
-      <span>ATTENDANCE</span>
-      <strong>Add Athlete To Event</strong>
+        <input
+          id="tournamentLocationInput"
+          type="text"
+          placeholder="Location"
+        />
+      </label>
 
-      <div class="setup-grid">
+      <label>
+        Bracket Round
 
-        <label>
-          Athlete Name
-          <input
-            id="athleteNameInput"
-            type="text"
-            placeholder="Athlete name"
-          />
-        </label>
+        <select id="bracketRoundInput">
+          <option value="">
+            General Event
+          </option>
 
-        <label>
-          Team
-          <input
-            id="teamNameInput"
-            type="text"
-            placeholder="Team name"
-          />
-        </label>
+          <option value="round_64">
+            Round of 64
+          </option>
 
-        <label>
-          Weight Group
+          <option value="round_32">
+            Round of 32
+          </option>
 
-          <select id="weightGroupSelect">
-            <option value="">Select Group</option>
+          <option value="round_16">
+            Round of 16
+          </option>
 
-            <option value="youth">Youth</option>
-            <option value="juniorHighBoys">Junior High Boys</option>
-            <option value="juniorHighGirls">Junior High Girls</option>
-            <option value="highSchoolBoys">High School Boys</option>
-            <option value="highSchoolGirls">High School Girls</option>
-            <option value="collegeMen">College Men</option>
-            <option value="collegeWomen">College Women</option>
-          </select>
-        </label>
+          <option value="quarterfinal">
+            Quarterfinal
+          </option>
 
-        <label>
-          Weight
+          <option value="semifinal">
+            Semifinal
+          </option>
 
-          <select id="weightInput">
-            <option value="">
-              Select Weight
-            </option>
-          </select>
-        </label>
+          <option value="final">
+            Final
+          </option>
+        </select>
+      </label>
 
-      </div>
+      <label>
+        Console Preference
 
-      <button
-        id="addTournamentAthleteBtn"
-        type="button"
-      >
-        Add To Tournament Roster
-      </button>
+        <select id="consolePreferenceInput">
+          <option value="compact">
+            Compact Console
+          </option>
 
-      <p
-        id="rosterStatus"
-        class="bridge-status"
-      >
-        Waiting for event.
+          <option value="classic">
+            Classic Console
+          </option>
+
+          <option value="overlay">
+            Overlay Console
+          </option>
+        </select>
+      </label>
+
+    </div>
+
+    <button
+      id="saveTournamentEventBtn"
+      type="button"
+    >
+      Save Event
+    </button>
+
+    <div id="currentTournament">
+      No tournament event created yet.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>
+      ATTENDANCE
+    </span>
+
+    <strong>
+      Add Athlete To Event
+    </strong>
+
+    <div class="setup-grid">
+
+      <label>
+        Athlete Name
+
+        <input
+          id="athleteNameInput"
+          type="text"
+          placeholder="Athlete name"
+        />
+      </label>
+
+      <label>
+        Team
+
+        <input
+          id="teamNameInput"
+          type="text"
+          placeholder="Team name"
+        />
+      </label>
+
+      <label>
+        Weight Group
+
+        <select id="weightGroupSelect">
+          <option value="">
+            Select Group
+          </option>
+
+          <option value="youth">
+            Youth
+          </option>
+
+          <option value="juniorHighBoys">
+            Junior High Boys
+          </option>
+
+          <option value="juniorHighGirls">
+            Junior High Girls
+          </option>
+
+          <option value="highSchoolBoys">
+            High School Boys
+          </option>
+
+          <option value="highSchoolGirls">
+            High School Girls
+          </option>
+
+          <option value="collegeMen">
+            College Men
+          </option>
+
+          <option value="collegeWomen">
+            College Women
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Weight
+
+        <select id="weightInput">
+          <option value="">
+            Select Weight
+          </option>
+        </select>
+      </label>
+
+    </div>
+
+    <button
+      id="addTournamentAthleteBtn"
+      type="button"
+    >
+      Add To Tournament Roster
+    </button>
+
+    <p
+      id="rosterStatus"
+      class="bridge-status"
+    >
+      Waiting for event.
+    </p>
+  </section>
+
+  <section class="card">
+    <span>
+      TOURNAMENT ACTIONS
+    </span>
+
+    <strong>
+      Match Launch
+    </strong>
+
+    <p>
+      Launch a match using this event context and console preference.
+    </p>
+
+    <a href="../console/match-launch.html">
+      Launch Match
+    </a>
+  </section>
+
+  <section class="card">
+    <span>
+      ACTIVE TOURNAMENT ROSTER
+    </span>
+
+    <button
+      id="archiveTournamentBtn"
+      type="button"
+    >
+      Archive Event
+    </button>
+
+    <div id="tournamentRosterList">
+      No athletes added yet.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>
+      LAST CONSOLE MATCH
+    </span>
+
+    <div id="lastConsoleMatch">
+      No console match found.
+    </div>
+  </section>
+
+  <section class="grid">
+
+    <a
+      class="card"
+      href="../console/"
+    >
+      <span>
+        BACK
+      </span>
+
+      <strong>
+        Console Command Center
+      </strong>
+
+      <p>
+        Return to the command center.
       </p>
-    </section>
+    </a>
 
-    <section class="card">
-      <span>ACTIVE TOURNAMENT ROSTER</span>
+    <a
+      class="card"
+      href="../events/team-dashboard.html"
+    >
+      <span>
+        DASHBOARD
+      </span>
 
-      <button
-        id="archiveTournamentBtn"
-        type="button"
-      >
-        Archive Event
-      </button>
+      <strong>
+        Team Dashboard
+      </strong>
 
-      <div id="tournamentRosterList">
-        No athletes added yet.
-      </div>
-    </section>
+      <p>
+        View imported team analytics.
+      </p>
+    </a>
 
-    <section class="card">
-      <span>LAST CONSOLE MATCH</span>
+    <a
+      class="card"
+      href="../athletes/athlete-dashboard.html"
+    >
+      <span>
+        DASHBOARD
+      </span>
 
-      <div id="lastConsoleMatch">
-        No console match found.
-      </div>
-    </section>
+      <strong>
+        Athlete Dashboard
+      </strong>
 
-    <section class="grid">
-            <a
-        class="card"
-        href="../console/"
-      >
-        <span>BACK</span>
+      <p>
+        View imported athlete analytics.
+      </p>
+    </a>
 
-        <strong>
-          Console Command Center
-        </strong>
+    <a
+      class="card"
+      href="../roster/athlete-stat-log.html"
+    >
+      <span>
+        LOG
+      </span>
 
-        <p>
-          Return to the command center.
-        </p>
-      </a>
+      <strong>
+        Athlete Stat Log
+      </strong>
 
+      <p>
+        Manual fallback for entering match results.
+      </p>
+    </a>
 
+  </section>
 
-      <a
-        class="card"
-        href="../events/team-dashboard.html"
-      >
-        <span>DASHBOARD</span>
+</main>
 
-        <strong>
-          Team Dashboard
-        </strong>
-
-        <p>
-          View imported team analytics.
-        </p>
-      </a>
-
-      <a
-        class="card"
-        href="../athletes/athlete-dashboard.html"
-      >
-        <span>DASHBOARD</span>
-
-        <strong>
-          Athlete Dashboard
-        </strong>
-
-        <p>
-          View imported athlete analytics.
-        </p>
-      </a>
-
-            <a
-        class="card"
-        href="../roster/athlete-stat-log.html"
-      >
-        <span>LOG</span>
-
-        <strong>
-          Athlete Stat Log
-        </strong>
-
-        <p>
-          Manual fallback for entering match results.
-        </p>
-      </a>
-
-
-
-    </section>
-
-  </main>
-
-  <script
-    type="module"
-    src="./tournament-manager.js"
-  ></script>
+<script
+  type="module"
+  src="./tournament-manager.js"
+></script>
 
 </body>
 </html>

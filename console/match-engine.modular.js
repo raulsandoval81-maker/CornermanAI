@@ -887,6 +887,9 @@ startBtn?.addEventListener("click", async () => {
           reviewPreview.controls = true;
         }
 
+        setMode("review");
+        renderAll();
+
         const reader = new FileReader();
 
 console.log("video captured", videoUrl);
@@ -1506,16 +1509,10 @@ const shouldFlash = ["pin", "tech"].includes(state.resultType);
 
 if (shouldFlash) {
   showFinishFlash(getResultLabel(state.resultType).toUpperCase(), state.winner);
-
-  setTimeout(() => {
-    setMode("review");
-    renderAll();
-  }, 900);
-} else {
-  setMode("review");
-  renderAll();
 }
-});
+
+setStatus("Finalizing video for review...");}
+);
 /* ARENA MODE */
 const arenaModeToggle = document.getElementById("arenaModeToggle");
 

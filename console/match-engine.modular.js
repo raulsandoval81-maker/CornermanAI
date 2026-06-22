@@ -864,7 +864,19 @@ startBtn?.addEventListener("click", async () => {
       }
 
       chunks = [];
-      mediaRecorder = new MediaRecorder(stream);
+
+      const mimeType =
+  MediaRecorder.isTypeSupported("video/mp4")
+    ? "video/mp4"
+    : MediaRecorder.isTypeSupported("video/webm;codecs=vp8")
+      ? "video/webm;codecs=vp8"
+      : "";
+
+mediaRecorder = mimeType
+  ? new MediaRecorder(stream, { mimeType })
+  : new MediaRecorder(stream);
+console.log("Recorder MIME:", mediaRecorder.mimeType);
+
       window.__cornermanMediaRecorder = mediaRecorder;
 
       mediaRecorder.ondataavailable = e => {
@@ -872,7 +884,9 @@ startBtn?.addEventListener("click", async () => {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: "video/webm" });
+        const blob = new Blob(chunks, {
+  type: mediaRecorder?.mimeType || "video/mp4"
+});
         const videoUrl = URL.createObjectURL(blob);
 
         if (preview) {
@@ -890,7 +904,6 @@ startBtn?.addEventListener("click", async () => {
         setMode("review");
         renderAll();
 
-        const reader = new FileReader();
 
 console.log("video captured", videoUrl);
 

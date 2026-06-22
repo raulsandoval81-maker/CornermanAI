@@ -921,8 +921,7 @@ updateStartButton({
 
       };
 
-      mediaRecorder.start();
-
+mediaRecorder.start(1000);
       setStatus("Camera ready.");
     }
 

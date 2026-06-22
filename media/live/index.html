@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cornerman Live Control</title>
+  <link rel="stylesheet" href="./live.css" />
+</head>
+
+<body>
+  <main class="live-shell">
+    <header class="live-header">
+      <div>
+        <h1>Cornerman Live</h1>
+        <p>Control match state for the live viewer.</p>
+      </div>
+
+      <a class="viewer-link" href="./viewer.html" target="_blank">
+        Open Viewer
+      </a>
+    </header>
+
+    <section class="setup-card">
+      <label>
+        Green Wrestler
+        <input id="greenNameInput" value="Maximus" />
+      </label>
+
+      <label>
+        Red Wrestler
+        <input id="redNameInput" value="Opponent" />
+      </label>
+
+      <button id="saveNamesBtn">Save Names</button>
+    </section>
+
+    <section class="score-card">
+      <div class="score-box green">
+        <span>GREEN</span>
+        <strong id="greenScoreText">0</strong>
+      </div>
+
+      <div class="clock-box">
+        <input id="clockInput" value="2:00" />
+        <input id="periodInput" type="number" min="1" max="3" value="1" />
+        <button id="saveClockBtn">Update Clock</button>
+      </div>
+
+      <div class="score-box red">
+        <span>RED</span>
+        <strong id="redScoreText">0</strong>
+      </div>
+    </section>
+
+    <section class="buttons-card">
+      <button data-action="neutral">Neutral</button>
+      <button data-action="greenTD">Green TD +2</button>
+      <button data-action="redTD">Red TD +2</button>
+      <button data-action="greenEscape">Green Escape +1</button>
+      <button data-action="redEscape">Red Escape +1</button>
+      <button data-action="greenReversal">Green Reversal +2</button>
+      <button data-action="redReversal">Red Reversal +2</button>
+      <button data-action="nearfallGreen">Near Fall Green</button>
+      <button data-action="nearfallRed">Near Fall Red</button>
+      <button data-action="pinThreat">Pin Threat</button>
+      <button data-action="reset">Reset Match</button>
+    </section>
+  </main>
+
+  <script src="./live.js"></script>
+</body>
+</html>

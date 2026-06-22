@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cornerman Live Viewer</title>
+  <link rel="stylesheet" href="./viewer.css" />
+</head>
+
+<body>
+  <main class="viewer-shell">
+
+
+<header class="viewer-header">
+  <div class="brand">CornermanAI Live</div>
+  <div class="status-pill" id="liveStatus">
+    LIVE VIEWER
+  </div>
+</header>
+
+<section class="scoreboard">
+
+  <div class="corner green">
+    <div class="label">GREEN</div>
+    <div class="name" id="greenName">Maximus</div>
+    <div class="score" id="greenScore">0</div>
+  </div>
+
+  <div class="clock-box">
+    <div class="clock" id="matchClock">2:00</div>
+    <div class="period" id="matchPeriod">Period 1</div>
+  </div>
+
+  <div class="corner red">
+    <div class="label">RED</div>
+    <div class="name" id="redName">Opponent</div>
+    <div class="score" id="redScore">0</div>
+  </div>
+
+</section>
+
+<section class="mat-card">
+
+  <div class="mat-title">
+    Current Position
+  </div>
+
+  <div class="mat-visual neutral" id="matVisual">
+
+    <div id="greenAvatar" class="avatar green-avatar">
+      <div class="head"></div>
+      <div class="torso"></div>
+      <div class="arm left-arm"></div>
+      <div class="arm right-arm"></div>
+      <div class="leg left-leg"></div>
+      <div class="leg right-leg"></div>
+    </div>
+
+    <div id="redAvatar" class="avatar red-avatar">
+      <div class="head"></div>
+      <div class="torso"></div>
+      <div class="arm left-arm"></div>
+      <div class="arm right-arm"></div>
+      <div class="leg left-leg"></div>
+      <div class="leg right-leg"></div>
+    </div>
+
+  </div>
+
+  <div class="position-label" id="positionLabel">
+    NEUTRAL
+  </div>
+
+</section>
+
+<section class="event-card">
+  <h2>Last Event</h2>
+  <p id="lastEvent">Match ready.</p>
+</section>
+
+<section class="timeline-card">
+  <h2>Timeline</h2>
+
+  <div id="timeline" class="timeline">
+    <div class="timeline-item">
+      0:00 Match ready.
+    </div>
+  </div>
+
+</section>
+
+
+  </main>
+
+  <script src="./viewer.js"></script>
+
+</body>
+</html>

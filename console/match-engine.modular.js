@@ -25,7 +25,8 @@ import {
 }
 from "./modules/match-overlay.js";
 
-
+import { publishLiveState }
+from "../media/live/live-publisher.js";
 
 import {
   getInvalidMessage,
@@ -1230,16 +1231,26 @@ checkTechFall({
   matchSummaryModal
 });
 
-    events.push(createScoreEvent({
-      state,
-      side,
-      code,
-      rule,
-      videoTime: preview?.currentTime || 0
-    }));
+events.push(createScoreEvent({
+  state,
+  side,
+  code,
+  rule,
+  videoTime: preview?.currentTime || 0
+}));
 
-    renderAll();
-    saveLocalDraft();
+renderAll();
+saveLocalDraft();
+
+publishLiveState({
+  state,
+  events,
+  athleteName:
+    athleteNameInput?.value || "Green",
+
+  opponentName:
+    opponentNameInput?.value || "Red"
+});
 
     btn.style.transform = "scale(.95)";
     setTimeout(() => {
@@ -1553,6 +1564,15 @@ renderControls({
 renderAll();
 
 saveLocalDraft();
+publishLiveState({
+  state,
+  events,
+  athleteName:
+    athleteNameInput?.value || "Green",
+
+  opponentName:
+    opponentNameInput?.value || "Red"
+});
 
 setMode("live");
 if (!matchConfirmed) {

@@ -1,0 +1,145 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #050505;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.live-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.live-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+p {
+  margin: 6px 0 0;
+  color: #aaa;
+}
+
+.viewer-link,
+button {
+  border: 1px solid #d4af37;
+  background: #111;
+  color: #d4af37;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.setup-card,
+.score-card,
+.buttons-card {
+  background: linear-gradient(180deg, #151515, #0b0b0b);
+  border: 1px solid #2b2b2b;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.setup-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: #d4af37;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+input {
+  width: 100%;
+  background: #050505;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.score-card {
+  display: grid;
+  grid-template-columns: 1fr 180px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.score-box {
+  text-align: center;
+  border-radius: 16px;
+  padding: 18px;
+  background: #101010;
+  border: 1px solid #272727;
+}
+
+.score-box span {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.score-box strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 54px;
+}
+
+.score-box.green span {
+  color: #15803d;
+}
+
+.score-box.red span {
+  color: #ef4444;
+}
+
+.clock-box {
+  display: grid;
+  gap: 8px;
+}
+
+.buttons-card {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+button:hover,
+.viewer-link:hover {
+  background: #1a1a1a;
+}
+
+@media (max-width: 720px) {
+  .live-header,
+  .setup-card,
+  .score-card {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .buttons-card {
+    grid-template-columns: 1fr 1fr;
+  }
+}

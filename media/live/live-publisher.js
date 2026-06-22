@@ -1,0 +1,26 @@
+export function publishLiveState({
+  state,
+  events,
+  athleteName,
+  opponentName
+}) {
+  const lastEvent = events[events.length - 1] || null;
+
+  const liveState = {
+    athleteName,
+    opponentName,
+    athleteScore: state.athleteScore,
+    opponentScore: state.opponentScore,
+    position: state.position,
+    round: state.currentRound,
+    clock: state.time,
+    lastEvent
+  };
+
+  console.log("PUBLISH LIVE STATE:", liveState);
+
+  localStorage.setItem(
+    "cornerman_live_state",
+    JSON.stringify(liveState)
+  );
+}

@@ -136,6 +136,7 @@ import { runRecon }
 from "../recon/recon-runner.js";
 
 
+
 const state = createMatchState();
 state.position = "neutral";
 const consoleMode = document.body.dataset.console || "classic";
@@ -912,9 +913,22 @@ updateStartButton({
 // --- CLOCK (separate, always runs on click) ---
 startClock({
   state,
+
   updateClock: () =>
     updateClock({ clockEl, formatTime, state }),
+
   saveLocalDraft,
+
+  publishLiveState: () =>
+    publishLiveState({
+      state,
+      events,
+      athleteName:
+        athleteNameInput?.value || "Green",
+      opponentName:
+        opponentNameInput?.value || "Red"
+    }),
+
   handleRoundComplete,
   setStatus,
   formatRoundLabel
@@ -971,19 +985,22 @@ pauseBtn?.addEventListener("click", () => {
     getMediaRecorder: () => mediaRecorder
   });
 
-  loadReplayFromCurrentChunks({
-    getChunks: () => chunks,
-    reviewPreview,
-    setStatus
-  });
+loadReplayFromCurrentChunks({
+  getChunks: () => chunks,
+  reviewPreview,
+  setStatus
+});
 
-  setMode("review");
+// stay in live mode
 
-  updateStartButton({
-    startBtn,
-    text: "Resume",
-    disabled: false
-  });
+setStatus("Match paused — still live");
+
+updateStartButton({
+  startBtn,
+  text: "Resume",
+  disabled: false
+});
+
 
 });
 
@@ -1125,7 +1142,7 @@ setPositionFromRoundStart(state, startPosition);
 updateStartButton({
   startBtn,
   text: "Start",
-  disabled: true
+  disabled: false
 });
 
     setStatus(`${formatRoundLabel(state.currentRound)} ready — press Start`);
@@ -1475,6 +1492,15 @@ localStorage.setItem(
   matchSummaryModal?.classList.add("hidden");
 
 setStatus("Match saved.");
+publishLiveState({
+  state,
+  events,
+  athleteName:
+    athleteNameInput?.value || "Green",
+
+  opponentName:
+    opponentNameInput?.value || "Red"
+});
 
 const shouldFlash = ["pin", "tech"].includes(state.resultType);
 

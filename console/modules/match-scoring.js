@@ -37,6 +37,29 @@ export function isValidAction(position, side, code) {
     }
   }
 
+  if (position === "green_nearfall") {
+  return side === "athlete"
+    ? ["nf2", "nf3", "nf4"].includes(code)
+    : ["esc1", "rev2"].includes(code);
+}
+
+if (position === "red_nearfall") {
+  return side === "opponent"
+    ? ["nf2", "nf3", "nf4"].includes(code)
+    : ["esc1", "rev2"].includes(code);
+}
+
+if (position === "green_reversal") {
+  if (side === "athlete") return ["nf2", "nf3", "nf4"].includes(code);
+  if (side === "opponent") return ["esc1", "rev2"].includes(code);
+  return false;
+}
+
+if (position === "red_reversal") {
+  if (side === "opponent") return ["nf2", "nf3", "nf4"].includes(code);
+  if (side === "athlete") return ["esc1", "rev2"].includes(code);
+  return false;
+}
   if (position === "red_top") {
     if (side === "opponent") {
       return ["nf2", "nf3", "nf4"].includes(code);
@@ -59,15 +82,21 @@ export function updatePositionAfterScore(state, side, code) {
   }
 
   if (code === "esc1") {
-    state.position =
-      "neutral";
+    state.position = "neutral";
   }
 
   if (code === "rev2") {
     state.position =
       side === "athlete"
-        ? "green_top"
-        : "red_top";
+        ? "green_reversal"
+        : "red_reversal";
+  }
+
+  if (["nf2", "nf3", "nf4"].includes(code)) {
+    state.position =
+      side === "athlete"
+        ? "green_nearfall"
+        : "red_nearfall";
   }
 }
 

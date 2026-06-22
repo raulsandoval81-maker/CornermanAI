@@ -49,6 +49,7 @@ export function startClock({
   state,
   updateClock,
   saveLocalDraft,
+  publishLiveState,
   handleRoundComplete,
   setStatus,
   formatRoundLabel
@@ -64,6 +65,10 @@ export function startClock({
 
     updateClock();
     saveLocalDraft();
+
+    if (publishLiveState) {
+      publishLiveState();
+    }
 
     if (state.time === 0) {
       handleRoundComplete();

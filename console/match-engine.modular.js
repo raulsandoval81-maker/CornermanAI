@@ -156,7 +156,7 @@ window.__cornermanMediaRecorder = mediaRecorder;
 let stream = null;
 window.__cornermanStream = stream;
 let chunks = [];
-
+let lastVideoBlob = null;
 
 /* DOM */
 const statusEl = document.getElementById("status");
@@ -236,6 +236,9 @@ const summaryScoreEl = document.getElementById("summaryScore");
 const summarySuggestedResultEl = document.getElementById("summarySuggestedResult");
 const sandmanColorSelect = document.getElementById("sandmanColor");
 
+
+const connectYouTubeBtn = document.getElementById("connectYouTubeBtn");
+const uploadMatchVideoBtn = document.getElementById("uploadMatchVideoBtn");
 /* HELPERS */
 
 const DEFAULT_FORMAT_BY_WEIGHT_GROUP = {
@@ -893,6 +896,8 @@ console.log("Recorder MIME:", mediaRecorder.mimeType);
         const blob = new Blob(chunks, {
   type: mediaRecorder?.mimeType || "video/mp4"
 });
+lastVideoBlob = blob;
+
         const videoUrl = URL.createObjectURL(blob);
 
         if (preview) {
@@ -1460,6 +1465,34 @@ saveMatchLogBtn?.addEventListener("click", () => {
   saveMatchLogBtn.textContent = "Saved";
 
   setStatus("Saved to match log.");
+});
+connectYouTubeBtn?.addEventListener("click", () => {
+  connectYouTubeUpload();
+});
+
+uploadMatchVideoBtn?.addEventListener("click", async () => {
+  if (!lastVideoBlob) {
+    setStatus("No match video ready to upload.");
+    return;
+  }
+
+  try {
+    setStatus("Uploading match video...");
+
+    const result = await uploadVideoToYouTube({
+      videoBlob: lastVideoBlob,
+      title: `${athleteNameInput?.value || "Green"} vs ${opponentNameInput?.value || "Red"}`,
+      description: "Uploaded from CornermanAI match console",
+      tags: ["CornermanAI", "wrestling"]
+    });
+
+    attachUploadedVideoUrl(result.videoUrl);
+
+    setStatus("YouTube upload complete.");
+  } catch (error) {
+    console.error("YouTube upload failed:", error);
+    setStatus("YouTube upload failed.");
+  }
 });
 
 attachLastUploadBtn?.addEventListener("click", () => {

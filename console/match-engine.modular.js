@@ -128,6 +128,12 @@ import {
 } from "../shared/event-log.js";
 
 import {
+  initYouTubeUploader,
+  connectYouTubeUpload,
+  uploadVideoToYouTube
+} from "../media/youtube-uploader.js";
+
+import {
   initializeAthleteDetailModal
 } from "./modules/athlete-detail-modal.js";
 
@@ -1622,6 +1628,11 @@ updateRefButtonLabels({
   state
 });
 
+initYouTubeUploader({
+  onConnected: () =>
+    console.log("YouTube connected"),
+  onError: console.error
+});
 
 initializeAthleteDetailModal();
 loadTournamentRosterSelect();

@@ -258,6 +258,22 @@
     <section class="post-match-card">
       <h2>Post-Match Pipeline</h2>
 
+      <div class="media-actions">
+  <button id="connectYouTubeBtn" type="button">
+    Connect YouTube
+  </button>
+
+  <button id="uploadMatchVideoBtn" type="button">
+    Upload Match Video
+  </button>
+
+  <input
+    id="videoUrlInput"
+    type="url"
+    placeholder="YouTube URL will appear here"
+  />
+</div>
+
       <div class="post-match-actions">
         <button id="saveMatchLogBtn" type="button">
           Save to Match Log
@@ -296,6 +312,7 @@
 </main>
 
 <div id="finishFlash" class="finish-flash"></div>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script
   type="module"

@@ -193,3 +193,25 @@ footer{
   color:#6b7280;
   font-size:.85rem;
 }
+.top-nav{
+  margin-bottom:24px;
+}
+
+.top-nav a{
+  color:#bbb;
+  text-decoration:none;
+  font-weight:600;
+  transition:.2s;
+}
+
+.top-nav a:hover{
+  color:#fff;
+}
+
+.section-title{
+  margin:40px 0 18px;
+  font-size:1rem;
+  letter-spacing:.12em;
+  color:#888;
+  text-transform:uppercase;
+}

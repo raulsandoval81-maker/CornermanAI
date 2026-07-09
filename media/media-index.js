@@ -1,8 +1,7 @@
 import {
   getMedia,
   saveMedia
-}
-from "./media-library.js";
+} from "./media-library.js";
 
 const MATCH_STORAGE_KEY =
   "cornerman_matches";
@@ -24,11 +23,19 @@ const mediaStatusFilter =
 
 render();
 
+/* ==========================
+   DATA
+========================== */
+
 function getMatches() {
   return JSON.parse(
     localStorage.getItem(MATCH_STORAGE_KEY) || "[]"
   );
 }
+
+/* ==========================
+   RENDER
+========================== */
 
 function render() {
   const media =
@@ -39,6 +46,14 @@ function render() {
 
   populateEventFilter(media);
 
+  const visibleMedia =
+    getFilteredMedia(media);
+
+  renderStats(media);
+  renderMediaList(visibleMedia, matches);
+}
+
+function getFilteredMedia(media) {
   const query =
     (mediaSearch?.value || "")
       .toLowerCase()
@@ -47,199 +62,217 @@ function render() {
   const selectedEvent =
     mediaEventFilter?.value || "";
 
-  const status =
+  const selectedStatus =
     mediaStatusFilter?.value || "all";
 
-  const visibleMedia =
-    media.filter(item => {
-      const searchText =
-        `
-          ${item.title || ""}
-          ${item.videoUrl || ""}
-          ${item.linkedMatchId || ""}
-          ${item.linkedAthlete || ""}
-          ${item.linkedOpponent || ""}
-          ${item.linkedEvent || ""}
-        `
-          .toLowerCase();
+  return media.filter(item => {
+    const searchText =
+      [
+        item.title,
+        item.videoUrl,
+        item.linkedMatchId,
+        item.linkedAthlete,
+        item.linkedOpponent,
+        item.linkedEvent
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
-      const searchMatch =
-        !query ||
-        searchText.includes(query);
+    const matchesSearch =
+      !query ||
+      searchText.includes(query);
 
-      const eventMatch =
-        !selectedEvent ||
-        item.linkedEvent === selectedEvent;
+    const matchesEvent =
+      !selectedEvent ||
+      item.linkedEvent === selectedEvent;
 
-      const statusMatch =
-        status === "all" ||
-        (
-          status === "linked" &&
-          item.linkedMatchId
-        ) ||
-        (
-          status === "unlinked" &&
-          !item.linkedMatchId
-        );
-
-      return (
-        searchMatch &&
-        eventMatch &&
-        statusMatch
+    const matchesStatus =
+      selectedStatus === "all" ||
+      (
+        selectedStatus === "linked" &&
+        item.linkedMatchId
+      ) ||
+      (
+        selectedStatus === "unlinked" &&
+        !item.linkedMatchId
       );
-    });
 
-  const linkedCount =
+    return (
+      matchesSearch &&
+      matchesEvent &&
+      matchesStatus
+    );
+  });
+}
+
+function renderStats(media) {
+  if (!mediaStats) return;
+
+  const linked =
     media.filter(item =>
       item.linkedMatchId
     ).length;
 
-  const unlinkedCount =
-    media.length - linkedCount;
+  const unlinked =
+    media.length - linked;
 
   mediaStats.innerHTML = `
     <p>Total Media: ${media.length}</p>
-    <p>Linked: ${linkedCount}</p>
-    <p>Unlinked: ${unlinkedCount}</p>
+    <p>Linked: ${linked}</p>
+    <p>Unlinked: ${unlinked}</p>
   `;
+}
+
+function renderMediaList(media, matches) {
+  if (!mediaList) return;
 
   if (!media.length) {
-    mediaList.innerHTML =
-      "<p>No media yet.</p>";
-    return;
-  }
-
-  if (!visibleMedia.length) {
     mediaList.innerHTML =
       "<p>No media found.</p>";
     return;
   }
 
   mediaList.innerHTML =
-    visibleMedia
-      .map(item => {
-        const matchOptions =
-          matches
-            .map(match => `
-              <option value="${match.id}">
-                ${match.athlete} vs ${match.opponent}
-                — ${match.eventName || "No Event"}
-                — ${match.result || "Result"}
-                ${match.pointsFor || 0}-${match.pointsAgainst || 0}
-              </option>
-            `)
-            .join("");
-
-        const linkedLabel =
-          item.linkedMatchId
-            ? `
-              <p>
-                <strong>Linked Match:</strong>
-                ${item.linkedAthlete || "Athlete"}
-                vs
-                ${item.linkedOpponent || "Opponent"}
-              </p>
-
-              <p>
-                <strong>Event:</strong>
-                ${item.linkedEvent || "—"}
-              </p>
-
-              <p>
-                <strong>Match ID:</strong>
-                ${item.linkedMatchId}
-              </p>
-            `
-            : `
-              <p>
-                Unlinked
-              </p>
-            `;
-
-        const linkedControls =
-          item.linkedMatchId
-            ? `
-              <div class="media-actions">
-
-                <a
-                  href="../history/match-detail.html?id=${item.linkedMatchId}"
-                >
-                  Open Linked Match
-                </a>
-
-                <button
-                  type="button"
-                  onclick="unlinkMedia('${item.id}')"
-                >
-                  Unlink
-                </button>
-
-              </div>
-            `
-            : `
-              <div class="media-actions">
-
-                <select id="matchSelect-${item.id}">
-                  <option value="">
-                    Select Match
-                  </option>
-
-                  ${matchOptions}
-                </select>
-
-                <button
-                  type="button"
-                  onclick="linkMediaToMatch('${item.id}')"
-                >
-                  Link Media To Match
-                </button>
-
-              </div>
-            `;
-
-        return `
-          <div class="media-row">
-
-            <strong>
-              ${item.title || "Untitled Video"}
-            </strong>
-
-            <p>
-              ${item.videoUrl || ""}
-            </p>
-
-            ${linkedLabel}
-
-            <p>
-              ${
-                item.createdAt
-                  ? new Date(
-                      item.createdAt
-                    ).toLocaleString()
-                  : ""
-              }
-            </p>
-
-            ${
-              item.videoUrl
-                ? `
-                  <a
-                    href="${item.videoUrl}"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    🎥 Watch Video
-                  </a>
-                `
-                : ""
-            }
-
-            ${linkedControls}
-
-          </div>
-        `;
-      })
+    media
+      .map(item =>
+        renderMediaRow(item, matches)
+      )
       .join("");
+}
+
+function renderMediaRow(item, matches) {
+  const createdAt =
+    item.createdAt
+      ? new Date(item.createdAt).toLocaleString()
+      : "";
+
+  return `
+    <div class="media-row">
+
+      <strong>
+        ${item.title || "Untitled Video"}
+      </strong>
+
+      ${
+        item.videoUrl
+          ? `
+            <p class="muted">
+              ${item.videoUrl}
+            </p>
+
+            <a
+              href="${item.videoUrl}"
+              target="_blank"
+              rel="noopener"
+            >
+              Watch Video
+            </a>
+          `
+          : `
+            <p class="muted">
+              No video URL
+            </p>
+          `
+      }
+
+      ${renderLinkedStatus(item)}
+
+      ${
+        createdAt
+          ? `<p class="muted">${createdAt}</p>`
+          : ""
+      }
+
+      ${renderMediaActions(item, matches)}
+
+    </div>
+  `;
+}
+
+function renderLinkedStatus(item) {
+  if (!item.linkedMatchId) {
+    return `
+      <p class="muted">
+        Unlinked
+      </p>
+    `;
+  }
+
+  return `
+    <p>
+      <strong>Linked Match:</strong>
+      ${item.linkedAthlete || "Athlete"}
+      vs
+      ${item.linkedOpponent || "Opponent"}
+    </p>
+
+    <p>
+      <strong>Event:</strong>
+      ${item.linkedEvent || "—"}
+    </p>
+  `;
+}
+
+function renderMediaActions(item, matches) {
+  if (item.linkedMatchId) {
+    return `
+      <div class="media-actions">
+
+        <a
+          href="../history/match-detail.html?id=${item.linkedMatchId}"
+        >
+          Open Match
+        </a>
+
+        <button
+          type="button"
+          onclick="unlinkMedia('${item.id}')"
+        >
+          Unlink
+        </button>
+
+      </div>
+    `;
+  }
+
+  return `
+    <div class="media-actions">
+
+      <select id="matchSelect-${item.id}">
+        <option value="">
+          Select Match
+        </option>
+
+        ${renderMatchOptions(matches)}
+      </select>
+
+      <button
+        type="button"
+        onclick="linkMediaToMatch('${item.id}')"
+      >
+        Link To Match
+      </button>
+
+    </div>
+  `;
+}
+
+function renderMatchOptions(matches) {
+  return matches
+    .map(match => `
+      <option value="${match.id}">
+        ${match.athlete || "Athlete"}
+        vs
+        ${match.opponent || "Opponent"}
+        —
+        ${match.eventName || "No Event"}
+        —
+        ${match.result || "Result"}
+        ${match.pointsFor || 0}-${match.pointsAgainst || 0}
+      </option>
+    `)
+    .join("");
 }
 
 function populateEventFilter(media) {
@@ -276,15 +309,16 @@ function populateEventFilter(media) {
     currentValue;
 }
 
+/* ==========================
+   ACTIONS
+========================== */
+
 window.linkMediaToMatch =
   function linkMediaToMatch(mediaId) {
-    const select =
-      document.getElementById(
-        `matchSelect-${mediaId}`
-      );
-
     const matchId =
-      select?.value || "";
+      document
+        .getElementById(`matchSelect-${mediaId}`)
+        ?.value || "";
 
     if (!matchId) {
       alert("Select a match first.");
@@ -299,55 +333,44 @@ window.linkMediaToMatch =
 
     const mediaIndex =
       media.findIndex(item =>
-        String(item.id) ===
-        String(mediaId)
+        String(item.id) === String(mediaId)
       );
 
     const matchIndex =
       matches.findIndex(match =>
-        String(match.id) ===
-        String(matchId)
+        String(match.id) === String(matchId)
       );
 
-    if (
-      mediaIndex < 0 ||
-      matchIndex < 0
-    ) {
-      alert(
-        "Media or match not found."
-      );
+    if (mediaIndex < 0 || matchIndex < 0) {
+      alert("Media or match not found.");
       return;
     }
 
     const match =
       matches[matchIndex];
 
+    const selectedMedia =
+      media[mediaIndex];
+
     media[mediaIndex] = {
-      ...media[mediaIndex],
-      linkedMatchId: matchId,
+      ...selectedMedia,
+      linkedMatchId: String(match.id),
       linkedAthlete: match.athlete || "",
       linkedOpponent: match.opponent || "",
       linkedEvent: match.eventName || "",
-      linkedAt:
-        new Date().toISOString()
+      linkedAt: new Date().toISOString()
     };
 
     matches[matchIndex] = {
-      ...matches[matchIndex],
-      videoUrl:
-        media[mediaIndex].videoUrl,
+      ...match,
+      videoUrl: selectedMedia.videoUrl || "",
       videoHost: "youtube",
       videoVisibility: "unlisted",
-      videoAttachedAt:
-        new Date().toISOString()
+      videoAttachedAt: new Date().toISOString()
     };
 
     saveMedia(media);
-
-    localStorage.setItem(
-      MATCH_STORAGE_KEY,
-      JSON.stringify(matches)
-    );
+    saveMatches(matches);
 
     render();
   };
@@ -362,17 +385,13 @@ window.unlinkMedia =
 
     const mediaIndex =
       media.findIndex(item =>
-        String(item.id) ===
-        String(mediaId)
+        String(item.id) === String(mediaId)
       );
 
-    if (mediaIndex < 0) {
-      return;
-    }
+    if (mediaIndex < 0) return;
 
     const linkedMatchId =
-      media[mediaIndex]
-        .linkedMatchId;
+      media[mediaIndex].linkedMatchId;
 
     media[mediaIndex] = {
       ...media[mediaIndex],
@@ -380,15 +399,13 @@ window.unlinkMedia =
       linkedAthlete: "",
       linkedOpponent: "",
       linkedEvent: "",
-      unlinkedAt:
-        new Date().toISOString()
+      unlinkedAt: new Date().toISOString()
     };
 
     if (linkedMatchId) {
       const matchIndex =
         matches.findIndex(match =>
-          String(match.id) ===
-          String(linkedMatchId)
+          String(match.id) === String(linkedMatchId)
         );
 
       if (matchIndex >= 0) {
@@ -398,14 +415,10 @@ window.unlinkMedia =
           videoHost: "",
           videoVisibility: "",
           videoAttachedAt: "",
-          videoUnlinkedAt:
-            new Date().toISOString()
+          videoUnlinkedAt: new Date().toISOString()
         };
 
-        localStorage.setItem(
-          MATCH_STORAGE_KEY,
-          JSON.stringify(matches)
-        );
+        saveMatches(matches);
       }
     }
 
@@ -413,6 +426,17 @@ window.unlinkMedia =
 
     render();
   };
+
+function saveMatches(matches) {
+  localStorage.setItem(
+    MATCH_STORAGE_KEY,
+    JSON.stringify(matches)
+  );
+}
+
+/* ==========================
+   EVENTS
+========================== */
 
 mediaSearch?.addEventListener(
   "input",

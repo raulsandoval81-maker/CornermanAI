@@ -106,59 +106,78 @@ function getFilteredMatches(matches) {
   });
 }
 
-function render(matches) {
-  const filtered =
-    getFilteredMatches(matches)
-      .slice()
-      .reverse();
+function renderMatchRow(match) {
+  const videoButton =
+    match.videoUrl
+      ? `
+        <a
+          href="${match.videoUrl}"
+          target="_blank"
+          rel="noopener"
+        >
+          Watch Video
+        </a>
+      `
+      : `
+        <span class="muted">
+          Needs Video
+        </span>
+      `;
 
-  const total =
-    matches.length;
+  const eventName =
+    match.eventName || "Practice";
 
-  const withVideo =
-    matches.filter(match =>
-      match.videoUrl
-    ).length;
+  const weight =
+    match.weightClass || "—";
 
-  const needsVideo =
-    total - withVideo;
+  const savedDate =
+    match.savedAt
+      ? new Date(match.savedAt).toLocaleDateString()
+      : "";
 
-  if (historyStats) {
-    historyStats.innerHTML = `
-      <p>Total Matches: ${total}</p>
-      <p>With Video: ${withVideo}</p>
-      <p>Needs Video: ${needsVideo}</p>
-    `;
-  }
+  return `
+    <div class="match-row">
 
-  if (!filtered.length) {
-    historyList.innerHTML =
-      "<p>No matches found.</p>";
-    return;
-  }
+      <div>
+        <strong>
+          ${match.athlete || "Green Wrestler"}
+          vs
+          ${match.opponent || "Red Wrestler"}
+        </strong>
 
-  const visible =
-    showAll
-      ? filtered
-      : filtered.slice(0, RECENT_LIMIT);
+        <p>
+          ${eventName}
+          ·
+          ${weight}
+          ${savedDate ? `· ${savedDate}` : ""}
+        </p>
+      </div>
 
-  historyList.innerHTML =
-    visible
-      .map(renderMatchRow)
-      .join("");
+      <div>
+        <p>
+          ${match.result || "Result"}
+          by
+          ${match.method || "Decision"}
+        </p>
 
-  if (!showAll && filtered.length > RECENT_LIMIT) {
-    historyList.innerHTML += `
-      <button
-        type="button"
-        onclick="showAllMatches()"
-      >
-        View All Matches
-      </button>
-    `;
-  }
+        <p>
+          ${match.pointsFor || 0}
+          -
+          ${match.pointsAgainst || 0}
+        </p>
+      </div>
+
+      <div class="match-row-actions">
+        <a href="./match-detail.html?id=${match.id}">
+          Open Match
+        </a>
+
+        ${videoButton}
+      </div>
+
+    </div>
+  `;
 }
-
 function renderMatchRow(match) {
   const videoButton =
     match.videoUrl

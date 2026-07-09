@@ -38,38 +38,6 @@
     Live mode
   </div>
 
-  <section id="matchSetup" class="hidden">
-
-    <input id="eventNameInput" type="hidden" />
-
-    <select id="athleteSelect" class="hidden">
-      <option value="">Select Athlete</option>
-    </select>
-
-    <select id="sandmanColor" class="hidden">
-      <option value="green">Athlete = Green</option>
-      <option value="red">Athlete = Red</option>
-    </select>
-
-    <select id="weightGroupSelect" class="hidden">
-      <option value="">Select Group</option>
-    </select>
-
-    <input id="weightClassInput" type="hidden" />
-    <input id="customWeightClassInput" type="hidden" />
-    <input id="redTeamInput" type="hidden" />
-    <input id="opponentName" type="hidden" />
-    <input id="greenTeamInput" type="hidden" />
-    <input id="athleteName" type="hidden" />
-
-    <button
-      id="confirmMatchSetup"
-      type="button"
-      class="hidden"
-    >
-      Confirm Match
-    </button>
-
   </section>
 
   <section class="match-card round-flow-card">
@@ -295,24 +263,49 @@
 
   </section>
 
-  <section id="athleteDetailModal" class="match-summary-modal hidden">
-    <div class="match-summary-card">
-      <h2 id="athleteDetailName">Athlete Details</h2>
+<section id="insightModal" class="match-summary-modal hidden">
 
-      <p id="athleteDetailTeam">Team: —</p>
-      <p id="athleteDetailColor">Side: —</p>
-      <p id="athleteDetailScore">Score: —</p>
+  <div class="match-summary-card">
 
-      <button id="closeAthleteDetail" type="button">
-        Close
-      </button>
+    <h2>Match Insights</h2>
+
+    <p>
+      Coming Soon
+    </p>
+
+    <div class="placeholder-list">
+
+      <div>🎥 Video Breakdown</div>
+
+      <div>🧠 AI Match Analysis</div>
+
+      <div>📈 Momentum Graph</div>
+
+      <div>⚠ Scoring Errors</div>
+
+      <div>🥋 Skill Recommendations</div>
+
+      <div>📝 Coach Report</div>
+
+      <div>🎯 Athlete Feedback</div>
+
     </div>
-  </section>
+
+    <button
+      id="closeInsightModal"
+      type="button"
+    >
+      Close
+    </button>
+
+  </div>
+
+</section>
 
 </main>
 
 <div id="finishFlash" class="finish-flash"></div>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client"></script>
 
 <script
   type="module"

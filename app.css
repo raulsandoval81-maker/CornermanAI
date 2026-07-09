@@ -19,11 +19,10 @@ body{
 
 .app-shell{
   min-height:100vh;
-  max-width:1200px;
+  max-width:900px;
   margin:0 auto;
   padding:40px 24px;
 }
-
 /* ==========================
    HERO
 ========================== */
@@ -208,10 +207,120 @@ footer{
   color:#fff;
 }
 
-.section-title{
-  margin:40px 0 18px;
+@media(max-width:700px){
+  .match-corners{
+    grid-template-columns:1fr;
+  }
+}
+.match-meta-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:16px;
+}
+
+.match-corners{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.corner-card{
+  padding:16px;
+  border-radius:14px;
+  background:#111;
+  border:1px solid #252525;
+}
+
+.corner-card h3{
+  margin:0 0 14px;
   font-size:1rem;
-  letter-spacing:.12em;
-  color:#888;
-  text-transform:uppercase;
+}
+
+.inline-field{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:10px;
+}
+
+@media(max-width:700px){
+  .match-meta-grid,
+  .match-corners{
+    grid-template-columns:1fr;
+  }
+
+  .inline-field{
+    grid-template-columns:1fr;
+  }
+}
+/* ==========================
+   MATCH DETAIL
+========================== */
+
+.card,
+.match-card,
+.review-card{
+  border-radius:12px;
+  padding:20px 24px;
+  margin-bottom:16px;
+}
+
+/* Hero */
+
+.hero{
+  border-radius:14px;
+  padding:32px 28px;
+}
+
+/* Headings */
+
+.card h2{
+  margin:4px 0 14px;
+  font-size:1.4rem;
+}
+
+.card h3{
+  margin:0 0 10px;
+}
+
+/* Detail rows */
+
+.match-detail p{
+  margin:8px 0;
+  line-height:1.45;
+}
+
+/* Timeline */
+
+.match-row{
+  padding:12px 0;
+  border-bottom:1px solid #ece7d8;
+}
+
+.match-row:last-child{
+  border-bottom:none;
+}
+
+/* Buttons */
+
+button,
+.primary-btn,
+a.button{
+  border-radius:8px;
+}
+
+/* Links */
+
+a{
+  text-decoration:none;
+}
+
+a:hover{
+  text-decoration:underline;
+}
+.app-shell{
+  max-width:900px;
+}
+
+.card{
+  margin-bottom:14px;
 }

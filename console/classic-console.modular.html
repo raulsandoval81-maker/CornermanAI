@@ -3,15 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Coach Console V2</title>
-  <link rel="stylesheet" href="./classic-console.css">
-  <link rel="icon" href="data:,"> 
+
+  <title>Coach Console | Classic</title>
+
+  <link rel="stylesheet" href="./classic-console.css" />
+  <link rel="icon" href="data:," />
 </head>
+
 <body data-console="classic">
+
 <main class="wrap">
 
   <header class="topbar">
-
     <div class="mode-switch">
       <button id="liveMode" class="mode active" type="button">LIVE</button>
       <button id="reviewMode" class="mode" type="button">REVIEW</button>
@@ -24,91 +27,10 @@
     </div>
   </header>
 
-<div id="status" class="status-line">Live mode</div>
+  <div id="status" class="status-line">
+    Live mode
+  </div>
 
-<section id="matchSetup" class="hidden">
-
-  <input
-    id="eventNameInput"
-    type="hidden"
-  />
-
-  <select
-    id="athleteSelect"
-    class="hidden"
-  >
-    <option value="">
-      Select Athlete
-    </option>
-  </select>
-
-  <select
-    id="sandmanColor"
-    class="hidden"
-  >
-    <option value="green">
-      Athlete = Green
-    </option>
-
-    <option value="red">
-      Athlete = Red
-    </option>
-  </select>
-
-  <select
-    id="weightGroupSelect"
-    class="hidden"
-  >
-    <option value="">
-      Select Group
-    </option>
-  </select>
-
-  <select
-    id="weightClassInput"
-    class="hidden"
-  >
-    <option value="">
-      Select Weight
-    </option>
-  </select>
-
-  <input
-    id="customWeightClassInput"
-    type="hidden"
-  />
-
-  <input
-    id="redTeamInput"
-    type="hidden"
-  />
-
-  <input
-    id="opponentName"
-    type="hidden"
-  />
-
-  <input
-    id="greenTeamInput"
-    type="hidden"
-  />
-
-  <input
-    id="athleteName"
-    type="hidden"
-  />
-
-  <button
-    id="confirmMatchSetup"
-    type="button"
-    class="hidden"
-  >
-    Confirm Match
-  </button>
-
-</section>
-
-</section>
   <section class="match-card round-flow-card">
     <div class="match-meta-strip">
       <span id="eventNameDisplay">Event: —</span>
@@ -116,49 +38,48 @@
     </div>
 
     <div class="match-header match-hud">
-   <div class="header-side red">
 
-  <div class="athlete-row">
-    <strong id="redDisplayName">Athlete A</strong>
-  </div>
+      <div class="header-side red">
+        <div class="athlete-row">
+          <strong id="redDisplayName">Red Wrestler</strong>
+        </div>
 
-  <div class="team-row red-text" id="redTeam">
-    Team
-  </div>
+        <div class="team-row red-text" id="redTeam">
+          Team
+        </div>
 
-  <strong id="opponentScore" class="hud-score">0</strong>
+        <strong id="opponentScore" class="hud-score">0</strong>
+      </div>
 
-</div>
-
-    <div class="header-round">
+      <div class="header-round">
         <span>ROUND</span>
         <strong id="currentRound">R1</strong>
         <strong id="clock">2:00</strong>
-        <div id="positionIndicator" class="position-indicator">NEUTRAL</div>
+        <div id="positionIndicator" class="position-indicator">
+          NEUTRAL
+        </div>
       </div>
 
-<div class="header-side green">
+      <div class="header-side green">
+        <div class="athlete-row">
+          <strong id="greenDisplayName">Green Wrestler</strong>
+        </div>
 
-  
+        <div class="team-row green-text" id="greenTeam">
+          Team
+        </div>
 
-  <div class="athlete-row">
-    <strong id="greenDisplayName">Athlete B</strong>
-  </div>
+        <strong id="athleteScore" class="hud-score">0</strong>
+      </div>
 
-  <div class="team-row green-text" id="greenTeam">
-    Team
-  </div>
+    </div>
 
-  <strong id="athleteScore" class="hud-score">0</strong>
-
-</div>
-
-      <div id="chooserPanel" class="choice-panel hidden">
+    <div id="chooserPanel" class="choice-panel hidden">
       <strong>WHO HAS CHOICE?</strong>
       <button id="greenChooserBtn" type="button">GREEN</button>
       <button id="redChooserBtn" type="button">RED</button>
     </div>
-</div>
+
     <div id="choicePanel" class="choice-panel hidden">
       <strong id="choiceOwnerLabel">CHOICE</strong>
       <button type="button" data-choice="top">Top</button>
@@ -203,36 +124,35 @@
       <button id="arenaModeToggle" type="button">Arena</button>
     </div>
 
-    
     <div id="matchActionsPanel" class="match-actions-panel hidden">
-  <button id="toggleAdjustClock" type="button">Adjust Clock</button>
-  <button id="toggleAdjustScore" type="button">Adjust Score</button>
-  <button id="undoBtn" type="button">Undo Last Action</button>
-  <button id="resetClock" type="button">Reset Clock</button>
-  <button id="resetMatch" type="button">Reset Match</button>
+      <button id="toggleAdjustClock" type="button">Adjust Clock</button>
+      <button id="toggleAdjustScore" type="button">Adjust Score</button>
+      <button id="undoBtn" type="button">Undo Last Action</button>
+      <button id="resetClock" type="button">Reset Clock</button>
+      <button id="resetMatch" type="button">Reset Match</button>
 
-  <button type="button" data-ref-call="caution" data-side="opponent" class="btn-red">RED CAU</button>
-  <button type="button" data-ref-call="caution" data-side="athlete" class="btn-green">GRN CAU</button>
+      <button type="button" data-ref-call="caution" data-side="opponent" class="btn-red">RED CAU</button>
+      <button type="button" data-ref-call="caution" data-side="athlete" class="btn-green">GRN CAU</button>
 
-  <button type="button" data-ref-call="stall" data-side="opponent" class="btn-red">RED STL</button>
-  <button type="button" data-ref-call="stall" data-side="athlete" class="btn-green">GRN STL</button>
+      <button type="button" data-ref-call="stall" data-side="opponent" class="btn-red">RED STL</button>
+      <button type="button" data-ref-call="stall" data-side="athlete" class="btn-green">GRN STL</button>
 
-  <button type="button" data-ref-call="lockedHands" data-side="opponent" class="btn-red">RED LH</button>
-  <button type="button" data-ref-call="lockedHands" data-side="athlete" class="btn-green">GRN LH</button>
-</div>
-      <div id="adjustClockPanel" class="adjust-clock-panel hidden">
-        <button type="button" data-adjust-time="-10">-10</button>
-        <button type="button" data-adjust-time="-1">-1</button>
-        <button type="button" data-adjust-time="1">+1</button>
-        <button type="button" data-adjust-time="10">+10</button>
-      </div>
+      <button type="button" data-ref-call="lockedHands" data-side="opponent" class="btn-red">RED LH</button>
+      <button type="button" data-ref-call="lockedHands" data-side="athlete" class="btn-green">GRN LH</button>
+    </div>
 
-      <div id="adjustScorePanel" class="adjust-score-panel hidden">
-        <button type="button" data-adjust-score-side="opponent" data-adjust-score="-1">Red -1</button>
-        <button type="button" data-adjust-score-side="opponent" data-adjust-score="1">Red +1</button>
-        <button type="button" data-adjust-score-side="athlete" data-adjust-score="-1">Green -1</button>
-        <button type="button" data-adjust-score-side="athlete" data-adjust-score="1">Green +1</button>
-      </div>
+    <div id="adjustClockPanel" class="adjust-clock-panel hidden">
+      <button type="button" data-adjust-time="-10">-10</button>
+      <button type="button" data-adjust-time="-1">-1</button>
+      <button type="button" data-adjust-time="1">+1</button>
+      <button type="button" data-adjust-time="10">+10</button>
+    </div>
+
+    <div id="adjustScorePanel" class="adjust-score-panel hidden">
+      <button type="button" data-adjust-score-side="opponent" data-adjust-score="-1">Red -1</button>
+      <button type="button" data-adjust-score-side="opponent" data-adjust-score="1">Red +1</button>
+      <button type="button" data-adjust-score-side="athlete" data-adjust-score="-1">Green -1</button>
+      <button type="button" data-adjust-score-side="athlete" data-adjust-score="1">Green +1</button>
     </div>
   </section>
 
@@ -241,12 +161,19 @@
       <h2>Match Summary</h2>
 
       <h3>Winner</h3>
+
       <div class="winner-row">
-        <button type="button" data-winner="opponent" class="winner-btn red">RED WINS</button>
-        <button type="button" data-winner="athlete" class="winner-btn green">GREEN WINS</button>
+        <button type="button" data-winner="opponent" class="winner-btn red">
+          RED WINS
+        </button>
+
+        <button type="button" data-winner="athlete" class="winner-btn green">
+          GREEN WINS
+        </button>
       </div>
 
       <h3>Win Type</h3>
+
       <div class="finish-type-row">
         <button type="button" data-finish-type="decision">Decision</button>
         <button type="button" data-finish-type="major">Major</button>
@@ -258,7 +185,9 @@
 
       <div class="summary-actions">
         <button id="closeMatchSummary" type="button">Cancel</button>
-        <button id="endMatch" class="save-primary" type="button">Save Match</button>
+        <button id="endMatch" class="save-primary" type="button">
+          Save Match
+        </button>
       </div>
     </div>
   </section>
@@ -273,6 +202,7 @@
 
     <section class="bout-card review-result-card">
       <h2>Match Result</h2>
+
       <div class="result-display">
         <div id="reviewWinner">Winner: —</div>
         <div id="reviewResult">Result: —</div>
@@ -296,55 +226,111 @@
 
     <section class="notes-card">
       <label>Coach Notes</label>
-      <textarea id="coachNotes" placeholder="1 win. 1 fix."></textarea>
+
+      <textarea
+        id="coachNotes"
+        placeholder="1 win. 1 fix."
+      ></textarea>
     </section>
-    <button id="attachLastUploadBtn" type="button">
-  Attach Last Upload
-</button>
 
-    <section class="notes-card">
+    <section class="post-match-card">
+      <h2>Post-Match Pipeline</h2>
 
-  <label>Video URL</label>
+<div class="media-actions">
+
+  <button
+    id="connectYouTubeBtn"
+    type="button"
+  >
+    Connect YouTube
+  </button>
+
+  <button
+    id="uploadMatchVideoBtn"
+    type="button"
+  >
+    Upload Match Video
+  </button>
 
   <input
     id="videoUrlInput"
     type="url"
-    placeholder="Paste YouTube link"
+    placeholder="YouTube URL will appear here"
+    readonly
   />
 
-</section>
+</div>
 
-    <section class="post-match-card">
-      <h2>Post-Match Pipeline</h2>
       <div class="post-match-actions">
         <button id="saveMatchLogBtn" type="button">
-  Save to Match Log
-</button>
-        <button type="button" disabled>Send Athlete Feedback</button>
-        <button type="button" disabled>View Stats Report</button>
+          Save to Match Log
+        </button>
+
+        <button type="button" disabled>
+          Send Athlete Feedback
+        </button>
+
+        <button type="button" disabled>
+          View Stats Report
+        </button>
       </div>
-      <p>Future layer only. Coach Console remains the source of truth for now.</p>
+
+      <p>
+        Future layer only. Coach Console remains the source of truth for now.
+      </p>
     </section>
 
   </section>
-  <section id="athleteDetailModal" class="match-summary-modal hidden">
+
+<section id="insightModal" class="match-summary-modal hidden">
+
   <div class="match-summary-card">
-    <h2 id="athleteDetailName">Athlete Details</h2>
 
-    <p id="athleteDetailTeam">Team: —</p>
-    <p id="athleteDetailColor">Side: —</p>
-    <p id="athleteDetailScore">Score: —</p>
+    <h2>Match Insights</h2>
 
-    <button id="closeAthleteDetail" type="button">
+    <p>
+      Coming Soon
+    </p>
+
+    <div class="placeholder-list">
+
+      <div>🎥 Video Breakdown</div>
+
+      <div>🧠 AI Match Analysis</div>
+
+      <div>📈 Momentum Graph</div>
+
+      <div>⚠ Scoring Errors</div>
+
+      <div>🥋 Skill Recommendations</div>
+
+      <div>📝 Coach Report</div>
+
+      <div>🎯 Athlete Feedback</div>
+
+    </div>
+
+    <button
+      id="closeInsightModal"
+      type="button"
+    >
       Close
     </button>
+
   </div>
+
 </section>
 
 </main>
 
 <div id="finishFlash" class="finish-flash"></div>
 
-<script type="module" src="./match-engine.modular.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
+
+<script
+  type="module"
+  src="./match-engine.modular.js"
+></script>
+
 </body>
 </html>

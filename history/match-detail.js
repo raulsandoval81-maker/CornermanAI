@@ -41,6 +41,9 @@ const match =
     String(item.id) === String(matchId)
   );
 
+console.log("MATCH", match);
+console.log("VIDEO URL", match?.videoUrl);
+
 if (!matchId) {
   matchTitle.textContent =
     "Match Detail";

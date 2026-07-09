@@ -1503,3 +1503,18 @@ button[data-ref-call="lockedHands"] {
 .hud-wrap {
   margin-top: 32px;
 }
+.media-actions{
+  display:grid;
+  gap:10px;
+  margin:14px 0;
+}
+
+.media-actions button,
+.media-actions input{
+  width:100%;
+}
+
+.media-actions input{
+  padding:12px;
+  border-radius:10px;
+}

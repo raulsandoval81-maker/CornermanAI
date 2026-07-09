@@ -21,13 +21,9 @@
 <main class="app-shell">
 
   <section class="hero">
-    <p class="eyebrow">
-      CORE
-    </p>
+    <p class="eyebrow">CORE</p>
 
-    <h1>
-      Launch Match
-    </h1>
+    <h1>Launch Match</h1>
 
     <p class="sub">
       Prepare match information or start immediately.
@@ -35,13 +31,9 @@
   </section>
 
   <section class="card">
-    <span>
-      TOURNAMENT CONTEXT
-    </span>
+    <span>TOURNAMENT CONTEXT</span>
 
-    <strong>
-      Current Event
-    </strong>
+    <strong>Current Event</strong>
 
     <div id="currentTournamentContext">
       No active tournament context.
@@ -49,16 +41,14 @@
   </section>
 
   <section class="card">
-    <span>
-      MATCH SETUP
-    </span>
+    <span>MATCH SETUP</span>
 
-    <strong>
-      Match Information
-    </strong>
+    <strong>Match Information</strong>
 
-    <div class="form-stack">
 
+
+
+      <div class="match-meta-grid">
       <label>
         Event
         <input
@@ -67,110 +57,145 @@
           placeholder="Dual / Tournament / Practice"
         />
       </label>
+              <label>
+  Console View
+  <select id="consoleViewSelect">
+    <option value="compact" selected>Compact Console</option>
+    <option value="classic">Classic Console</option>
+    <option value="overlay">Overlay Console</option>
+  </select>
+</label>
 
-      <label>
-        Tournament Roster
-        <select id="athleteSelect">
-          <option value="">
-            Select Athlete
-          </option>
-        </select>
-      </label>
+        <label>
+          Weight Group
+          <select id="weightGroupSelect">
+            <option value="">Select Group</option>
+            <option value="youth">Youth</option>
+            <option value="juniorHighBoys">Junior High Boys</option>
+            <option value="juniorHighGirls">Junior High Girls</option>
+            <option value="highSchoolBoys">High School Boys</option>
+            <option value="highSchoolGirls">High School Girls</option>
+            <option value="collegeMen">College Men</option>
+            <option value="collegeWomen">College Women</option>
+          </select>
+        </label>
 
-      <label>
-        Manual Athlete Name
-        <input
-          id="manualAthleteName"
-          type="text"
-          placeholder="Only if athlete is not in roster"
-        />
-      </label>
+        <label>
+          Weight
+          <select id="weightClassInput">
+            <option value="">Select Weight</option>
+          </select>
+        </label>
 
-      <label>
-        Athlete Side
-        <select id="sandmanColor">
-          <option value="green">
-            Athlete = Green
-          </option>
+        <label>
+          Match Time
+          <select id="matchTimeInput">
+            <option value="">Default Time</option>
+            <option value="1-1-1">1-1-1</option>
+            <option value="1.5-1.5-1.5">1:30-1:30-1:30</option>
+            <option value="2-2-2">2-2-2</option>
+            <option value="3-2-2">3-2-2</option>
+          </select>
+        </label>
 
-          <option value="red">
-            Athlete = Red
-          </option>
-        </select>
-      </label>
 
-      <label>
-        Weight Group
-        <select id="weightGroupSelect">
-          <option value="">
-            Select Group
-          </option>
+        <label>
+          Custom Weight
+          <input
+            id="customWeightClassInput"
+            type="text"
+            placeholder="Only if not listed"
+          />
+        </label>
 
-          <option value="youth">
-            Youth
-          </option>
+      </div>
 
-          <option value="juniorHighBoys">
-            Junior High Boys
-          </option>
+      <div class="match-corners">
 
-          <option value="juniorHighGirls">
-            Junior High Girls
-          </option>
+<section class="corner-card">
+  <h3>Team A</h3>
 
-          <option value="highSchoolBoys">
-            High School Boys
-          </option>
+  <label>
+    Wrestler A
+    <div class="inline-field">
+      <select id="athleteMode">
+        <option value="manual">Manual</option>
+        <option value="roster" selected>Roster</option>
+      </select>
 
-          <option value="highSchoolGirls">
-            High School Girls
-          </option>
+      <select id="athleteSelect">
+        <option value="">Select Wrestler A</option>
+      </select>
 
-          <option value="collegeMen">
-            College Men
-          </option>
+      <input
+        id="manualAthleteName"
+        type="text"
+        placeholder="Type Wrestler A"
+        hidden
+      />
+    </div>
+  </label>
 
-          <option value="collegeWomen">
-            College Women
-          </option>
-        </select>
-      </label>
+  <label>
+    Team A
+    <input
+      id="teamAInput"
+      type="text"
+      placeholder="Team A"
+    />
+  </label>
 
-      <label>
-        Weight
-        <select id="weightClassInput">
-          <option value="">
-            Select Weight
-          </option>
-        </select>
-      </label>
+  <label>
+    Color
+    <select id="sandmanColor">
+      <option value="green" selected>Green</option>
+      <option value="red">Red</option>
+    </select>
+  </label>
+</section>
 
-      <label>
-        Custom Weight
-        <input
-          id="customWeightClassInput"
-          type="text"
-          placeholder="Only if not listed"
-        />
-      </label>
+<section class="corner-card">
+  <h3>Team B</h3>
 
-      <label>
-        Opponent Team
-        <input
-          id="redTeamInput"
-          type="text"
-          placeholder="Opponent team"
-        />
-      </label>
+  <label>
+    Wrestler B
+    <div class="inline-field">
+      <select id="opponentMode">
+        <option value="manual" selected>Manual</option>
+        <option value="known">Known</option>
+      </select>
 
-      <label>
-        Opponent Wrestler
-        <input
-          id="opponentName"
-          type="text"
-          placeholder="Opponent wrestler"
-        />
-      </label>
+      <select id="knownOpponentSelect" hidden>
+        <option value="">Select Known Wrestler B</option>
+      </select>
+
+      <input
+        id="opponentName"
+        type="text"
+        placeholder="Type Wrestler B"
+      />
+    </div>
+  </label>
+
+  <label>
+    Team B
+    <input
+      id="redTeamInput"
+      type="text"
+      placeholder="Team B"
+    />
+  </label>
+
+  <label>
+    Color
+    <select id="opponentColor">
+      <option value="red" selected>Red</option>
+      <option value="green">Green</option>
+    </select>
+  </label>
+</section>
+
+      </div>
 
     </div>
 
@@ -183,13 +208,9 @@
   </section>
 
   <section class="card">
-    <span>
-      FAST START
-    </span>
+    <span>FAST START</span>
 
-    <strong>
-      Practice Mode
-    </strong>
+    <strong>Practice Mode</strong>
 
     <p>
       Skip setup and start scoring immediately.
@@ -205,9 +226,7 @@
   </section>
 
   <section class="card">
-    <span>
-      BACK
-    </span>
+    <span>BACK</span>
 
     <a href="./">
       Console Command Center

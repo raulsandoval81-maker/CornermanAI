@@ -128,6 +128,10 @@ import {
 } from "../shared/event-log.js";
 
 import {
+  runIntelligence
+} from "../analysis/intelligence-runner.js";
+
+import {
   initYouTubeUploader,
   connectYouTubeUpload,
   uploadVideoToYouTube
@@ -612,52 +616,53 @@ function saveMatchToHistory() {
         ?.trim() || ""
   };
 
+  const intelligence =
+    runIntelligence(match);
+
+  const matchWithIntelligence = {
+    ...match,
+    intelligence,
+    intelligenceRanAt:
+      new Date().toISOString()
+  };
+
   const matches = JSON.parse(
     localStorage.getItem("cornerman_matches") || "[]"
   );
-const alreadySaved =
-  matches.some(saved =>
-    saved.athlete === match.athlete &&
-    saved.opponent === match.opponent &&
-    saved.eventName === match.eventName &&
-    saved.weightClass === match.weightClass &&
-    saved.athleteScore === match.athleteScore &&
-    saved.opponentScore === match.opponentScore &&
-    saved.currentRound === match.currentRound
-  );
 
-if (alreadySaved) {
-  const index = matches.findIndex(saved =>
+  const matchIdentity = saved =>
     saved.athlete === match.athlete &&
     saved.opponent === match.opponent &&
     saved.eventName === match.eventName &&
     saved.weightClass === match.weightClass &&
     saved.athleteScore === match.athleteScore &&
     saved.opponentScore === match.opponentScore &&
-    saved.currentRound === match.currentRound
-  );
+    saved.currentRound === match.currentRound;
+
+  const index =
+    matches.findIndex(matchIdentity);
 
   if (index >= 0) {
     matches[index] = {
       ...matches[index],
-      videoUrl: match.videoUrl,
-      notes: match.notes,
-      updatedAt: new Date().toISOString()
+      ...matchWithIntelligence,
+      updatedAt:
+        new Date().toISOString()
     };
 
     localStorage.setItem(
       "cornerman_matches",
       JSON.stringify(matches)
     );
+
+    setStatus("Match updated.");
+    return matchWithIntelligence;
   }
 
-  setStatus("Match updated.");
-  return match;
-}
-
   matches.push({
-    ...match,
-    savedToMatchLogAt: new Date().toISOString()
+    ...matchWithIntelligence,
+    savedToMatchLogAt:
+      new Date().toISOString()
   });
 
   localStorage.setItem(
@@ -665,7 +670,7 @@ if (alreadySaved) {
     JSON.stringify(matches)
   );
 
-  return match;
+  return matchWithIntelligence;
 }
 
 /* MODE */

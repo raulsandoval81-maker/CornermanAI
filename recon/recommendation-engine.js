@@ -1,39 +1,81 @@
-export function buildRecommendations(match = {}, analysis = {}) {
+export function buildRecommendations(
+  match = {},
+  analysis = {}
+) {
   const recommendations = [];
 
-  const takedowns =
-    Number(match.takedowns || analysis.takedowns || 0);
+  const patterns =
+    analysis.patterns || [];
 
-  const nearfall =
-    Number(match.nearfall || analysis.nearfall || 0);
-
-  const pointsAgainst =
-    Number(match.pointsAgainst || 0);
-
-  if (takedowns === 0) {
+  if (patterns.includes("neutral-defense")) {
     recommendations.push({
       type: "skill",
       priority: "high",
-      title: "Improve neutral offense",
-      focus: "Create first scoring opportunities from neutral."
+      title: "Strengthen neutral defense",
+      focus: "Improve stance, hand fighting, down-blocks, and sprawl reactions."
     });
   }
 
-  if (nearfall === 0) {
+  if (patterns.includes("neutral-offense")) {
+    recommendations.push({
+      type: "maintain",
+      priority: "medium",
+      title: "Continue attacking first",
+      focus: "Build setup-to-shot chains and finish cleanly."
+    });
+  }
+
+  if (patterns.includes("strong-bottom")) {
+    recommendations.push({
+      type: "maintain",
+      priority: "medium",
+      title: "Keep developing bottom wrestling",
+      focus: "Continue building first-move speed and stand-up finishes."
+    });
+  }
+
+  if (patterns.includes("reversal-threat")) {
     recommendations.push({
       type: "skill",
       priority: "medium",
-      title: "Build top-turn offense",
-      focus: "Convert takedowns into nearfall points."
+      title: "Develop reversal chains",
+      focus: "Turn defensive positions into scoring opportunities."
     });
   }
 
-  if (pointsAgainst > 0) {
+  if (patterns.includes("top-pressure")) {
+    recommendations.push({
+      type: "skill",
+      priority: "medium",
+      title: "Expand top pressure",
+      focus: "Turn rides into nearfall opportunities and pinning combinations."
+    });
+  }
+
+  if (patterns.includes("back-exposure-risk")) {
     recommendations.push({
       type: "fix",
       priority: "high",
-      title: "Clean up defensive reactions",
-      focus: "Reduce points allowed after scoring exchanges."
+      title: "Protect against exposure",
+      focus: "Improve hip awareness, fight hands, and recover safely."
+    });
+  }
+
+  if (patterns.includes("gives-up-first-score")) {
+    recommendations.push({
+      type: "mindset",
+      priority: "high",
+      title: "Start matches aggressively",
+      focus: "Win the opening exchange and score first."
+    });
+  }
+
+  if (patterns.includes("scores-first")) {
+    recommendations.push({
+      type: "maintain",
+      priority: "low",
+      title: "Continue scoring first",
+      focus: "Keep building matches from an early lead."
     });
   }
 
@@ -41,8 +83,8 @@ export function buildRecommendations(match = {}, analysis = {}) {
     recommendations.push({
       type: "maintain",
       priority: "low",
-      title: "Continue current focus",
-      focus: "Match performance shows balanced scoring control."
+      title: "Continue current development",
+      focus: "No major pattern detected. Continue reinforcing complete wrestling."
     });
   }
 

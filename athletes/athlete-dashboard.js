@@ -63,7 +63,7 @@ function loadAthletes() {
   athletes.forEach(name => {
     const option = document.createElement("option");
 
-    option.value = name.toLowerCase();
+    option.value = name;
     option.textContent = name;
 
     athleteSelect.appendChild(option);

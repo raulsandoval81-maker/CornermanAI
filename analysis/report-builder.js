@@ -1,43 +1,70 @@
 export function buildReport({
 
-  match,
-  patterns,
-  analysis,
-  coachSummary,
-  athleteFeedback,
-  recommendations,
-  practiceFocus
+  match = {},
+  patterns = [],
+  analysis = {},
+  coachSummary = {},
+  athleteFeedback = {},
+  recommendations = [],
+  practiceFocus = {}
 
 }) {
 
   return {
 
+    reportVersion: "1.0",
+
     generatedAt:
       new Date().toISOString(),
 
-    athlete:
-      match.athlete,
+    match: {
 
-    opponent:
-      match.opponent,
+      id:
+        match.id || "",
 
-    event:
-      match.eventName,
+      athlete:
+        match.athlete || "",
 
-    result:
-      match.result,
+      opponent:
+        match.opponent || "",
 
-    patterns,
+      event:
+        match.eventName || "",
 
-    analysis,
+      weightClass:
+        match.weightClass || "",
 
-    coachSummary,
+      result:
+        match.result || "",
 
-    athleteFeedback,
+      method:
+        match.method || "",
 
-    recommendations,
+      score: {
+        for:
+          Number(match.pointsFor || 0),
 
-    practiceFocus
+        against:
+          Number(match.pointsAgainst || 0)
+      }
+
+    },
+
+    intelligence: {
+
+      patterns,
+
+      analysis,
+
+      coachSummary,
+
+      athleteFeedback,
+
+      recommendations,
+
+      practiceFocus
+
+    }
 
   };
 

@@ -2,24 +2,53 @@ import {
   exportToSandman
 } from "../../bridge/sandman-import.js";
 
-const payload =
-  exportToSandman({
-    athlete: "Maximus",
+const MATCHES_KEY =
+  "cornerman_matches";
 
-    latestMatch: {
-      opponent: "Dill",
-      result: "Win",
-      method: "Pin",
-      pointsFor: 12,
-      pointsAgainst: 4
-    },
+const matches =
+  JSON.parse(
+    localStorage.getItem(MATCHES_KEY) || "[]"
+  );
 
-    patterns: [
-      "neutral-offense"
-    ]
-  });
+const latestMatch =
+  matches
+    .slice()
+    .reverse()
+    .find(match => match.intelligence) ||
+  matches.at(-1) ||
+  null;
 
-render(payload);
+if (!latestMatch) {
+  renderEmpty();
+} else {
+  const payload =
+    exportToSandman({
+      athlete:
+        latestMatch.athlete || "Athlete",
+
+      latestMatch: {
+        opponent:
+          latestMatch.opponent || "Opponent",
+
+        result:
+          latestMatch.result || "Result",
+
+        method:
+          latestMatch.method || "Decision",
+
+        pointsFor:
+          latestMatch.pointsFor || 0,
+
+        pointsAgainst:
+          latestMatch.pointsAgainst || 0
+      },
+
+      patterns:
+        latestMatch.intelligence?.patterns || []
+    });
+
+  render(payload);
+}
 
 function render(payload) {
   setText(
@@ -56,7 +85,7 @@ function render(payload) {
       </div>
 
       <div class="feedback-item">
-        <strong>Pattern</strong>
+        <strong>Patterns</strong>
         <p>${formatList(payload.patterns)}</p>
       </div>
     `
@@ -66,19 +95,40 @@ function render(payload) {
     "cardInfo",
     (payload.cards || [])
       .map(card => `
-<div class="feedback-card">
-  <strong>
-    ${formatCardTitle(card)}
-  </strong>
+        <div class="feedback-card">
+          <strong>
+            ${formatCardTitle(card)}
+          </strong>
 
-  <p>
-    ${getCardDescription(card)}
-  </p>
-</div>
+          <p>
+            ${getCardDescription(card)}
+          </p>
+        </div>
+      `)
+      .join("") ||
+    "<p>No suggested cards yet.</p>"
+  );
+}
 
-        `)
-      .join("")
-      || "<p>No suggested cards yet.</p>"
+function renderEmpty() {
+  setText(
+    "athleteName",
+    "No athlete selected"
+  );
+
+  setHtml(
+    "matchInfo",
+    "<p>No saved matches found.</p>"
+  );
+
+  setHtml(
+    "feedbackInfo",
+    "<p>Save a match first to generate athlete feedback.</p>"
+  );
+
+  setHtml(
+    "cardInfo",
+    "<p>No suggested cards yet.</p>"
   );
 }
 
@@ -109,7 +159,7 @@ function formatList(items = []) {
 
   return items
     .map(item =>
-      item
+      String(item)
         .replaceAll("-", " ")
         .replace(/\b\w/g, char =>
           char.toUpperCase()
@@ -119,7 +169,7 @@ function formatList(items = []) {
 }
 
 function formatCardTitle(cardId = "") {
-  return cardId
+  return String(cardId)
     .replace(/-\d+$/, "")
     .replaceAll("-", " ")
     .replace(/\b\w/g, char =>
@@ -139,9 +189,15 @@ function getCardDescription(cardId = "") {
       "Build movement from bottom and turn escapes into points.",
 
     "back-defense-01":
-      "Fight hands, belly down, and prevent exposure."
+      "Fight hands, belly down, and prevent exposure.",
+
+    "top-pressure-01":
+      "Build ride-to-turn chains and convert control into nearfall.",
+
+    "reversal-threat-01":
+      "Use bottom motion and hip heists to create reversal opportunities."
   };
 
-  return descriptions[cardId]
-    || "Development card connected to this match pattern.";
+  return descriptions[cardId] ||
+    "Development card connected to this match pattern.";
 }

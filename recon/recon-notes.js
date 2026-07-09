@@ -1,99 +1,93 @@
 const STORAGE_KEY =
-"cornerman_recon";
+  "cornerman_recon";
 
 const saveBtn =
-document.getElementById("saveRecon");
+  document.getElementById("saveRecon");
 
 const reconList =
-document.getElementById("reconList");
+  document.getElementById("reconList");
 
 loadRecon();
 
 saveBtn?.addEventListener(
-"click",
-saveRecon
+  "click",
+  saveRecon
 );
 
 function saveRecon() {
+  const notes =
+    JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
 
-const notes =
-JSON.parse(
-localStorage.getItem(STORAGE_KEY) || "[]"
-);
+  const note = {
+    id:
+      Date.now(),
 
-notes.push({
-id: Date.now(),
+    opponent:
+      getValue("opponentName"),
 
+    preferredStance:
+      getValue("preferredStance"),
 
-opponent:
-  document.getElementById("opponentName")
-    ?.value.trim() || "",
+    favoriteTie:
+      getValue("favoriteTie"),
 
-preferredStance:
-  document.getElementById("preferredStance")
-    ?.value.trim() || "",
+    favoriteShot:
+      getValue("favoriteShot"),
 
-favoriteTie:
-  document.getElementById("favoriteTie")
-    ?.value.trim() || "",
+    favoriteEscape:
+      getValue("favoriteEscape"),
 
-favoriteShot:
-  document.getElementById("favoriteShot")
-    ?.value.trim() || "",
+    bestTurn:
+      getValue("bestTurn"),
 
-favoriteEscape:
-  document.getElementById("favoriteEscape")
-    ?.value.trim() || "",
+    coachNotes:
+      getValue("coachNotes"),
 
-bestTurn:
-  document.getElementById("bestTurn")
-    ?.value.trim() || "",
+    createdAt:
+      new Date().toISOString()
+  };
 
-coachNotes:
-  document.getElementById("coachNotes")
-    ?.value.trim() || "",
+  notes.push(note);
 
-createdAt:
-  new Date().toISOString()
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(notes)
+  );
 
-
-});
-
-localStorage.setItem(
-STORAGE_KEY,
-JSON.stringify(notes)
-);
-
-loadRecon();
+  clearForm();
+  loadRecon();
 }
 
 function loadRecon() {
+  const notes =
+    JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
 
-const notes =
-JSON.parse(
-localStorage.getItem(STORAGE_KEY) || "[]"
-);
+  if (!reconList) return;
 
-if (!notes.length) {
+  if (!notes.length) {
+    reconList.innerHTML =
+      "<p>No notes saved.</p>";
+    return;
+  }
 
-
-reconList.innerHTML =
-  "<p>No notes saved.</p>";
-
-return;
-
-
+  reconList.innerHTML =
+    notes
+      .slice()
+      .reverse()
+      .map(renderReconNote)
+      .join("");
 }
 
-reconList.innerHTML =
-notes
-.slice()
-.reverse()
-.map(note => ` <div class="match-row">
-
+function renderReconNote(note) {
+  return `
+    <div class="match-row">
 
       <strong>
-        ${note.opponent}
+        ${note.opponent || "Unknown Opponent"}
       </strong>
 
       <p>
@@ -116,9 +110,42 @@ notes
         Turn: ${note.bestTurn || "-"}
       </p>
 
+      ${
+        note.coachNotes
+          ? `
+            <p>
+              Notes: ${note.coachNotes}
+            </p>
+          `
+          : ""
+      }
+
     </div>
-  `)
-  .join("");
+  `;
+}
 
+function getValue(id) {
+  return document
+    .getElementById(id)
+    ?.value
+    .trim() || "";
+}
 
+function clearForm() {
+  [
+    "opponentName",
+    "preferredStance",
+    "favoriteTie",
+    "favoriteShot",
+    "favoriteEscape",
+    "bestTurn",
+    "coachNotes"
+  ].forEach(id => {
+    const el =
+      document.getElementById(id);
+
+    if (el) {
+      el.value = "";
+    }
+  });
 }

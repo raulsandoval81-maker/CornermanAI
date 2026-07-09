@@ -1,94 +1,62 @@
-<!DOCTYPE html>
+<section class="card">
 
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recon Notes</title>
-  <link rel="stylesheet" href="../app.css">
-</head>
-<body>
-
-<main class="app-shell">
-
-  <section class="card">
-    <span>RECON</span>
-    <strong>Opponent Notes</strong>
-    <p>
-      Capture tendencies and observations.
-    </p>
-  </section>
-
-  <section class="card">
-
+<h2>Opponent Profile</h2>
 
 <label>Opponent</label>
-<input
-  id="opponentName"
-  type="text"
-  placeholder="Opponent Name"
->
+<input id="opponentName">
+
+<label>Team</label>
+<input id="opponentTeam">
+
+<label>Weight Class</label>
+<input id="weightClass">
+
 <label>Preferred Stance</label>
-
-<input
-  id="preferredStance"
-  type="text"
-  placeholder="Right Lead"
-/>
-
+<input id="preferredStance">
 
 <label>Favorite Tie</label>
-<input
-  id="favoriteTie"
-  type="text"
-  placeholder="Collar Tie"
->
+<input id="favoriteTie">
 
 <label>Favorite Shot</label>
-<input
-  id="favoriteShot"
-  type="text"
-  placeholder="Sweep Single"
->
+<input id="favoriteShot">
+
+<label>Favorite Finish</label>
+<input id="favoriteFinish">
 
 <label>Favorite Escape</label>
-<input
-  id="favoriteEscape"
-  type="text"
-  placeholder="Stand Up"
->
+<input id="favoriteEscape">
 
 <label>Best Turn</label>
-<input
-  id="bestTurn"
-  type="text"
-  placeholder="Half Nelson"
->
+<input id="bestTurn">
+
+<label>Scores First?</label>
+<select id="scoresFirst">
+  <option>Unknown</option>
+  <option>Usually</option>
+  <option>Sometimes</option>
+  <option>Rarely</option>
+</select>
+
+<label>Match Pace</label>
+<select id="matchPace">
+  <option>Slow</option>
+  <option>Average</option>
+  <option>Fast</option>
+</select>
+
+<label>Conditioning</label>
+<select id="conditioning">
+  <option>Unknown</option>
+  <option>Strong</option>
+  <option>Average</option>
+  <option>Fades Late</option>
+</select>
 
 <label>Coach Notes</label>
-<textarea
-  id="coachNotes"
-  rows="6"
-  placeholder="Additional observations..."
-></textarea>
+<textarea id="coachNotes"></textarea>
 
 <button id="saveRecon">
-  Save Recon
+Save Recon
 </button>
 
-
-  </section>
-
-  <section class="card">
-    <span>SAVED NOTES</span>
-    <div id="reconList">
-      No notes saved.
-    </div>
-  </section>
-
-</main>
-
-<script src="./recon-notes.js"></script>
-
-</body>
-</html>
+</section>

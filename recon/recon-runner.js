@@ -1,21 +1,54 @@
-import { detectPatterns } from "./pattern-detector.js";
-import { buildCoachSummary } from "./coach-summary.js";
-import { buildAthleteFeedback } from "./athlete-feedback.js";
-import { buildPracticeFocus } from "./practice-focus.js";
+import {
+  detectPatterns
+} from "./pattern-detector.js";
 
-export function runRecon(matchPayload) {
+import {
+  buildCoachSummary
+} from "./coach-summary.js";
+
+import {
+  buildAthleteFeedback
+} from "./athlete-feedback.js";
+
+import {
+  buildRecommendations
+} from "./recommendation-engine.js";
+
+import {
+  buildPracticeFocus
+} from "./practice-focus.js";
+
+export function runRecon(match = {}) {
 
   const patterns =
-    detectPatterns(matchPayload);
+    detectPatterns(match);
+
+  const analysis = {
+    patterns
+  };
+
+  const coach =
+    buildCoachSummary(match, analysis);
+
+  const athlete =
+    buildAthleteFeedback(match, analysis);
+
+  const recommendations =
+    buildRecommendations(match, analysis);
+
+  const practice =
+    buildPracticeFocus(match, analysis);
 
   return {
-    coach:
-      buildCoachSummary(patterns),
+    generatedAt:
+      new Date().toISOString(),
 
-    athlete:
-      buildAthleteFeedback(patterns),
+    patterns,
+    analysis,
 
-    practice:
-      buildPracticeFocus(patterns)
+    coach,
+    athlete,
+    recommendations,
+    practice
   };
 }

@@ -114,74 +114,62 @@ function buildPatternScores() {
     }
   };
 
-  matches.forEach(match => {
-    const lost =
-      match.result === "Loss";
+matches.forEach(match => {
+  const intelPatterns =
+    match.intelligence?.patterns || [];
 
-    const won =
-      match.result === "Win";
+ if (!intelPatterns.length) {
+    return;
+  }
 
-    const pointsAgainst =
-      Number(match.pointsAgainst || 0);
-
-    const takedowns =
-      Number(match.takedowns || 0);
-
-    const escapes =
-      Number(match.escapes || 0);
-
-    const nearfall =
-      Number(match.nearfall || 0);
-
-    if (lost && pointsAgainst > 0) {
+  intelPatterns.forEach(pattern => {
+    if (pattern === "neutral-defense") {
       addSignal(
         patterns.neutralDefense,
         3,
-        `${match.athlete} lost while allowing ${pointsAgainst} point(s).`
+        `${match.athlete} showed neutral defense risk.`
       );
     }
 
-    if (
-      lost &&
-      String(match.method || "").toLowerCase() === "pin"
-    ) {
-      addSignal(
-        patterns.neutralDefense,
-        2,
-        `${match.athlete} lost by pin.`
-      );
-    }
-
-    if (takedowns > 0) {
+    if (pattern === "neutral-offense") {
       addSignal(
         patterns.finishing,
-        won ? 1 : 0.5,
-        `${match.athlete} finished ${takedowns} takedown(s).`
+        1,
+        `${match.athlete} created neutral offense.`
       );
     }
 
-    if (escapes > 0) {
+    if (pattern === "strong-bottom") {
       addSignal(
         patterns.bottomEscapes,
         1,
-        `${match.athlete} earned ${escapes} escape(s).`
+        `${match.athlete} showed strong bottom movement.`
       );
     }
 
-    if (nearfall > 0) {
-      addSignal(
-        patterns.nearfall,
-        1,
-        `${match.athlete} scored ${nearfall} nearfall signal(s).`
-      );
-
+    if (pattern === "top-pressure") {
       addSignal(
         patterns.topControl,
         1,
-        `${match.athlete} created top scoring pressure.`
+        `${match.athlete} created top pressure.`
+      );
+
+      addSignal(
+        patterns.nearfall,
+        1,
+        `${match.athlete} created nearfall pressure.`
+      );
+    }
+
+    if (pattern === "back-exposure-risk") {
+      addSignal(
+        patterns.neutralDefense,
+        2,
+        `${match.athlete} showed back exposure risk.`
       );
     }
   });
+});
 
   return patterns;
 }

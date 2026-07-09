@@ -1,24 +1,61 @@
-export function buildPracticeFocus(match = {}, analysis = {}) {
+export function buildPracticeFocus(
+  match = {},
+  analysis = {}
+) {
+  const patterns =
+    analysis.patterns || [];
+
   const focus = [];
 
-  if (Number(analysis.takedowns || 0) === 0) {
+  if (patterns.includes("neutral-defense")) {
+    focus.push("Neutral defense");
+  }
+
+  if (patterns.includes("neutral-offense")) {
     focus.push("Neutral offense");
   }
 
-  if (Number(analysis.nearfall || 0) === 0) {
+  if (patterns.includes("strong-bottom")) {
+    focus.push("Bottom wrestling");
+  }
+
+  if (patterns.includes("reversal-threat")) {
+    focus.push("Reversal chains");
+  }
+
+  if (patterns.includes("top-pressure")) {
     focus.push("Top turns");
   }
 
-  if (Number(analysis.pointsAgainst || 0) > 0) {
-    focus.push("Defensive reactions");
+  if (patterns.includes("back-exposure-risk")) {
+    focus.push("Back defense");
+  }
+
+  if (patterns.includes("gives-up-first-score")) {
+    focus.push("First-score situations");
+  }
+
+  if (patterns.includes("scores-first")) {
+    focus.push("Protect early lead");
   }
 
   if (!focus.length) {
-    focus.push("Maintain current scoring habits");
+    focus.push("Maintain complete wrestling system");
   }
 
   return {
     title: "Practice Focus",
-    focus
+
+    priority:
+      focus[0],
+
+    focus,
+
+    drillBlock: [
+      "Technique",
+      "Situational Wrestling",
+      "Live Wrestling",
+      "Review"
+    ]
   };
 }

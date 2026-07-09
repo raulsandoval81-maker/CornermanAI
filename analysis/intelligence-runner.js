@@ -1,12 +1,39 @@
-import { detectPatterns } from "../recon/pattern-detector.js";
-import { analyzeMatch } from "./match-analyzer.js";
-import { buildCoachSummary } from "../recon/coach-summary.js";
-import { buildAthleteFeedback } from "../recon/athlete-feedback.js";
-import { buildRecommendations } from "../recon/recommendation-engine.js";
-import { buildPracticeFocus } from "../recon/practice-focus.js";
-import { buildReport } from "./report-builder.js";
+import {
+  normalizeMatchPayload
+} from "../payloads/match-schema.js";
 
-export function runIntelligence(match = {}) {
+import {
+  detectPatterns
+} from "../recon/pattern-detector.js";
+
+import {
+  analyzeMatch
+} from "./match-analyzer.js";
+
+import {
+  buildCoachSummary
+} from "../recon/coach-summary.js";
+
+import {
+  buildAthleteFeedback
+} from "../recon/athlete-feedback.js";
+
+import {
+  buildRecommendations
+} from "../recon/recommendation-engine.js";
+
+import {
+  buildPracticeFocus
+} from "../recon/practice-focus.js";
+
+import {
+  buildReport
+} from "./report-builder.js";
+
+export function runIntelligence(rawMatch = {}) {
+  const match =
+    normalizeMatchPayload(rawMatch);
+
   const patterns =
     detectPatterns(match);
 
@@ -39,9 +66,8 @@ export function runIntelligence(match = {}) {
     });
 
   return {
-    generatedAt:
-      new Date().toISOString(),
-
+    generatedAt: new Date().toISOString(),
+    match,
     patterns,
     analysis,
     coachSummary,

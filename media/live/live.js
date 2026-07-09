@@ -71,15 +71,15 @@ document.querySelectorAll("[data-action]").forEach((button) => {
         break;
 
       case "greenTD":
-        state.greenScore += 2;
+        state.greenScore += 3;
         state.position = "green_top";
-        addEvent("Green takedown +2.");
+        addEvent("Green takedown +3.");
         break;
 
       case "redTD":
-        state.redScore += 2;
-        state.position = "redTop";
-        addEvent("Red takedown +2.");
+        state.redScore += 3;
+        state.position = "red_top";
+        addEvent("Red takedown +3.");
         break;
 
       case "greenEscape":
@@ -102,22 +102,22 @@ document.querySelectorAll("[data-action]").forEach((button) => {
 
       case "redReversal":
         state.redScore += 2;
-        state.position = "redTop";
+        state.position = "red_top";
         addEvent("Red reversal +2.");
         break;
 
       case "nearfallGreen":
-        state.position = "nearfallGreen";
+        state.position = "green_nearfall";
         addEvent("Green near fall pressure.");
         break;
 
       case "nearfallRed":
-        state.position = "nearfallRed";
+        state.position = "red_nearfall";
         addEvent("Red near fall pressure.");
         break;
 
       case "pinThreat":
-        state.position = "pinThreat";
+        state.position = "red_pin";
         addEvent("Pin threat.");
         break;
 

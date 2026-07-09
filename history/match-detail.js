@@ -76,6 +76,9 @@ function renderMatch(match) {
   matchTitle.textContent =
     `${match.athlete} vs ${match.opponent}`;
 
+     matchTitle.textContent =
+    `${match.athlete} vs ${match.opponent}`;
+
   const videoLink =
     match.videoUrl
       ? `
@@ -165,6 +168,13 @@ function renderTimeline(events, videoUrl = "") {
 }
 
 function renderSummary(match) {
+
+  const intelligence =
+    match.intelligence || {};
+
+  const analysis =
+    intelligence.analysis || {};
+
   const firstScore =
     (match.events || []).find(event =>
       Number(event.points || 0) > 0
@@ -176,23 +186,18 @@ function renderSummary(match) {
       : "No scoring recorded";
 
   const takedowns =
-    match.takedowns || 0;
+    analysis.takedowns ??
+    match.takedowns ??
+    0;
 
   const nearfall =
-    match.nearfall || 0;
+    analysis.nearfall ??
+    match.nearfall ??
+    0;
 
-  let winningFactor =
+  const winningFactor =
+    analysis.winningFactor ||
     "Match data still limited.";
-
-  if (takedowns >= 2) {
-    winningFactor =
-      "Neutral offense created repeated scoring opportunities.";
-  }
-
-  if (nearfall >= 2) {
-    winningFactor =
-      "Turns and exposure points created separation.";
-  }
 
   matchSummary.innerHTML = `
     <p>

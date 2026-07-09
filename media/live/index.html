@@ -2,71 +2,231 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>Cornerman Live Control</title>
-  <link rel="stylesheet" href="./live.css" />
+
+  <link
+    rel="stylesheet"
+    href="./live.css"
+  />
 </head>
 
 <body>
-  <main class="live-shell">
-    <header class="live-header">
-      <div>
-        <h1>Cornerman Live</h1>
-        <p>Control match state for the live viewer.</p>
-      </div>
 
-      <a class="viewer-link" href="./viewer.html" target="_blank">
-        Open Viewer
-      </a>
-    </header>
+<main class="live-shell">
 
-    <section class="setup-card">
+  <section class="hero">
+
+    <p class="eyebrow">
+      LIVE
+    </p>
+
+    <h1>
+      Live Broadcast Control
+    </h1>
+
+    <p class="sub">
+      Control the live viewer scoreboard, clock, period, and match state.
+    </p>
+
+  </section>
+
+  <section class="card">
+
+    <span>
+      VIEWER
+    </span>
+
+    <strong>
+      Live Display
+    </strong>
+
+    <p>
+      Open the public viewer on another monitor, TV, or projector.
+    </p>
+
+    <a
+      class="primary-btn"
+      href="./viewer.html"
+      target="_blank"
+    >
+      Open Live Viewer
+    </a>
+
+  </section>
+
+  <section class="card">
+
+    <span>
+      MATCH
+    </span>
+
+    <strong>
+      Wrestlers
+    </strong>
+
+    <div class="form-stack">
+
       <label>
         Green Wrestler
-        <input id="greenNameInput" value="Maximus" />
+        <input
+          id="greenNameInput"
+          value="Maximus"
+        />
       </label>
 
       <label>
         Red Wrestler
-        <input id="redNameInput" value="Opponent" />
+        <input
+          id="redNameInput"
+          value="Opponent"
+        />
       </label>
 
-      <button id="saveNamesBtn">Save Names</button>
-    </section>
+      <button id="saveNamesBtn">
+        Update Wrestlers
+      </button>
 
-    <section class="score-card">
+    </div>
+
+  </section>
+
+  <section class="card">
+
+    <span>
+      SCOREBOARD
+    </span>
+
+    <strong>
+      Match State
+    </strong>
+
+    <div class="score-grid">
+
       <div class="score-box green">
         <span>GREEN</span>
         <strong id="greenScoreText">0</strong>
       </div>
 
       <div class="clock-box">
-        <input id="clockInput" value="2:00" />
-        <input id="periodInput" type="number" min="1" max="3" value="1" />
-        <button id="saveClockBtn">Update Clock</button>
+
+        <label>
+          Clock
+          <input
+            id="clockInput"
+            value="2:00"
+          />
+        </label>
+
+        <label>
+          Period
+          <input
+            id="periodInput"
+            type="number"
+            min="1"
+            max="3"
+            value="1"
+          />
+        </label>
+
+        <button id="saveClockBtn">
+          Update Clock
+        </button>
+
       </div>
 
       <div class="score-box red">
         <span>RED</span>
         <strong id="redScoreText">0</strong>
       </div>
-    </section>
 
-    <section class="buttons-card">
-      <button data-action="neutral">Neutral</button>
-      <button data-action="greenTD">Green TD +2</button>
-      <button data-action="redTD">Red TD +2</button>
-      <button data-action="greenEscape">Green Escape +1</button>
-      <button data-action="redEscape">Red Escape +1</button>
-      <button data-action="greenReversal">Green Reversal +2</button>
-      <button data-action="redReversal">Red Reversal +2</button>
-      <button data-action="nearfallGreen">Near Fall Green</button>
-      <button data-action="nearfallRed">Near Fall Red</button>
-      <button data-action="pinThreat">Pin Threat</button>
-      <button data-action="reset">Reset Match</button>
-    </section>
-  </main>
+    </div>
 
-  <script src="./live.js"></script>
+  </section>
+
+  <section class="card">
+
+    <span>
+      MATCH EVENTS
+    </span>
+
+    <strong>
+      Live Controls
+    </strong>
+
+    <div class="buttons-grid">
+
+      <button data-action="neutral">
+        Neutral
+      </button>
+
+      <button data-action="greenTD">
+        Green TD +2
+      </button>
+
+      <button data-action="redTD">
+        Red TD +2
+      </button>
+
+      <button data-action="greenEscape">
+        Green Escape +1
+      </button>
+
+      <button data-action="redEscape">
+        Red Escape +1
+      </button>
+
+      <button data-action="greenReversal">
+        Green Reversal +2
+      </button>
+
+      <button data-action="redReversal">
+        Red Reversal +2
+      </button>
+
+      <button data-action="nearfallGreen">
+        Green Near Fall
+      </button>
+
+      <button data-action="nearfallRed">
+        Red Near Fall
+      </button>
+
+      <button data-action="pinThreat">
+        Pin Threat
+      </button>
+
+      <button
+        class="danger"
+        data-action="reset"
+      >
+        Reset Match
+      </button>
+
+    </div>
+
+  </section>
+
+  <section class="card">
+
+    <span>
+      BACK
+    </span>
+
+    <a href="../console/">
+      Console Command Center
+    </a>
+
+  </section>
+
+</main>
+
+<script src="./live.js"></script>
+
 </body>
 </html>

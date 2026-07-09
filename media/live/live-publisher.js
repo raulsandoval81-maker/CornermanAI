@@ -4,30 +4,35 @@ export function publishLiveState({
   athleteName,
   opponentName
 }) {
-  const lastEvent = events[events.length - 1] || null;
+  const lastEvent =
+    events[events.length - 1] || null;
 
-const liveState = {
-  athleteName,
-  opponentName,
+  const liveState = {
+    athleteName,
+    opponentName,
 
-  athleteScore: state.athleteScore,
-  opponentScore: state.opponentScore,
+    athleteScore: state.athleteScore,
+    opponentScore: state.opponentScore,
 
-  position: state.position,
-  round: state.currentRound,
-  clock: state.time,
+    position: state.position,
+    round: state.currentRound,
+    clock: state.time,
 
-  winner: state.winner,
-  resultType: state.resultType,
-  matchFinished: !!state.resultLocked,
+    winner: state.winner,
+    resultType: state.resultType,
+    matchFinished: !!state.resultLocked,
 
-  lastEvent
-};
+    lastEvent,
+    events
+  };
 
-  console.log("PUBLISH LIVE STATE:", liveState);
+  console.log(
+    "PUBLISH LIVE STATE:",
+    liveState
+  );
 
   localStorage.setItem(
-    "cornerman_live_state",
+    "cornerman-live-state",
     JSON.stringify(liveState)
   );
 }

@@ -1,4 +1,4 @@
-const STORAGE_KEY = "cornerman_live_state";
+const STORAGE_KEY = "cornerman-live-state";
 
 const state = {
   athleteName: "Green",

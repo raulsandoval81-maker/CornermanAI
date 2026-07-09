@@ -1578,6 +1578,7 @@ arenaModeToggle?.addEventListener("click", () => {
   const isArena = document.body.classList.contains("arena-mode");
   arenaModeToggle.textContent = isArena ? "Normal" : "Arena";
 });
+
 function loadPendingMatchSetup() {
   const pendingMatch =
     JSON.parse(
@@ -1588,38 +1589,56 @@ function loadPendingMatchSetup() {
 
   if (!pendingMatch.source) return;
 
-  eventNameInput.value =
-    pendingMatch.eventName || "";
+  const setValue = (element, value) => {
+    if (element) {
+      element.value = value || "";
+    }
+  };
 
-  athleteNameInput.value =
-    pendingMatch.athleteName || "Athlete B";
+  setValue(
+    eventNameInput,
+    pendingMatch.eventName
+  );
 
-  opponentNameInput.value =
-    pendingMatch.opponentName || "Athlete A";
+  setValue(
+    athleteNameInput,
+    pendingMatch.athleteName || "Athlete B"
+  );
 
-  redTeamInput.value =
-    pendingMatch.opponentTeam || "";
+  setValue(
+    opponentNameInput,
+    pendingMatch.opponentName || "Athlete A"
+  );
 
-  weightClassInput.value =
-    pendingMatch.weightClass || "";
+  setValue(
+    redTeamInput,
+    pendingMatch.opponentTeam
+  );
 
-  sandmanColorSelect.value =
-    pendingMatch.athleteSide || "green";
+  setValue(
+    weightClassInput,
+    pendingMatch.weightClass
+  );
+
+  setValue(
+    sandmanColorSelect,
+    pendingMatch.athleteSide || "green"
+  );
 
   matchConfirmed = true;
 
   matchSetupEl?.classList.add("hidden");
 
   lockMatchSetup({
-  locked: true,
-  eventNameInput,
-  weightClassInput,
-  redTeamInput,
-  greenTeamInput,
-  athleteNameInput,
-  opponentNameInput,
-  matchFormatSelect
-});
+    locked: true,
+    eventNameInput,
+    weightClassInput,
+    redTeamInput,
+    greenTeamInput,
+    athleteNameInput,
+    opponentNameInput,
+    matchFormatSelect
+  });
 
   updateStartButton({
     startBtn,
@@ -1631,6 +1650,7 @@ function loadPendingMatchSetup() {
     "Match loaded from launcher"
   );
 }
+
 loadPendingMatchSetup();
 
 /* INIT */

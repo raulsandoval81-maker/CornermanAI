@@ -72,7 +72,7 @@ function renderMatches() {
       (${match.pointsFor || 0}-${match.pointsAgainst || 0})
     </p>
 
-    <a href="../history/match-detail?id=${match.id}">
+    <a href="../history/match-detail.html?id=${match.id}">
       View Match
     </a>
   </div>

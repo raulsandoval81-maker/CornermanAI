@@ -1,21 +1,19 @@
-export function buildCoachSummary(patterns = []) {
+export function buildCoachSummary(match = {}, analysis = {}) {
+  const patterns = analysis.patterns || [];
 
-  if (patterns.includes("neutral-defense")) {
-    return "Athlete gave up multiple takedowns from neutral.";
+  if (!patterns.length) {
+    return {
+      title: "Coach Summary",
+      summary: "Match data is limited. Review the timeline and video evidence.",
+      keyPoints: []
+    };
   }
 
-  if (patterns.includes("neutral-offense")) {
-    return "Athlete created strong offense from neutral.";
-  }
-
-  if (patterns.includes("strong-bottom")) {
-    return "Athlete showed strong bottom position skills.";
-  }
-
-  if (patterns.includes("back-exposure-risk")) {
-    return "Athlete gave up multiple nearfall exposures.";
-  }
-
-  return "No major pattern detected.";
-
+  return {
+    title: "Coach Summary",
+    summary: patterns
+      .map(pattern => pattern.message || pattern.title || String(pattern))
+      .join(" "),
+    keyPoints: patterns
+  };
 }

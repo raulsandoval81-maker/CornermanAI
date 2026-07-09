@@ -6,13 +6,14 @@ import { buildRecommendations } from "../recon/recommendation-engine.js";
 import { buildPracticeFocus } from "../recon/practice-focus.js";
 import { buildReport } from "./report-builder.js";
 
-export function runIntelligence(match) {
-
+export function runIntelligence(match = {}) {
   const patterns =
     detectPatterns(match);
 
-  const analysis =
-    analyzeMatch(match, patterns);
+  const analysis = {
+    ...analyzeMatch(match, patterns),
+    patterns
+  };
 
   const coachSummary =
     buildCoachSummary(match, analysis);
@@ -38,6 +39,9 @@ export function runIntelligence(match) {
     });
 
   return {
+    generatedAt:
+      new Date().toISOString(),
+
     patterns,
     analysis,
     coachSummary,

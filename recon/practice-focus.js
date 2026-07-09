@@ -1,21 +1,24 @@
-export function buildPracticeFocus(patterns = []) {
+export function buildPracticeFocus(match = {}, analysis = {}) {
+  const focus = [];
 
-  if (patterns.includes("neutral-defense")) {
-    return "Sprawl reactions and single-leg defense.";
+  if (Number(analysis.takedowns || 0) === 0) {
+    focus.push("Neutral offense");
   }
 
-  if (patterns.includes("neutral-offense")) {
-    return "Continue offensive chain wrestling.";
+  if (Number(analysis.nearfall || 0) === 0) {
+    focus.push("Top turns");
   }
 
-  if (patterns.includes("strong-bottom")) {
-    return "Continue bottom work and first-move escapes.";
+  if (Number(analysis.pointsAgainst || 0) > 0) {
+    focus.push("Defensive reactions");
   }
 
-  if (patterns.includes("back-exposure-risk")) {
-    return "Bottom defense and nearfall prevention.";
+  if (!focus.length) {
+    focus.push("Maintain current scoring habits");
   }
 
-  return "Fundamental position work.";
-
+  return {
+    title: "Practice Focus",
+    focus
+  };
 }

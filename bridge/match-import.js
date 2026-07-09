@@ -10,7 +10,6 @@ function importLastConsoleMatch() {
     setImportStatus(
       "No console match found. Run and save a match first."
     );
-
     return;
   }
 
@@ -27,7 +26,6 @@ function importLastConsoleMatch() {
     setImportStatus(
       "This console match is already imported."
     );
-
     return;
   }
 
@@ -61,7 +59,6 @@ function getLastConsoleMatch() {
       "Bad console match payload:",
       error
     );
-
     return null;
   }
 }
@@ -75,10 +72,20 @@ function getTournamentMatches() {
 }
 
 function convertConsoleMatch(consoleMatch) {
+
+  const intelligence =
+    consoleMatch.intelligence || {};
+
   return {
-    id: Date.now(),
-    sourceId: consoleMatch.id,
-    source: "coach-console-import",
+
+    id:
+      Date.now(),
+
+    sourceId:
+      consoleMatch.id,
+
+    source:
+      "coach-console-import",
 
     athlete:
       consoleMatch.athlete || "Athlete",
@@ -141,6 +148,33 @@ function convertConsoleMatch(consoleMatch) {
 
     notes:
       consoleMatch.notes || "",
+
+    /* =====================
+       Intelligence Payload
+    ====================== */
+
+    intelligence,
+
+    patterns:
+      intelligence.patterns || [],
+
+    analysis:
+      intelligence.analysis || {},
+
+    coachSummary:
+      intelligence.coachSummary || {},
+
+    athleteFeedback:
+      intelligence.athleteFeedback || {},
+
+    recommendations:
+      intelligence.recommendations || [],
+
+    practiceFocus:
+      intelligence.practiceFocus || {},
+
+    report:
+      intelligence.report || {},
 
     importedAt:
       new Date().toISOString()

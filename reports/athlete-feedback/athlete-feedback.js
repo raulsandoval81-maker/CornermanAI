@@ -1,6 +1,6 @@
 import {
   exportToSandman
-} from "../../bridge/sandman-import.js";
+} from "../../bridge/export-to-sandman.js";
 
 const MATCHES_KEY =
   "cornerman_matches";

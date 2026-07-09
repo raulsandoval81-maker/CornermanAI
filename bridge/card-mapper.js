@@ -1,4 +1,5 @@
 const CARD_MAP = {
+
   "neutral-defense": [
     "neutral-defense-01",
     "sprawl-defense-01",
@@ -17,41 +18,35 @@ const CARD_MAP = {
     "hip-heist-01"
   ],
 
+  "reversal-threat": [
+    "reversal-series-01",
+    "sit-out-series-01",
+    "switch-series-01"
+  ],
+
+  "top-pressure": [
+    "ride-control-01",
+    "mat-return-01",
+    "turn-series-01"
+  ],
+
   "back-exposure-risk": [
     "back-defense-01",
     "belly-down-01",
     "hand-fight-bottom-01"
   ],
 
-  "weak-finishes": [
-    "shot-finish-01",
-    "single-leg-finish-01",
-    "double-leg-finish-01"
+  "scores-first": [
+    "first-score-mindset-01",
+    "pressure-starts-01"
   ],
 
-  "poor-hand-fighting": [
-    "inside-tie-01",
-    "clear-tie-01",
-    "collar-tie-defense-01"
-  ],
-
-  "gets-tired-late": [
-    "third-period-pace-01",
-    "shark-bait-01",
-    "pressure-wrestling-01"
-  ],
-
-  "top-control": [
-    "ride-control-01",
-    "mat-return-01",
-    "wrist-ride-01"
-  ],
-
-  "turn-defense": [
-    "half-defense-01",
-    "wrist-control-defense-01",
-    "base-rebuild-01"
+  "gives-up-first-score": [
+    "opening-defense-01",
+    "ready-position-01",
+    "first-contact-01"
   ]
+
 };
 
 export function mapPatternsToCards(patterns = []) {

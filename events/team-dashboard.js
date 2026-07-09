@@ -350,6 +350,7 @@ function sum(key) {
   );
 }
 
+
 function setText(id, value) {
   const el =
     document.getElementById(id);

@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   />
 
-  <title>Athlete Dashboard</title>
+  <title>CornermanAI Athlete Dashboard</title>
 
   <link rel="stylesheet" href="../app.css" />
   <link rel="stylesheet" href="./athlete-dashboard.css" />
@@ -16,126 +17,161 @@
 
 <body>
 
-  <main class="app-shell">
+<main class="app-shell">
 
-    <section class="hero">
-      <p class="eyebrow">CornermanAI</p>
+  <section class="hero">
+    <p class="eyebrow">CornermanAI</p>
 
-      <h1>Athlete Dashboard</h1>
+    <h1>Athlete Dashboard</h1>
 
-      <p class="sub">
-        Athlete performance, scoring trends, and match history.
+    <p class="sub">
+      Athlete performance, match history, intelligence patterns, and development focus.
+    </p>
+  </section>
+
+  <section class="card selector-card">
+    <span>ATHLETE</span>
+
+    <strong>Select Athlete</strong>
+
+    <select id="athleteSelect">
+      <option value="">
+        Select Athlete
+      </option>
+    </select>
+  </section>
+
+  <section class="stats-grid">
+
+    <article class="stat-card">
+      <span>Record</span>
+      <strong id="record">0-0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Win %</span>
+      <strong id="winPct">0%</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Points For</span>
+      <strong id="pointsFor">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Points Against</span>
+      <strong id="pointsAgainst">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Takedowns</span>
+      <strong id="takedowns">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Escapes</span>
+      <strong id="escapes">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Reversals</span>
+      <strong id="reversals">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Nearfall</span>
+      <strong id="nearfall">0</strong>
+    </article>
+
+  </section>
+
+  <section class="card">
+    <span>RECENT MATCHES</span>
+
+    <strong>Match History</strong>
+
+    <div id="matchHistory">
+      Select an athlete.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>INSIGHTS</span>
+
+    <strong>Athlete Insights</strong>
+
+    <div id="athleteInsights">
+      Select an athlete to generate insights.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>INTELLIGENCE</span>
+
+    <strong>Athlete Patterns</strong>
+
+    <div id="athletePatterns">
+      Select an athlete to generate patterns.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>DEVELOPMENT</span>
+
+    <strong>Athlete Recommendations</strong>
+
+    <div id="athleteRecommendations">
+      Select an athlete.
+    </div>
+  </section>
+
+  <section class="grid">
+
+    <a class="card" href="../reports/athlete-feedback/">
+      <span>FEEDBACK</span>
+
+      <strong>Athlete Feedback</strong>
+
+      <p>
+        Review athlete-facing feedback and Sandman development focus.
       </p>
-    </section>
+    </a>
 
-    <section class="card selector-card">
-      <span>ATHLETE</span>
+    <a class="card" href="../recon/">
+      <span>RECON</span>
 
-      <select id="athleteSelect">
-        <option value="">
-          Select Athlete
-        </option>
-      </select>
-    </section>
+      <strong>Recon Center</strong>
 
-    <section class="stats-grid">
+      <p>
+        Review coaching priorities and practice direction.
+      </p>
+    </a>
 
-      <article class="stat-card">
-        <span>Record</span>
-        <strong id="record">0-0</strong>
-      </article>
+    <a class="card" href="../history/">
+      <span>MATCH HISTORY</span>
 
-      <article class="stat-card">
-        <span>Win %</span>
-        <strong id="winPct">0%</strong>
-      </article>
+      <strong>Match Database</strong>
 
-      <article class="stat-card">
-        <span>Points For</span>
-        <strong id="pointsFor">0</strong>
-      </article>
+      <p>
+        Open full match records and intelligence reports.
+      </p>
+    </a>
 
-      <article class="stat-card">
-        <span>Points Against</span>
-        <strong id="pointsAgainst">0</strong>
-      </article>
+    <a class="card" href="../console/">
+      <span>BACK</span>
 
-      <article class="stat-card">
-        <span>Takedowns</span>
-        <strong id="takedowns">0</strong>
-      </article>
+      <strong>Console Command Center</strong>
 
-      <article class="stat-card">
-        <span>Escapes</span>
-        <strong id="escapes">0</strong>
-      </article>
+      <p>
+        Return to the command center.
+      </p>
+    </a>
 
-      <article class="stat-card">
-        <span>Reversals</span>
-        <strong id="reversals">0</strong>
-      </article>
+  </section>
 
-      <article class="stat-card">
-        <span>Nearfall</span>
-        <strong id="nearfall">0</strong>
-      </article>
+</main>
 
-    </section>
-
-    <section class="card">
-      <span>RECENT MATCHES</span>
-
-      <div id="matchHistory">
-        Select an athlete.
-      </div>
-    </section>
-
-    <section class="card">
-      <span>ATHLETE INSIGHTS</span>
-
-      <div id="athleteInsights">
-        Select an athlete to generate insights.
-      </div>
-    </section>
-
-    <section class="card">
-  <span>ATHLETE PATTERNS</span>
-
-  <div id="athletePatterns">
-    Select an athlete to generate patterns.
-  </div>
-</section>
-
-<section class="card">
-  <span>ATHLETE RECOMMENDATIONS</span>
-
-  <div id="athleteRecommendations">
-    Select an athlete.
-  </div>
-</section>
-
-    <section class="grid">
-
-      <a
-        class="card"
-        href="../console/"
-      >
-        <span>BACK</span>
-
-        <strong>
-          Console Command Center
-        </strong>
-
-        <p>
-          Return to the command center.
-        </p>
-      </a>
-
-    </section>
-
-  </main>
-
-  <script src="./athlete-dashboard.js"></script>
+<script src="./athlete-dashboard.js"></script>
 
 </body>
 </html>

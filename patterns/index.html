@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>CornermanAI Patterns</title>
+  <title>CornermanAI Pattern Engine</title>
 
   <link rel="stylesheet" href="../app.css" />
   <link rel="stylesheet" href="./patterns.css" />
@@ -13,59 +13,109 @@
 
 <body>
 
-  <main class="app-shell">
+<main class="app-shell">
 
-    <section class="hero">
-      <p class="eyebrow">CornermanAI</p>
+  <section class="hero">
+    <p class="eyebrow">CornermanAI</p>
 
-      <h1>Pattern Engine</h1>
+    <h1>Pattern Engine</h1>
 
-      <p class="sub">
-        Detect repeated scoring signals and turn match data into practice focus.
+    <p class="sub">
+      Detect recurring match intelligence, identify coaching priorities, and generate practice direction.
+    </p>
+  </section>
+
+  <section class="card">
+
+    <span>INTELLIGENCE</span>
+
+    <strong>Detected Patterns</strong>
+
+    <div id="patterns">
+      Loading patterns...
+    </div>
+
+  </section>
+
+  <section class="card">
+
+    <span>PRACTICE PRIORITIES</span>
+
+    <strong>Training Recommendation</strong>
+
+    <div id="recommendation">
+      Loading recommendations...
+    </div>
+
+  </section>
+
+  <section class="grid">
+
+    <a class="card" href="../recon/">
+      <span>RECON</span>
+
+      <strong>Recon Center</strong>
+
+      <p>
+        Convert intelligence into coaching priorities and practice plans.
       </p>
-    </section>
+    </a>
 
-    <section class="card">
-      <span>TOP PATTERNS</span>
-      <div id="patterns"></div>
-    </section>
+    <a class="card" href="../events/team-dashboard.html">
+      <span>DASHBOARD</span>
 
-    <section class="card">
-      <span>TRAINING RECOMMENDATION</span>
-      <div id="recommendation"></div>
-    </section>
+      <strong>Team Dashboard</strong>
 
-    <section class="grid">
+      <p>
+        Review team performance, trends, and intelligence summaries.
+      </p>
+    </a>
 
-      <a class="card" href="../events/team-dashboard.html">
-        <span>DASHBOARD</span>
-        <strong>Team Dashboard</strong>
-        <p>Review team-level scoring data.</p>
-      </a>
+    <a class="card" href="../athletes/athlete-dashboard.html">
+      <span>DASHBOARD</span>
 
-      <a class="card" href="../athletes/athlete-dashboard.html">
-        <span>DASHBOARD</span>
-        <strong>Athlete Dashboard</strong>
-        <p>Review athlete-level scoring data.</p>
-      </a>
+      <strong>Athlete Dashboard</strong>
 
-      <a class="card" href="../reports/index.html">
-        <span>REPORTS</span>
-        <strong>Reports</strong>
-        <p>Review saved match summaries.</p>
-      </a>
+      <p>
+        Review athlete development, scoring history, and growth.
+      </p>
+    </a>
 
-      <a class="card" href="../console/">
-        <span>BACK</span>
-        <strong>Console Command Center</strong>
-        <p>Return to the main command center.</p>
-      </a>
+    <a class="card" href="../reports/">
+      <span>REPORTS</span>
 
-    </section>
+      <strong>Reports Center</strong>
 
-  </main>
+      <p>
+        View athlete, team, and intelligence reports.
+      </p>
+    </a>
 
-  <script src="./patterns.js"></script>
+    <a class="card" href="../opponents/">
+      <span>OPPONENTS</span>
+
+      <strong>Opponent Dashboard</strong>
+
+      <p>
+        Scout tendencies and compare opponent intelligence.
+      </p>
+    </a>
+
+    <a class="card" href="../console/">
+      <span>BACK</span>
+
+      <strong>Console Command Center</strong>
+
+      <p>
+        Return to the live coaching console.
+      </p>
+    </a>
+
+  </section>
+
+</main>
+
+<script src="./patterns.js"></script>
 
 </body>
 </html>

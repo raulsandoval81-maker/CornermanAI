@@ -13,71 +13,124 @@ function saveMatch(event) {
 
   const match = {
     id: Date.now(),
+
     athlete: getValue("athlete"),
     opponent: getValue("opponent"),
-    tournament: getValue("tournament"),
-    weight: getValue("weight"),
+
+    eventName: getValue("tournament"),
+    weightClass: getValue("weight"),
+
     result: getValue("result"),
     method: getValue("method"),
+
     pointsFor: getNumber("pointsFor"),
     pointsAgainst: getNumber("pointsAgainst"),
+
     takedowns: getNumber("takedowns"),
     escapes: getNumber("escapes"),
     reversals: getNumber("reversals"),
     nearfall: getNumber("nearfall"),
-    notes: getValue("notes")
+
+    notes: getValue("notes"),
+
+    createdAt: new Date().toISOString()
   };
 
   const matches = getMatches();
   matches.push(match);
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(matches));
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(matches)
+  );
 
   form.reset();
+
   updateScreen();
 }
 
 function getMatches() {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  try {
+    return JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+  } catch (error) {
+    console.error(
+      "Could not read match history:",
+      error
+    );
+
+    return [];
+  }
 }
 
 function getValue(id) {
-  return document.getElementById(id).value.trim();
+  return document
+    .getElementById(id)
+    .value
+    .trim();
 }
 
 function getNumber(id) {
-  return Number(document.getElementById(id).value || 0);
+  return Number(
+    document.getElementById(id).value || 0
+  );
 }
 
 function updateScreen() {
   const matches = getMatches();
 
-  statusEl.textContent = `${matches.length} Match(es) Saved`;
+  statusEl.textContent =
+    `${matches.length} Match(es) Saved`;
 
   renderMatchHistory(matches);
 }
 
 function renderMatchHistory(matches) {
+
   if (!matchHistoryEl) return;
 
-  if (matches.length === 0) {
+  if (!matches.length) {
     matchHistoryEl.innerHTML =
       `<p class="empty-state">No saved matches yet.</p>`;
+
     return;
   }
 
-  const recentMatches = matches.slice(-6).reverse();
+  const recentMatches =
+    matches
+      .slice()
+      .reverse()
+      .slice(0, 6);
 
-  matchHistoryEl.innerHTML = recentMatches.map((match) => {
-    return `
-      <article class="match-row">
-        <div>
-          <strong>${match.athlete} vs ${match.opponent}</strong>
-          <p>${match.result} by ${match.method} · ${match.pointsFor}-${match.pointsAgainst}</p>
-        </div>
+  matchHistoryEl.innerHTML =
+    recentMatches
+      .map(match => `
+        <article class="match-row">
 
-        <span>${match.weight || "No weight"}</span>
-      </article>
-    `;
-  }).join("");
+          <div>
+
+            <strong>
+              ${match.athlete} vs ${match.opponent}
+            </strong>
+
+            <p>
+              ${match.result} by ${match.method}
+              ·
+              ${match.pointsFor}-${match.pointsAgainst}
+            </p>
+
+            <small>
+              ${match.eventName || "Practice"}
+            </small>
+
+          </div>
+
+          <span>
+            ${match.weightClass || "No weight"}
+          </span>
+
+        </article>
+      `)
+      .join("");
 }

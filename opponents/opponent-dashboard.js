@@ -53,11 +53,17 @@ function loadOpponents() {
   if (!opponentSelect) return;
 
   const names =
-    [...new Set(
-      reconNotes
-        .map(note => note.opponent)
-        .filter(Boolean)
-    )].sort();
+    [
+      ...new Set([
+        ...reconNotes
+          .map(note => note.opponent)
+          .filter(Boolean),
+
+        ...matches
+          .map(match => match.opponent)
+          .filter(Boolean)
+      ])
+    ].sort();
 
   opponentSelect.innerHTML = `
     <option value="">
@@ -190,6 +196,7 @@ function buildDashboard() {
 }
 
 function renderMatchesVsUs(matchesVsUs) {
+
   if (!matchesVsUsEl) return;
 
   if (!matchesVsUs.length) {
@@ -203,7 +210,9 @@ function renderMatchesVsUs(matchesVsUs) {
       .slice()
       .reverse()
       .map(match => `
+
         <div class="match-row">
+
           <strong>
             ${match.athlete || "Athlete"}
           </strong>
@@ -215,10 +224,19 @@ function renderMatchesVsUs(matchesVsUs) {
             (${match.pointsFor || 0}-${match.pointsAgainst || 0})
           </p>
 
+          <p>
+            <strong>Patterns:</strong>
+            ${formatPatterns(
+              match.intelligence?.patterns || []
+            )}
+          </p>
+
           <a href="../history/match-detail.html?id=${match.id}">
             View Match
           </a>
+
         </div>
+
       `)
       .join("");
 }
@@ -456,6 +474,24 @@ function getMostCommonRaw(notes, field) {
   }
 
   return sorted[0][0];
+}
+
+function formatPatterns(patterns = []) {
+
+  if (!patterns.length) {
+    return "No intelligence yet.";
+  }
+
+  return patterns
+    .map(pattern =>
+      String(pattern)
+        .replaceAll("-", " ")
+        .replace(/\b\w/g, char =>
+          char.toUpperCase()
+        )
+    )
+    .join(", ");
+
 }
 
 function normalize(value) {

@@ -1,21 +1,40 @@
+/* ==========================
+   ATHLETE SELECT
+========================== */
+
 .selector-card {
-  width: min(600px, 100%);
+  width: min(640px, 100%);
   margin: 0 auto 24px;
-  color: #f8fafc;
+}
+
+.selector-card strong {
+  display: block;
+  margin: 6px 0 14px;
+  color: #fff;
+  font-size: 1.2rem;
 }
 
 .selector-card select {
   width: 100%;
-  margin-top: 10px;
-  padding: 14px;
+  padding: 14px 16px;
+  border: 1px solid #2f2f2f;
   border-radius: 12px;
-  border: 1px solid #3a3a3a;
-  background: #050505;
-  color: #ffffff;
+  background: #0b0b0b;
+  color: #fff;
+  font: inherit;
 }
 
+.selector-card select:focus {
+  outline: none;
+  border-color: #facc15;
+}
+
+/* ==========================
+   STATS
+========================== */
+
 .stats-grid {
-  width: min(1000px, 100%);
+  width: min(1100px, 100%);
   margin: 0 auto 24px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -23,42 +42,99 @@
 }
 
 .stat-card {
-  background: #0b0b0b;
+  background: #0d0d0d;
   border: 1px solid #2a2a2a;
   border-radius: 18px;
-  padding: 18px;
-  color: #f8fafc;
+  padding: 20px;
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(0,0,0,.35);
 }
 
 .stat-card span {
   display: block;
   color: #facc15;
-  font-size: 0.75rem;
+  font-size: .75rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: .08em;
   margin-bottom: 10px;
 }
 
 .stat-card strong {
   display: block;
-  color: #ffffff;
-  font-size: 2rem;
+  font-size: 2.15rem;
   font-weight: 900;
   line-height: 1;
 }
 
+/* ==========================
+   MATCH ROWS
+========================== */
+
 .match-row {
-  padding: 14px 0;
-  border-top: 1px solid #2a2a2a;
-  color: #f8fafc;
+  padding: 16px 0;
+  border-top: 1px solid #252525;
 }
 
 .match-row:first-child {
   border-top: 0;
 }
 
+.match-row strong {
+  display: block;
+  color: #fff;
+  font-size: 1.05rem;
+}
+
 .match-row p {
   margin: 6px 0 0;
-  color: #d4d4d8;
+  color: #b5b5b5;
+  line-height: 1.55;
+}
+
+.match-row a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #facc15;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.match-row a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================
+   CONTENT CARDS
+========================== */
+
+.card > strong {
+  display: block;
+  margin: 8px 0 16px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.card > div {
+  color: #b5b5b5;
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media (max-width: 700px) {
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+@media (max-width: 520px) {
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
 }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Team Dashboard</title>
+  <title>CornermanAI Team Dashboard</title>
 
   <link rel="stylesheet" href="../app.css" />
   <link rel="stylesheet" href="./team-dashboard.css" />
@@ -13,114 +13,151 @@
 
 <body>
 
-  <main class="app-shell">
+<main class="app-shell">
 
-    <section class="hero">
-      <p class="eyebrow">CornermanAI</p>
+  <section class="hero">
+    <p class="eyebrow">CornermanAI</p>
 
-      <h1>Team Dashboard</h1>
+    <h1>Team Dashboard</h1>
 
-      <p class="sub">
-        Team performance, scoring trends, and event analytics.
+    <p class="sub">
+      Team performance, intelligence patterns, coaching insights, and practice priorities.
+    </p>
+  </section>
+
+  <section class="stats-grid">
+
+    <article class="stat-card">
+      <span>Record</span>
+      <strong id="record">0-0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Win %</span>
+      <strong id="winPct">0%</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Points For</span>
+      <strong id="pointsFor">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Points Against</span>
+      <strong id="pointsAgainst">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Pins</span>
+      <strong id="pins">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Tech Falls</span>
+      <strong id="techs">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Majors</span>
+      <strong id="majors">0</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Decisions</span>
+      <strong id="decisions">0</strong>
+    </article>
+
+  </section>
+
+  <section class="card">
+    <span>RECENT MATCHES</span>
+
+    <div id="recentMatches">
+      Loading recent matches...
+    </div>
+  </section>
+
+  <section class="card">
+    <span>TEAM INSIGHTS</span>
+
+    <div id="teamInsights">
+      No team insights available.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>TEAM PATTERNS</span>
+
+    <div id="teamPatterns">
+      No patterns detected yet.
+    </div>
+  </section>
+
+  <section class="card">
+    <span>PRACTICE RECOMMENDATIONS</span>
+
+    <div id="teamRecommendations">
+      No recommendations available.
+    </div>
+  </section>
+
+  <section class="grid">
+
+    <a class="card" href="../recon/">
+      <span>RECON</span>
+
+      <strong>Recon Center</strong>
+
+      <p>
+        Review intelligence patterns and practice priorities.
       </p>
-    </section>
+    </a>
 
-    <section class="stats-grid">
+    <a class="card" href="../reports/">
+      <span>REPORTS</span>
 
-      <article class="stat-card">
-        <span>Record</span>
-        <strong id="record">0-0</strong>
-      </article>
+      <strong>Reports Center</strong>
 
-      <article class="stat-card">
-        <span>Win %</span>
-        <strong id="winPct">0%</strong>
-      </article>
+      <p>
+        View athlete, team, and event reports.
+      </p>
+    </a>
 
-      <article class="stat-card">
-        <span>Points For</span>
-        <strong id="pointsFor">0</strong>
-      </article>
+    <a class="card" href="../history/">
+      <span>MATCH HISTORY</span>
 
-      <article class="stat-card">
-        <span>Points Against</span>
-        <strong id="pointsAgainst">0</strong>
-      </article>
+      <strong>Match Database</strong>
 
-      <article class="stat-card">
-        <span>Pins</span>
-        <strong id="pins">0</strong>
-      </article>
+      <p>
+        Browse every recorded match and review details.
+      </p>
+    </a>
 
-      <article class="stat-card">
-        <span>Techs</span>
-        <strong id="techs">0</strong>
-      </article>
+    <a class="card" href="../opponents/">
+      <span>OPPONENTS</span>
 
-      <article class="stat-card">
-        <span>Majors</span>
-        <strong id="majors">0</strong>
-      </article>
+      <strong>Opponent Dashboard</strong>
 
-      <article class="stat-card">
-        <span>Decisions</span>
-        <strong id="decisions">0</strong>
-      </article>
+      <p>
+        Scout opponents using recon notes and match intelligence.
+      </p>
+    </a>
 
-    </section>
+    <a class="card" href="../console/">
+      <span>BACK</span>
 
-    <section class="card">
-      <span>RECENT MATCHES</span>
+      <strong>Console Command Center</strong>
 
-      <div id="recentMatches">
-        Loading...
-      </div>
-    </section>
+      <p>
+        Return to the command center.
+      </p>
+    </a>
 
-    <section class="card">
-      <span>TEAM INSIGHTS</span>
+  </section>
 
-      <div id="teamInsights">
-        No team insights yet.
-      </div>
-    </section>
+</main>
 
-    <section class="card">
-  <span>TEAM PATTERNS</span>
-
-  <div id="teamPatterns">
-    No team patterns yet.
-  </div>
-</section>
-<section class="card">
-  <span>TEAM RECOMMENDATIONS</span>
-
-  <div id="teamRecommendations">
-    No recommendations yet.
-  </div>
-</section>
-    <section class="grid">
-
-      <a
-        class="card"
-        href="../console/"
-      >
-        <span>BACK</span>
-
-        <strong>
-          Console Command Center
-        </strong>
-
-        <p>
-          Return to the command center.
-        </p>
-      </a>
-
-    </section>
-
-  </main>
-
-  <script src="./team-dashboard.js"></script>
+<script src="./team-dashboard.js"></script>
 
 </body>
 </html>

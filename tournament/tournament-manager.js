@@ -13,13 +13,11 @@ const CONSOLE_MATCH_KEY =
 const TOURNAMENT_MATCHES_KEY =
   "cornerman_matches";
 
-  const TOURNAMENT_HISTORY_KEY =
+const CURRENT_TOURNAMENT_KEY =
+  "cornerman_current_tournament";
+
+const TOURNAMENT_HISTORY_KEY =
   "cornerman_tournament_history";
-
-
-/* =========================
-   TOURNAMENT EVENT
-========================= */
 
 let currentTournament = {
   name: "",
@@ -28,10 +26,6 @@ let currentTournament = {
   bracketRound: "",
   consolePreference: "compact"
 };
-
-/* =========================
-   DOM
-========================= */
 
 const importBtn =
   document.getElementById("importLastMatchBtn");
@@ -66,18 +60,17 @@ const rosterStatus =
 const tournamentRosterList =
   document.getElementById("tournamentRosterList");
 
-  const tournamentDateInput =
+const tournamentDateInput =
   document.getElementById("tournamentDateInput");
 
 const tournamentLocationInput =
   document.getElementById("tournamentLocationInput");
 
+const bracketRoundInput =
+  document.getElementById("bracketRoundInput");
 
-const bracketRoundInput = 
-  document.getElementById( "bracketRoundInput"   );
-
-  const consolePreferenceInput =
-  document.getElementById( "consolePreferenceInput" );
+const consolePreferenceInput =
+  document.getElementById("consolePreferenceInput");
 
 const saveTournamentEventBtn =
   document.getElementById("saveTournamentEventBtn");
@@ -85,61 +78,60 @@ const saveTournamentEventBtn =
 const currentTournamentEl =
   document.getElementById("currentTournament");
 
-  const archiveTournamentBtn =
-  document.getElementById(
-    "archiveTournamentBtn"
+const archiveTournamentBtn =
+  document.getElementById("archiveTournamentBtn");
+
+init();
+
+function init() {
+  loadCurrentTournament();
+  renderCurrentTournament();
+  renderTournamentRoster();
+  renderLastConsoleMatch();
+
+  weightGroupSelect?.addEventListener(
+    "change",
+    () => loadWeightOptions(weightGroupSelect.value)
   );
 
+  addTournamentAthleteBtn?.addEventListener(
+    "click",
+    addAthleteToTournamentRoster
+  );
 
-  /* =========================
-   INIT
-========================= */
+  saveTournamentEventBtn?.addEventListener(
+    "click",
+    saveTournamentEvent
+  );
 
-renderTournamentRoster();
-loadCurrentTournament();
-renderCurrentTournament();
-setRosterStatus(
-  "Tournament event saved."
-);
+  archiveTournamentBtn?.addEventListener(
+    "click",
+    archiveCurrentTournament
+  );
 
+  importBtn?.addEventListener(
+    "click",
+    importLastConsoleMatch
+  );
+}
 
-weightGroupSelect?.addEventListener(
-  "change",
-  () => {
-    loadWeightOptions(
-      weightGroupSelect.value
-    );
-  }
-);
-
-addTournamentAthleteBtn?.addEventListener(
-  "click",
-  addAthleteToTournamentRoster
-);
-
-saveTournamentEventBtn?.addEventListener(
-  "click",
-  saveTournamentEvent
-);
-
-archiveTournamentBtn?.addEventListener(
-  "click",
-  archiveCurrentTournament
-);
-
-/* =========================
-   TOURNAMENT ROSTER
-========================= */
 function saveTournamentEvent() {
-currentTournament = {
-  name: eventNameInput?.value.trim() || "",
-  date: tournamentDateInput?.value || "",
-  location: tournamentLocationInput?.value.trim() || "",
-  bracketRound:
-    bracketRoundInput?.value || "",
-  consolePreference:
-    consolePreferenceInput?.value || "compact"
-};
+  currentTournament = {
+    name:
+      eventNameInput?.value.trim() || "",
+
+    date:
+      tournamentDateInput?.value || "",
+
+    location:
+      tournamentLocationInput?.value.trim() || "",
+
+    bracketRound:
+      bracketRoundInput?.value || "",
+
+    consolePreference:
+      consolePreferenceInput?.value || "compact"
+  };
 
   if (!currentTournament.name) {
     setRosterStatus("Enter tournament name first.");
@@ -147,49 +139,67 @@ currentTournament = {
   }
 
   localStorage.setItem(
-    "cornerman_current_tournament",
+    CURRENT_TOURNAMENT_KEY,
     JSON.stringify(currentTournament)
   );
 
   renderCurrentTournament();
+
+  setRosterStatus(
+    "Tournament event saved."
+  );
 }
+
 function loadCurrentTournament() {
   const saved =
-    localStorage.getItem(
-      "cornerman_current_tournament"
-    );
+    localStorage.getItem(CURRENT_TOURNAMENT_KEY);
 
-    if (consolePreferenceInput) {
-  consolePreferenceInput.value =
-    currentTournament.consolePreference || "compact";
-}
-
-  if (!saved) return;
+  if (!saved) {
+    syncTournamentInputs();
+    return;
+  }
 
   try {
     currentTournament =
       JSON.parse(saved);
 
-    eventNameInput.value =
-      currentTournament.name || "";
-
-    tournamentDateInput.value =
-      currentTournament.date || "";
-
-      if (bracketRoundInput) {
-  bracketRoundInput.value =
-    currentTournament.bracketRound || "";
-}
-
-    tournamentLocationInput.value =
-      currentTournament.location || "";
-
+    syncTournamentInputs();
   } catch (error) {
-    console.error(error);
+    console.error(
+      "Could not load tournament:",
+      error
+    );
   }
 }
-function archiveCurrentTournament() {
 
+function syncTournamentInputs() {
+  if (eventNameInput) {
+    eventNameInput.value =
+      currentTournament.name || "";
+  }
+
+  if (tournamentDateInput) {
+    tournamentDateInput.value =
+      currentTournament.date || "";
+  }
+
+  if (tournamentLocationInput) {
+    tournamentLocationInput.value =
+      currentTournament.location || "";
+  }
+
+  if (bracketRoundInput) {
+    bracketRoundInput.value =
+      currentTournament.bracketRound || "";
+  }
+
+  if (consolePreferenceInput) {
+    consolePreferenceInput.value =
+      currentTournament.consolePreference || "compact";
+  }
+}
+
+function archiveCurrentTournament() {
   if (!currentTournament.name) {
     setRosterStatus(
       "No active tournament to archive."
@@ -202,22 +212,14 @@ function archiveCurrentTournament() {
 
   const history =
     JSON.parse(
-      localStorage.getItem(
-        TOURNAMENT_HISTORY_KEY
-      ) || "[]"
+      localStorage.getItem(TOURNAMENT_HISTORY_KEY) || "[]"
     );
 
   history.push({
     id: Date.now(),
-
-    event: {
-      ...currentTournament
-    },
-
+    event: { ...currentTournament },
     roster,
-
-    archivedAt:
-      new Date().toISOString()
+    archivedAt: new Date().toISOString()
   });
 
   localStorage.setItem(
@@ -225,33 +227,18 @@ function archiveCurrentTournament() {
     JSON.stringify(history)
   );
 
-  localStorage.removeItem(
-    "cornerman_current_tournament"
-  );
+  localStorage.removeItem(CURRENT_TOURNAMENT_KEY);
+  localStorage.removeItem("cornerman_tournament_roster");
 
-  localStorage.removeItem(
-    "cornerman_tournament_roster"
-  );
+  currentTournament = {
+    name: "",
+    date: "",
+    location: "",
+    bracketRound: "",
+    consolePreference: "compact"
+  };
 
-currentTournament = {
-  name: "",
-  date: "",
-  location: "",
-  bracketRound: "",
-  consolePreference: "compact"
-};
-
-  eventNameInput.value = "";
-  tournamentDateInput.value = "";
-  tournamentLocationInput.value = "";
-if (bracketRoundInput) {
-  bracketRoundInput.value = "";
-}
-if (consolePreferenceInput) {
-  consolePreferenceInput.value =
-    "compact";
-}
-
+  syncTournamentInputs();
   renderCurrentTournament();
   renderTournamentRoster();
 
@@ -262,7 +249,7 @@ if (consolePreferenceInput) {
 
 function addAthleteToTournamentRoster() {
   const eventName =
-  currentTournament.name || "";
+    currentTournament.name || "";
 
   const athleteName =
     athleteNameInput?.value.trim() || "";
@@ -286,41 +273,53 @@ function addAthleteToTournamentRoster() {
     setRosterStatus(
       "Complete event, athlete, team, weight group, and weight."
     );
-
     return;
   }
 
-  const entryId =
-    buildEntryId(
-      athleteName,
-      weightGroup,
-      weight
-    );
-
   const entry = {
-    entryId,
-    athleteId: slugify(athleteName),
-    name: athleteName,
-    team: teamName,
+    entryId:
+      buildEntryId(
+        athleteName,
+        weightGroup,
+        weight
+      ),
+
+    athleteId:
+      slugify(athleteName),
+
+    name:
+      athleteName,
+
+    team:
+      teamName,
+
     eventName,
-    division: formatDivision(weightGroup),
+
+    division:
+      formatDivision(weightGroup),
+
     weightGroup,
     weight,
-    checkedIn: true,
-    attendanceXp: 10,
-    placementXp: 0,
-    createdAt: new Date().toISOString()
+
+    checkedIn:
+      true,
+
+    attendanceXp:
+      10,
+
+    placementXp:
+      0,
+
+    createdAt:
+      new Date().toISOString()
   };
 
   addTournamentEntry(entry);
 
-  setRosterStatus(
-    `${athleteName} added to tournament roster.`
-  );
-
   athleteNameInput.value = "";
   teamNameInput.value = "";
   weightGroupSelect.value = "";
+
   weightInput.innerHTML = `
     <option value="">
       Select Weight
@@ -328,40 +327,43 @@ function addAthleteToTournamentRoster() {
   `;
 
   renderTournamentRoster();
+
+  setRosterStatus(
+    `${athleteName} added to tournament roster.`
+  );
 }
+
 function renderCurrentTournament() {
   if (!currentTournamentEl) return;
 
   if (!currentTournament.name) {
     currentTournamentEl.innerHTML =
-      "<p>No tournament event created yet.</p>";
+      "<p>No active tournament context.</p>";
     return;
   }
 
-currentTournamentEl.innerHTML = `
-  <strong>${currentTournament.name}</strong>
+  currentTournamentEl.innerHTML = `
+    <strong>
+      ${currentTournament.name}
+    </strong>
 
-  <p>
-    ${currentTournament.date || "No date"}
-    ·
-    ${currentTournament.location || "No location"}
-  </p>
+    <p>
+      ${currentTournament.date || "No date"}
+      ·
+      ${currentTournament.location || "No location"}
+    </p>
 
-  <p>
-    Bracket:
-    ${currentTournament.bracketRound || "General Event"}
-  </p>
+    <p>
+      Bracket:
+      ${currentTournament.bracketRound || "General Event"}
+    </p>
 
-  <p>
-    Console:
-    ${currentTournament.consolePreference || "compact"}
-  </p>
-`;
-
+    <p>
+      Console:
+      ${currentTournament.consolePreference || "compact"}
+    </p>
+  `;
 }
-
-
-
 
 function renderTournamentRoster() {
   if (!tournamentRosterList) return;
@@ -421,42 +423,181 @@ function loadWeightOptions(group) {
   });
 }
 
-function setRosterStatus(message) {
-  if (rosterStatus) {
-    rosterStatus.textContent =
-      message;
+function importLastConsoleMatch() {
+  const consoleMatch =
+    getLastConsoleMatch();
+
+  if (!consoleMatch) {
+    setImportStatus(
+      "No console match found. Run and save a match first."
+    );
+    return;
+  }
+
+  const matches =
+    getTournamentMatches();
+
+  const alreadyImported =
+    matches.some(match =>
+      String(match.sourceId) ===
+      String(consoleMatch.id)
+    );
+
+  if (alreadyImported) {
+    setImportStatus(
+      "This console match is already imported."
+    );
+    return;
+  }
+
+  const importedMatch =
+    convertConsoleMatch(consoleMatch);
+
+  matches.push(importedMatch);
+
+  localStorage.setItem(
+    TOURNAMENT_MATCHES_KEY,
+    JSON.stringify(matches)
+  );
+
+  setImportStatus(
+    `Imported: ${importedMatch.athlete} vs ${importedMatch.opponent} — ${importedMatch.result} by ${importedMatch.method}`
+  );
+
+  renderLastConsoleMatch();
+}
+
+function getLastConsoleMatch() {
+  const raw =
+    localStorage.getItem(CONSOLE_MATCH_KEY);
+
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    console.error(
+      "Bad console match payload:",
+      error
+    );
+    return null;
   }
 }
 
-function normalizeMethod(method) {
-  if (!method) return "Decision";
-
-  const value =
-    String(method).toLowerCase();
-
-  if (value.includes("pin")) return "Pin";
-  if (value.includes("tech")) return "Tech";
-  if (value.includes("major")) return "Major";
-  if (value.includes("forfeit")) return "Forfeit";
-
-  return "Decision";
+function getTournamentMatches() {
+  return JSON.parse(
+    localStorage.getItem(TOURNAMENT_MATCHES_KEY) || "[]"
+  );
 }
 
-function countEvents(match, side, shortCode) {
-  return (match.events || [])
-    .filter(event =>
-      event.side === side &&
-      event.short === shortCode
-    ).length;
-}
+function convertConsoleMatch(consoleMatch) {
+  const intelligence =
+    consoleMatch.intelligence || {};
 
-function countNearfall(match, side) {
-  return (match.events || [])
-    .filter(event =>
-      event.side === side &&
-      String(event.short || "")
-        .startsWith("NF")
-    ).length;
+  return {
+    id:
+      Date.now(),
+
+    sourceId:
+      consoleMatch.id,
+
+    source:
+      "coach-console-import",
+
+    athlete:
+      consoleMatch.athlete || "Athlete",
+
+    opponent:
+      consoleMatch.opponent || "Opponent",
+
+    eventName:
+      consoleMatch.eventName ||
+      currentTournament.name ||
+      "",
+
+    tournament:
+      consoleMatch.eventName ||
+      currentTournament.name ||
+      "",
+
+    tournamentDate:
+      currentTournament.date || "",
+
+    tournamentLocation:
+      currentTournament.location || "",
+
+    bracketRound:
+      currentTournament.bracketRound || "",
+
+    weightClass:
+      consoleMatch.weightClass || "",
+
+    weight:
+      consoleMatch.weightClass || "",
+
+    result:
+      consoleMatch.winner === "athlete"
+        ? "Win"
+        : "Loss",
+
+    method:
+      normalizeMethod(
+        consoleMatch.resultType
+      ),
+
+    pointsFor:
+      Number(consoleMatch.athleteScore || 0),
+
+    pointsAgainst:
+      Number(consoleMatch.opponentScore || 0),
+
+    takedowns:
+      countEvents(
+        consoleMatch,
+        "athlete",
+        "TD"
+      ),
+
+    escapes:
+      countEvents(
+        consoleMatch,
+        "athlete",
+        "ESC"
+      ),
+
+    reversals:
+      countEvents(
+        consoleMatch,
+        "athlete",
+        "REV"
+      ),
+
+    nearfall:
+      countNearfall(
+        consoleMatch,
+        "athlete"
+      ),
+
+    events:
+      consoleMatch.events || [],
+
+    notes:
+      consoleMatch.notes || "",
+
+    intelligence,
+
+    patterns:
+      intelligence.patterns || [],
+
+    recommendations:
+      intelligence.recommendations || [],
+
+    practiceFocus:
+      intelligence.practiceFocus || {},
+
+    importedAt:
+      new Date().toISOString()
+  };
 }
 
 function renderLastConsoleMatch() {
@@ -491,14 +632,21 @@ function renderLastConsoleMatch() {
       </p>
 
       <p>
-        Tournament:
-        ${converted.tournament || "Not set"}
+        Event:
+        ${converted.eventName || "Not set"}
         ·
         Weight:
-        ${converted.weight || "Not set"}
+        ${converted.weightClass || "Not set"}
       </p>
     </div>
   `;
+}
+
+function setRosterStatus(message) {
+  if (rosterStatus) {
+    rosterStatus.textContent =
+      message;
+  }
 }
 
 function setImportStatus(message) {
@@ -508,9 +656,37 @@ function setImportStatus(message) {
   }
 }
 
-/* =========================
-   HELPERS
-========================= */
+function normalizeMethod(method) {
+  if (!method) return "Decision";
+
+  const value =
+    String(method).toLowerCase();
+
+  if (value.includes("pin")) return "Pin";
+  if (value.includes("tech")) return "Tech";
+  if (value.includes("major")) return "Major";
+  if (value.includes("forfeit")) return "Forfeit";
+  if (value.includes("dq")) return "DQ";
+
+  return "Decision";
+}
+
+function countEvents(match, side, shortCode) {
+  return (match.events || [])
+    .filter(event =>
+      event.side === side &&
+      event.short === shortCode
+    ).length;
+}
+
+function countNearfall(match, side) {
+  return (match.events || [])
+    .filter(event =>
+      event.side === side &&
+      String(event.short || "")
+        .startsWith("NF")
+    ).length;
+}
 
 function slugify(value) {
   return String(value || "")

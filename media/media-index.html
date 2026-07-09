@@ -8,110 +8,149 @@
     content="width=device-width, initial-scale=1"
   />
 
-  <title>Media Library</title>
+  <title>CornermanAI Media Library</title>
 
   <link
     rel="stylesheet"
     href="./media.css"
   />
+
+  <link
+    rel="icon"
+    href="data:,"
+  />
 </head>
 
 <body>
 
-  <main class="page">
+<main class="page">
 
-    <section class="hero">
-      <p class="eyebrow">
-        MEDIA
-      </p>
+  <section class="hero">
+    <p class="eyebrow">
+      MEDIA
+    </p>
 
-      <h1>
-        Media Library
-      </h1>
+    <h1>
+      Media Library
+    </h1>
 
-      <p class="sub">
-        Organize uploaded match videos, linked matches, and future media assets.
-      </p>
-    </section>
+    <p class="sub">
+      Organize match videos, linked matches, live broadcasts, and video evidence.
+    </p>
+  </section>
 
-    <section class="card">
-      <span>
-        SEARCH
-      </span>
+  <section class="card">
+    <span>
+      SEARCH
+    </span>
 
-      <strong>
-        Media Filters
-      </strong>
+    <strong>
+      Media Filters
+    </strong>
 
-      <div class="form-stack">
-        <input
-          id="mediaSearch"
-          type="text"
-          placeholder="Search athlete, opponent, event, title, URL, or match ID"
-        />
+    <div class="form-stack">
 
-        <select id="mediaEventFilter">
-          <option value="">
-            All Events
-          </option>
-        </select>
+      <input
+        id="mediaSearch"
+        type="text"
+        placeholder="Search athlete, opponent, event, title, URL, or match ID"
+      />
 
-        <select id="mediaStatusFilter">
-          <option value="all">
-            All Media
-          </option>
+      <select id="mediaEventFilter">
+        <option value="">
+          All Events
+        </option>
+      </select>
 
-          <option value="linked">
-            Linked
-          </option>
+      <select id="mediaStatusFilter">
+        <option value="all">
+          All Media
+        </option>
 
-          <option value="unlinked">
-            Unlinked
-          </option>
-        </select>
-      </div>
-    </section>
+        <option value="linked">
+          Linked
+        </option>
 
-    <section class="card">
-      <span>
-        SUMMARY
-      </span>
+        <option value="unlinked">
+          Unlinked
+        </option>
+      </select>
 
-      <strong>
-        Media Snapshot
-      </strong>
+    </div>
+  </section>
 
-      <div id="mediaStats"></div>
-    </section>
+  <section class="card">
+    <span>
+      SUMMARY
+    </span>
 
-    <section class="card">
-      <span>
-        LIBRARY
-      </span>
+    <strong>
+      Media Snapshot
+    </strong>
 
-      <strong>
-        Uploaded Media
-      </strong>
+    <div id="mediaStats"></div>
+  </section>
 
-      <div id="mediaList"></div>
-    </section>
+  <section class="card">
+    <span>
+      LIBRARY
+    </span>
 
-    <section class="card">
-      <span>
-        BACK
-      </span>
+    <strong>
+      Uploaded Media
+    </strong>
 
-      <a href="../console/">
-        Console Command Center
-      </a>
-    </section>
+    <div id="mediaList"></div>
+  </section>
 
-  </main>
+  <section class="card">
+    <span>
+      LIVE
+    </span>
 
-  <script
-    type="module"
-    src="./media-index.js"
-  ></script>
+    <strong>
+      Live Broadcast
+    </strong>
+
+    <p>
+      Open the live control panel or viewer display.
+    </p>
+
+    <a href="./live/">
+      Open Live Control
+    </a>
+  </section>
+
+  <section class="card">
+    <span>
+      COMMAND
+    </span>
+
+    <strong>
+      Command Center
+    </strong>
+
+    <a href="../hub/">
+      Open Command Center
+    </a>
+  </section>
+
+  <section class="card">
+    <span>
+      BACK
+    </span>
+
+    <a href="../console/">
+      Console Command Center
+    </a>
+  </section>
+
+</main>
+
+<script
+  type="module"
+  src="./media-index.js"
+></script>
 
 </body>
-</html>grep -R "videoUrl" . -n
+</html>

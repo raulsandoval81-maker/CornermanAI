@@ -84,7 +84,7 @@ function buildDashboard() {
   matches.filter(match =>
     String(match.athlete || "")
       .trim()
-      .toLowerCase() === athlete
+      .toLowerCase() === athlete.toLowerCase()
   );
   const wins =
     athleteMatches.filter(match =>
@@ -212,7 +212,7 @@ function renderHistory(athleteMatches) {
   </p>
 
   <a
-    href="../history/match-detail?id=${match.id}"
+    href="../history/match-detail.html?id=${match.id}"
   >
     View Match
   </a>
@@ -296,6 +296,7 @@ function renderAthleteInsights(athleteMatches) {
     </div>
   `;
 }
+ 
 function renderAthletePatterns(athleteMatches) {
   const container =
     document.getElementById("athletePatterns");
@@ -308,57 +309,56 @@ function renderAthletePatterns(athleteMatches) {
     return;
   }
 
-  const wins =
+  const patternCounts = {};
+
+  athleteMatches.forEach(match => {
+    const patterns =
+      match.intelligence?.patterns || [];
+
+    patterns.forEach(pattern => {
+      patternCounts[pattern] =
+        (patternCounts[pattern] || 0) + 1;
+    });
+  });
+
+  const rankedPatterns =
+    Object.entries(patternCounts)
+      .sort((a, b) => b[1] - a[1]);
+
+  const primaryPattern =
+    rankedPatterns[0];
+
+  const secondaryPattern =
+    rankedPatterns[1];
+
+  const analyzedMatches =
     athleteMatches.filter(match =>
-      match.result === "Win"
+      match.intelligence
     ).length;
-
-  const losses =
-    athleteMatches.filter(match =>
-      match.result === "Loss"
-    ).length;
-
-  const pins =
-    athleteMatches.filter(match =>
-      match.method === "Pin"
-    ).length;
-
-  const takedowns =
-    sum(athleteMatches, "takedowns");
-
-  const pointsFor =
-    sum(athleteMatches, "pointsFor");
-
-  const highestMatch =
-    athleteMatches
-      .slice()
-      .sort((a, b) =>
-        Number(b.pointsFor || 0) -
-        Number(a.pointsFor || 0)
-      )[0];
 
   container.innerHTML = `
     <div class="match-row">
-      <strong>Recent Trend</strong>
-      <p>${wins} wins · ${losses} losses</p>
+      <strong>Primary Pattern</strong>
+      <p>${formatPattern(primaryPattern)}</p>
     </div>
 
     <div class="match-row">
-      <strong>Most Common Finish</strong>
-      <p>${pins ? "Pin" : "Decision / Other"}</p>
+      <strong>Secondary Pattern</strong>
+      <p>${formatPattern(secondaryPattern)}</p>
     </div>
 
     <div class="match-row">
-      <strong>Scoring Pattern</strong>
-      <p>${getScoringPattern(takedowns, pointsFor)}</p>
+      <strong>Pattern Signals</strong>
+      <p>${rankedPatterns.length}</p>
     </div>
 
     <div class="match-row">
-      <strong>Highest Scoring Match</strong>
-      <p>${highestMatch?.opponent || "Opponent"} · ${pointsFor ? highestMatch.pointsFor : 0} points</p>
+      <strong>Intelligence Ready</strong>
+      <p>${analyzedMatches} analyzed match(es)</p>
     </div>
   `;
 }
+ 
 function renderAthleteRecommendations(athleteMatches) {
   const container =
     document.getElementById("athleteRecommendations");
@@ -476,7 +476,22 @@ function buildFeedback({
 
   return `${result}: ${strength} Next focus: ${focus}`;
 }
+function formatPattern(entry) {
+  if (!entry) {
+    return "No intelligence yet.";
+  }
 
+  const [pattern, count] = entry;
+
+  const label =
+    String(pattern)
+      .replaceAll("-", " ")
+      .replace(/\b\w/g, char =>
+        char.toUpperCase()
+      );
+
+  return `${label} (${count})`;
+}
 
 function sum(matchList, key) {
   return matchList.reduce(

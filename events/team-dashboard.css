@@ -1,53 +1,82 @@
-.stats-grid {
-  width: min(1000px, 100%);
-  margin: 0 auto 24px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
+.stats-grid{
+  width:min(1000px,100%);
+  margin:0 auto 28px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:18px;
 }
 
-.stat-card {
-  background: #0d0d0d;
-  border: 1px solid #2a2a2a;
-  border-radius: 18px;
-  padding: 20px;
-  color: #fff;
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+.stat-card{
+  background:#0d0d0d;
+  border:1px solid #2a2a2a;
+  border-radius:18px;
+  padding:22px;
+  color:#fff;
+  box-shadow:0 14px 30px rgba(0,0,0,.35);
+  transition:.2s ease;
 }
 
-.stat-card span {
-  display: block;
-  color: #facc15;
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 10px;
+.stat-card:hover{
+  border-color:#facc15;
+  transform:translateY(-2px);
 }
 
-.stat-card strong {
-  display: block;
-  color: #fff;
-  font-size: 2.2rem;
-  line-height: 1;
+.stat-card span{
+  display:block;
+  margin-bottom:10px;
+  color:#facc15;
+  font-size:.75rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
 }
 
-.match-row {
-  padding: 14px 0;
-  border-top: 1px solid #2a2a2a;
-  color: #fff;
+.stat-card strong{
+  display:block;
+  color:#fff;
+  font-size:2.2rem;
+  line-height:1;
 }
 
-.match-row:first-child {
-  border-top: 0;
+.match-row{
+  padding:14px 0;
+  border-top:1px solid #2a2a2a;
+  color:#fff;
 }
 
-.match-row strong {
-  color: #fff;
-  font-size: 1.05rem;
+.match-row:first-child{
+  border-top:0;
 }
 
-.match-row p {
-  margin: 6px 0 0;
-  color: #b5b5b5;
+.match-row strong{
+  color:#fff;
+  font-size:1.05rem;
+}
+
+.match-row p{
+  margin:6px 0 0;
+  color:#b5b5b5;
+  line-height:1.45;
+}
+
+.match-row a{
+  display:inline-block;
+  margin-top:10px;
+  color:#facc15;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.match-row a:hover{
+  text-decoration:underline;
+}
+
+@media(max-width:700px){
+  .stat-card{
+    padding:18px;
+  }
+
+  .stat-card strong{
+    font-size:1.9rem;
+  }
 }

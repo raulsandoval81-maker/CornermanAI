@@ -247,3 +247,11 @@
     margin:46px auto 36px;
   }
 }
+.hero-console{
+  display:block;
+  width:min(100%,900px);
+  margin:48px auto 32px;
+  border-radius:24px;
+  filter:
+    drop-shadow(0 20px 60px rgba(0,0,0,.55));
+}

@@ -106,6 +106,41 @@ function getFilteredMatches(matches) {
   });
 }
 
+function render(matches) {
+  if (!historyList) return;
+
+  const filteredMatches =
+    getFilteredMatches(matches);
+
+  const visibleMatches =
+    showAll
+      ? filteredMatches
+      : filteredMatches.slice(0, RECENT_LIMIT);
+
+  if (historyStats) {
+    historyStats.innerHTML = `
+      <strong>${filteredMatches.length}</strong>
+      match${filteredMatches.length === 1 ? "" : "es"}
+    `;
+  }
+
+  if (!visibleMatches.length) {
+    historyList.innerHTML = `
+      <p class="muted">
+        No matches found.
+      </p>
+    `;
+    return;
+  }
+
+  historyList.innerHTML =
+    visibleMatches
+      .slice()
+      .reverse()
+      .map(renderMatchRow)
+      .join("");
+}
+
 function renderMatchRow(match) {
   const videoButton =
     match.videoUrl

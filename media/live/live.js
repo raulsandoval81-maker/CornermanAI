@@ -21,9 +21,41 @@ const redScoreText = document.getElementById("redScoreText");
 const clockInput = document.getElementById("clockInput");
 const periodInput = document.getElementById("periodInput");
 
+function formatClock(value) {
+  if (typeof value !== "number") return value || "0:00";
+  return `${Math.floor(value / 60)}:${String(value % 60).padStart(2, "0")}`;
+}
+
 function loadState() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  return saved ? JSON.parse(saved) : { ...defaultState };
+  if (!saved) return { ...defaultState, timeline: [...defaultState.timeline] };
+
+  try {
+    const stored = JSON.parse(saved);
+    const eventTimeline = Array.isArray(stored.events)
+      ? stored.events.map(event => {
+          if (typeof event === "string") return event;
+          const side = event.side === "athlete" ? "Green" : event.side === "opponent" ? "Red" : "";
+          const label = event.label || event.short || event.code || event.type || "Event";
+          return `${event.clock || ""} ${side} ${label}${event.points ? ` +${event.points}` : ""}`.trim();
+        })
+      : [];
+
+    return {
+      ...stored,
+      greenName: stored.greenName || stored.athleteName || defaultState.greenName,
+      redName: stored.redName || stored.opponentName || defaultState.redName,
+      greenScore: Number(stored.greenScore ?? stored.athleteScore ?? 0),
+      redScore: Number(stored.redScore ?? stored.opponentScore ?? 0),
+      period: stored.period || stored.round || defaultState.period,
+      clock: formatClock(stored.clock || defaultState.clock),
+      position: stored.position || defaultState.position,
+      lastEvent: stored.lastEvent || defaultState.lastEvent,
+      timeline: Array.isArray(stored.timeline) ? stored.timeline : eventTimeline.length ? eventTimeline : [...defaultState.timeline]
+    };
+  } catch {
+    return { ...defaultState, timeline: [...defaultState.timeline] };
+  }
 }
 
 function saveState() {

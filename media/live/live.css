@@ -6,13 +6,48 @@ body {
   margin: 0;
   background: #050505;
   color: white;
-  font-family: Arial, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 .live-shell {
   max-width: 920px;
   margin: 0 auto;
   padding: 24px;
+}
+
+.live-shell .hero,
+.live-shell .card {
+  margin-bottom: 16px;
+  padding: 20px;
+  color: #f5f7fb;
+  background: linear-gradient(180deg, #17191d, #0b0c0f);
+  border: 1px solid #30343b;
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+}
+
+.live-shell .hero {
+  text-align: left;
+}
+
+.live-shell .hero h1,
+.live-shell .card > strong {
+  color: #fff;
+}
+
+.live-shell .eyebrow,
+.live-shell .card > span {
+  color: #d4af37;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.live-shell .card > strong {
+  display: block;
+  margin: 7px 0;
+  font-size: 1.25rem;
 }
 
 .live-header {
@@ -33,6 +68,7 @@ p {
 }
 
 .viewer-link,
+.primary-btn,
 button {
   border: 1px solid #d4af37;
   background: #111;
@@ -42,6 +78,21 @@ button {
   font-weight: 900;
   text-decoration: none;
   cursor: pointer;
+}
+
+.primary-btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  border: 1px solid #d4af37;
+  background: #d4af37;
+  color: #090909;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 900;
+  text-decoration: none;
 }
 
 .setup-card,
@@ -79,7 +130,8 @@ input {
   font-size: 16px;
 }
 
-.score-card {
+.score-card,
+.score-grid {
   display: grid;
   grid-template-columns: 1fr 180px 1fr;
   gap: 12px;
@@ -120,10 +172,21 @@ input {
   gap: 8px;
 }
 
-.buttons-card {
+.buttons-card,
+.buttons-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 9px;
+}
+
+.buttons-grid button {
+  min-height: 48px;
+}
+
+.buttons-grid .danger {
+  color: #fecaca;
+  background: #2a0d11;
+  border-color: #b91c1c;
 }
 
 button:hover,
@@ -134,12 +197,23 @@ button:hover,
 @media (max-width: 720px) {
   .live-header,
   .setup-card,
-  .score-card {
+  .score-card,
+  .score-grid {
     grid-template-columns: 1fr;
     display: grid;
   }
 
-  .buttons-card {
+  .buttons-card,
+  .buttons-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .live-shell {
+    padding: 14px;
+  }
+
+  .live-shell .hero,
+  .live-shell .card {
+    padding: 16px;
   }
 }

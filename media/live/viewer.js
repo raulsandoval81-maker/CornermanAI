@@ -184,13 +184,13 @@ function loadLiveState() {
   try {
     const live = JSON.parse(saved);
 
-    state.athleteName = live.athleteName || "Green";
-    state.opponentName = live.opponentName || "Red";
+    state.athleteName = live.greenName || live.athleteName || "Green";
+    state.opponentName = live.redName || live.opponentName || "Red";
 
-    state.athleteScore = Number(live.athleteScore || 0);
-    state.opponentScore = Number(live.opponentScore || 0);
+    state.athleteScore = Number(live.greenScore ?? live.athleteScore ?? 0);
+    state.opponentScore = Number(live.redScore ?? live.opponentScore ?? 0);
 
-    state.round = live.round || "1";
+    state.round = live.period || live.round || "1";
     state.clock = formatClock(live.clock);
 
     state.winner = live.winner || null;
@@ -202,15 +202,22 @@ function loadLiveState() {
     state.lastEvent = formatLastEvent(live.lastEvent);
 
     const events =
-      Array.isArray(live.events)
-        ? live.events
+      Array.isArray(live.timeline)
+        ? live.timeline
+        : Array.isArray(live.events)
+          ? live.events
         : live.lastEvent
           ? [live.lastEvent]
           : [];
 
     state.timeline =
       events.length
-        ? events.map(formatLastEvent)
+        ? events.map(event => ({
+            text: formatLastEvent(event),
+            round: typeof event === "object" ? event.round || null : null,
+            side: typeof event === "object" ? event.side || null : null,
+            type: typeof event === "object" ? event.type || null : null
+          }))
         : [state.lastEvent];
 
   } catch (error) {
@@ -280,7 +287,7 @@ function render() {
 
 if (state.matchFinished && state.resultType && state.winner) {
   resultBanner.textContent =
-    `${getWinnerColor(state.winner)} WINS BY ${getResultLabel(state.resultType)}`;
+    `${getWinnerColor(state.winner)} WINS BY ${getResultLabel(state.resultType)} · FINAL ${state.athleteScore}-${state.opponentScore}`;
 
   resultBanner.classList.remove("hidden");
 } else {
@@ -295,7 +302,18 @@ if (state.matchFinished && state.resultType && state.winner) {
     .map(item => {
       const row = document.createElement("div");
       row.className = "timeline-item";
-      row.textContent = item;
+      const timelineItem = typeof item === "string" ? { text: item } : item;
+      if (timelineItem.round) {
+        const round = document.createElement("span");
+        round.className = "timeline-round";
+        round.textContent = `Period ${timelineItem.round}`;
+        row.appendChild(round);
+      }
+      const text = document.createElement("span");
+      text.textContent = timelineItem.text;
+      row.appendChild(text);
+      if (timelineItem.side) row.dataset.side = timelineItem.side;
+      if (timelineItem.type) row.dataset.eventType = timelineItem.type;
       return row;
     });
 

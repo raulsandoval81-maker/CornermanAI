@@ -42,9 +42,10 @@ function signature(value, secret) {
   return crypto.createHmac("sha256", secret).update(value).digest("base64url");
 }
 
-function createSession(secret) {
+function createSession(secret, userId = process.env.CORNERMAN_OWNER_USER_ID || "user_local_owner") {
   const expires = Date.now() + 12 * 60 * 60 * 1000;
-  const value = String(expires);
+  const encodedUserId = Buffer.from(String(userId), "utf8").toString("base64url");
+  const value = `v1.${encodedUserId}.${expires}`;
   return `${value}.${signature(value, secret)}`;
 }
 
@@ -54,18 +55,41 @@ function timingSafeEqual(left, right) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
-function isAuthorized(request) {
+function getSessionUser(request) {
   const secret = process.env.CORNERMAN_SESSION_SECRET;
-  if (!secret) return false;
+  if (!secret) return null;
   const cookies = Object.fromEntries(
     String(request.headers.cookie || "").split(";").map(value => {
       const [key, ...rest] = value.trim().split("=");
       return [key, rest.join("=")];
     })
   );
-  const [expires, supplied] = String(cookies[COOKIE_NAME] || "").split(".");
-  return Number(expires) > Date.now() && timingSafeEqual(supplied, signature(expires, secret));
+  const parts = String(cookies[COOKIE_NAME] || "").split(".");
+  if (parts.length === 4 && parts[0] === "v1") {
+    const [version, encodedUserId, expires, supplied] = parts;
+    const value = `${version}.${encodedUserId}.${expires}`;
+    if (!(Number(expires) > Date.now()) || !timingSafeEqual(supplied, signature(value, secret))) return null;
+    try {
+      const userId = Buffer.from(encodedUserId, "base64url").toString("utf8");
+      return userId ? { userId, expiresAt: Number(expires), version } : null;
+    } catch {
+      return null;
+    }
+  }
+  if (parts.length === 2) {
+    const [expires, supplied] = parts;
+    if (Number(expires) > Date.now() && timingSafeEqual(supplied, signature(expires, secret))) {
+      return {
+        userId: process.env.CORNERMAN_OWNER_USER_ID || "user_local_owner",
+        expiresAt: Number(expires),
+        version: "legacy-owner-compatibility"
+      };
+    }
+  }
+  return null;
 }
+
+function isAuthorized(request) { return Boolean(getSessionUser(request)); }
 
 function requireAuth(request, response) {
   if (isAuthorized(request)) return true;
@@ -73,4 +97,4 @@ function requireAuth(request, response) {
   return false;
 }
 
-module.exports = { COOKIE_NAME, createSession, isAuthorized, json, readJson, requireAuth, timingSafeEqual };
+module.exports = { COOKIE_NAME, createSession, getSessionUser, isAuthorized, json, readJson, requireAuth, timingSafeEqual };

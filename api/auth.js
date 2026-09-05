@@ -14,7 +14,8 @@ module.exports = async function handler(request, response) {
     const secret = process.env.CORNERMAN_SESSION_SECRET;
     if (!expected || !secret) return json(response, 503, { error: "Authentication is not configured." });
     if (!timingSafeEqual(body.password, expected)) return json(response, 401, { error: "Invalid credentials." });
-    response.setHeader("Set-Cookie", `${COOKIE_NAME}=${createSession(secret)}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=43200`);
+    const userId = process.env.CORNERMAN_OWNER_USER_ID || "user_local_owner";
+    response.setHeader("Set-Cookie", `${COOKIE_NAME}=${createSession(secret, userId)}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=43200`);
     return json(response, 200, { authenticated: true });
   } catch (error) {
     return json(response, error.status || 400, { error: error.message || "Invalid request." });

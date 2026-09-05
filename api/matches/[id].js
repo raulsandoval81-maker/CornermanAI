@@ -1,7 +1,7 @@
 const {
   json,
   readJson,
-  requireAuth
+  getSessionUser
 } = require("../_lib/http");
 
 const {
@@ -13,16 +13,24 @@ const {
   writeStoredMatches
 } = require("../_lib/store");
 
+const {
+  requireWorkspaceAccess,
+  resolveMatchWorkspaceId
+} = require("../_lib/workspace-authorization");
+
 module.exports = async function handler(
   request,
   response
 ) {
 
-  if (!requireAuth(request, response)) {
-    return;
-  }
-
   try {
+
+    if (!getSessionUser(request)) {
+      return json(response, 401, { error: "Authentication required." });
+    }
+
+    const workspaceId = request.query?.workspaceId;
+    requireWorkspaceAccess(request, workspaceId);
 
     const id =
       String(request.query.id || "");
@@ -33,7 +41,8 @@ module.exports = async function handler(
     const index =
       matches.findIndex(
         item =>
-          String(item.id) === id
+          String(item.id) === id &&
+          resolveMatchWorkspaceId(item) === workspaceId
       );
 
     if (index < 0) {
@@ -72,6 +81,18 @@ module.exports = async function handler(
         64 * 1024
       );
 
+    if (body.workspaceId && body.workspaceId !== workspaceId) {
+      return json(response, 403, { error: "Match workspace cannot be changed." });
+    }
+
+    if (body.match?.workspaceId && body.match.workspaceId !== workspaceId) {
+      return json(response, 403, { error: "Match workspace cannot be changed." });
+    }
+
+    if (body.mediaReference?.workspaceId && body.mediaReference.workspaceId !== workspaceId) {
+      return json(response, 403, { error: "Match workspace cannot be changed." });
+    }
+
     const existing =
       matches[index];
 
@@ -81,6 +102,8 @@ module.exports = async function handler(
     const updated =
       normalizeMatch({
         ...existing,
+
+        workspaceId,
 
         videoUrl:
           mediaReference.videoUrl ??

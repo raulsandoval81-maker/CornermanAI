@@ -15,15 +15,16 @@ globalThis.fetch = async (path, options = {}) => {
   if (!available) return new Response(JSON.stringify({ error: "Unavailable" }), { status: 503 });
   if (!authenticated) return new Response(JSON.stringify({ error: "Authentication required." }), { status: 401 });
   const method = options.method || "GET";
-  if (path === "/api/matches" && method === "GET") return Response.json({ matches: backend });
-  if (path === "/api/matches" && method === "POST") {
+  const pathname = String(path).split("?")[0];
+  if (pathname === "/api/matches" && method === "GET") return Response.json({ matches: backend });
+  if (pathname === "/api/matches" && method === "POST") {
     const match = JSON.parse(options.body).match;
     const index = backend.findIndex(item => item.id === match.id || (match.legacyId && item.legacyId === match.legacyId));
     if (index >= 0) backend[index] = { ...backend[index], ...match };
     else backend.push(match);
     return Response.json({ match: index >= 0 ? backend[index] : match }, { status: index >= 0 ? 200 : 201 });
   }
-  const id = decodeURIComponent(String(path).split("/").pop());
+  const id = decodeURIComponent(pathname.split("/").pop());
   const match = backend.find(item => item.id === id);
   return match ? Response.json({ match }) : Response.json({ error: "Match not found." }, { status: 404 });
 };

@@ -19,6 +19,7 @@ function response() {
 const auth = require("../api/auth");
 const matches = require("../api/matches");
 const matchDetail = require("../api/matches/[id]");
+const workspaceId = "workspace_local_owner";
 
 (async () => {
   let res = response();
@@ -37,12 +38,12 @@ const matchDetail = require("../api/matches/[id]");
   const cookie = res.headers["Set-Cookie"].split(";")[0];
 
   res = response();
-  await matches({ method: "POST", headers: { cookie }, body: { match: { id: "one", athlete: "A", opponent: "B" } } }, res);
+  await matches({ method: "POST", headers: { cookie }, body: { workspaceId, match: { id: "one", workspaceId, athlete: "A", opponent: "B" } } }, res);
   assert.equal(res.statusCode, 201);
   const created = JSON.parse(res.body).match;
 
   res = response();
-  await matches({ method: "POST", headers: { cookie }, body: { match: { ...created, athlete: "Updated", createdAt: "tampered", updatedAt: "stale" } } }, res);
+  await matches({ method: "POST", headers: { cookie }, body: { workspaceId, match: { ...created, athlete: "Updated", createdAt: "tampered", updatedAt: "stale" } } }, res);
   assert.equal(res.statusCode, 200);
   const resaved = JSON.parse(res.body).match;
   assert.equal(resaved.id, created.id);
@@ -50,7 +51,7 @@ const matchDetail = require("../api/matches/[id]");
   assert.notEqual(resaved.updatedAt, "stale");
 
   res = response();
-  await matchDetail({ method: "PATCH", headers: { cookie }, query: { id: "one" }, body: { mediaReference: { videoUrl: "https://example.com/match" } } }, res);
+  await matchDetail({ method: "PATCH", headers: { cookie }, query: { id: "one", workspaceId }, body: { workspaceId, mediaReference: { videoUrl: "https://example.com/match" } } }, res);
   assert.equal(res.statusCode, 200);
   const patched = JSON.parse(res.body).match;
   assert.equal(patched.id, created.id);
@@ -59,11 +60,11 @@ const matchDetail = require("../api/matches/[id]");
   assert.ok(Date.parse(patched.updatedAt) >= Date.parse(resaved.updatedAt));
 
   res = response();
-  await matches({ method: "GET", headers: { cookie } }, res);
+  await matches({ method: "GET", headers: { cookie }, query: { workspaceId } }, res);
   assert.equal(JSON.parse(res.body).matches.length, 1);
 
   res = response();
-  await matchDetail({ method: "GET", headers: { cookie }, query: { id: "one" } }, res);
+  await matchDetail({ method: "GET", headers: { cookie }, query: { id: "one", workspaceId } }, res);
   assert.equal(JSON.parse(res.body).match.id, "one");
 
   console.log("Match API authentication tests: PASS");

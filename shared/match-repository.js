@@ -95,11 +95,11 @@ function forWorkspace(matches, workspaceId) {
   return matches.filter(match => String(match.workspaceId || getCurrentWorkspaceId()) === String(workspaceId));
 }
 
-export async function listMatches({ workspaceId } = {}) {
+export async function listMatches({ workspaceId = getCurrentWorkspaceId() } = {}) {
   try {
     await importLegacyOnce();
     await flushOutbox();
-    const payload = await request("/api/matches");
+    const payload = await request(`/api/matches?workspaceId=${encodeURIComponent(String(workspaceId))}`);
     const matches = (payload.matches || []).map(match => normalizeMatch(match));
     writeCache(matches);
     return { matches: forWorkspace(matches, workspaceId), source: "backend", authenticated: true, pending: 0 };
@@ -113,15 +113,18 @@ export function listMatchesForWorkspace(workspaceId) {
 }
 
 export async function getMatch(id) {
+  const workspaceId = getCurrentWorkspaceId();
   try {
     await importLegacyOnce();
     await flushOutbox();
-    const payload = await request(`/api/matches/${encodeURIComponent(String(id))}`);
+    const payload = await request(`/api/matches/${encodeURIComponent(String(id))}?workspaceId=${encodeURIComponent(workspaceId)}`);
     const match = normalizeMatch(payload.match);
     cacheOne(match);
     return { match, source: "backend", authenticated: true };
   } catch (error) {
-    const match = getCachedMatches().find(item => String(item.id) === String(id)) || null;
+    const match = getCachedMatches().find(item =>
+      String(item.id) === String(id) && String(item.workspaceId) === String(workspaceId)
+    ) || null;
     return { match, source: "cache", authenticated: error.status !== 401, error };
   }
 }
@@ -130,7 +133,7 @@ export async function saveMatch(match) {
   const normalized = normalizeMatch(match);
   cacheOne(normalized);
   try {
-    const payload = await request("/api/matches", { method: "POST", body: JSON.stringify({ match: normalized }) });
+    const payload = await request("/api/matches", { method: "POST", body: JSON.stringify({ workspaceId: normalized.workspaceId, match: normalized }) });
     const saved = normalizeMatch(payload.match);
     cacheOne(saved);
     removeFromOutbox(normalized.id);
@@ -142,10 +145,11 @@ export async function saveMatch(match) {
 }
 
 export async function updateMatchMedia(id, mediaReference) {
+  const workspaceId = getCurrentWorkspaceId();
   const cached = getCachedMatches().find(item => String(item.id) === String(id));
   if (cached) cacheOne(normalizeMatch({ ...cached, ...mediaReference, updatedAt: new Date().toISOString() }));
   try {
-    const payload = await request(`/api/matches/${encodeURIComponent(String(id))}`, { method: "PATCH", body: JSON.stringify({ mediaReference }) });
+    const payload = await request(`/api/matches/${encodeURIComponent(String(id))}?workspaceId=${encodeURIComponent(workspaceId)}`, { method: "PATCH", body: JSON.stringify({ workspaceId, mediaReference }) });
     const match = normalizeMatch(payload.match);
     cacheOne(match);
     return { match, synced: true };

@@ -1,8 +1,14 @@
 import { createDOM }
 from "./modules/match-dom.js";
 
-import { saveMatch as persistMatch }
+import { listMatches, saveMatch as persistMatch }
 from "../shared/match-repository.js";
+
+import { canSaveNewMatch, getCurrentTier }
+from "../shared/cornerman-entitlements.js";
+
+import { getCurrentWorkspaceId }
+from "../shared/cornerman-workspace.js";
 
 import { pushActionSnapshot, undoAction }
 from "./modules/match-undo.js";
@@ -683,6 +689,13 @@ async function saveMatchToHistory() {
   console.log("SAVE MATCH TO HISTORY FIRED");
 
   if (!persistedMatchId) {
+    if (getCurrentTier() === "free") {
+      const { matches } = await listMatches({ workspaceId: getCurrentWorkspaceId() });
+      if (!canSaveNewMatch(matches.length, "free")) {
+        setStatus("You’ve reached the 3-match Free library limit. Upgrade to Basic to keep building this athlete’s match history.");
+        return null;
+      }
+    }
     persistedMatchId = globalThis.crypto?.randomUUID?.() || String(Date.now());
   }
 
@@ -1563,6 +1576,8 @@ saveMatchLogBtn?.addEventListener("click", async () => {
 
   const match = await saveMatchToHistory();
 
+  if (!match) return;
+
   console.log(
     "MATCH VIDEO URL AFTER SAVE:",
     match.videoUrl
@@ -1637,6 +1652,7 @@ stopClock({
 
   stopCameraStream();
 const match = await saveMatchToHistory();
+  if (!match) return;
   console.log("MATCH PAYLOAD", match);
 
 

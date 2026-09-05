@@ -1,4 +1,5 @@
 import { normalizeMatchPayload } from "../payloads/match-schema.js";
+import { getCurrentWorkspaceId } from "./cornerman-workspace.js";
 
 export const MATCH_CACHE_KEY = "cornerman_matches";
 export const MATCH_MIGRATION_KEY = "cornerman_matches_backend_migration_v1";
@@ -23,6 +24,7 @@ export function normalizeMatch(match = {}, { migrating = false } = {}) {
   return {
     ...match,
     ...normalized,
+    workspaceId: String(match.workspaceId || getCurrentWorkspaceId()),
     id: String(match.id || normalized.id),
     schemaVersion: "cornerman-match-v1",
     legacyId: match.legacyId ?? (migrating && match.id != null ? String(match.id) : null),
@@ -88,17 +90,26 @@ async function flushOutbox() {
   }
 }
 
-export async function listMatches() {
+function forWorkspace(matches, workspaceId) {
+  if (!workspaceId) return matches;
+  return matches.filter(match => String(match.workspaceId || getCurrentWorkspaceId()) === String(workspaceId));
+}
+
+export async function listMatches({ workspaceId } = {}) {
   try {
     await importLegacyOnce();
     await flushOutbox();
     const payload = await request("/api/matches");
     const matches = (payload.matches || []).map(match => normalizeMatch(match));
     writeCache(matches);
-    return { matches, source: "backend", authenticated: true, pending: 0 };
+    return { matches: forWorkspace(matches, workspaceId), source: "backend", authenticated: true, pending: 0 };
   } catch (error) {
-    return { matches: getCachedMatches(), source: "cache", authenticated: error.status !== 401, pending: readArray(MATCH_OUTBOX_KEY).length, error };
+    return { matches: forWorkspace(getCachedMatches(), workspaceId), source: "cache", authenticated: error.status !== 401, pending: readArray(MATCH_OUTBOX_KEY).length, error };
   }
+}
+
+export function listMatchesForWorkspace(workspaceId) {
+  return listMatches({ workspaceId });
 }
 
 export async function getMatch(id) {

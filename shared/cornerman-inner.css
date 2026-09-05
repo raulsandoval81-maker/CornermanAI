@@ -1,5 +1,78 @@
 /* Shared inner-page polish. Shell and feature-specific layouts remain canonical. */
 
+body:not(.console-body):not(.live-viewer-body):not(.cm-dark-surface) {
+  background: var(--cm-bg);
+  color: var(--cm-text);
+}
+
+body:not(.cm-dark-surface) main .hero,
+body:not(.cm-dark-surface) main .card,
+body:not(.cm-dark-surface) main .panel,
+body:not(.cm-dark-surface) main .selector-card,
+body:not(.cm-dark-surface) main .stat-card,
+body:not(.cm-dark-surface) main .focus-card,
+body:not(.cm-dark-surface) main .summary-card,
+body:not(.cm-dark-surface) main .match-card,
+body:not(.cm-dark-surface) main .report-card {
+  color: var(--cm-text);
+  background-color: var(--cm-surface);
+  border-color: var(--cm-border);
+}
+
+body:not(.cm-dark-surface) main :where(h1, h2, h3, strong) { color: var(--cm-text); }
+body:not(.cm-dark-surface) main :where(.sub, .muted, .meta, small, .empty-state, .match-row p) { color: var(--cm-muted); }
+body:not(.cm-dark-surface) main :where(.match-row, .intelligence-row) { border-color: var(--cm-border); }
+body:not(.cm-dark-surface) main :where(.stat-card, .focus-card, .card) > span,
+body:not(.cm-dark-surface) main :where(.eyebrow, .section-title, .recon-priority) {
+  color: var(--cm-gold);
+}
+
+main .cm-green,
+main .match-green { color: var(--cm-green); }
+main .cm-red,
+main .match-red { color: var(--cm-red); }
+main .cm-info { color: var(--cm-blue); }
+
+main .cm-callout-info {
+  color: var(--cm-text);
+  background: color-mix(in srgb, var(--cm-blue) 10%, var(--cm-surface));
+  border-color: color-mix(in srgb, var(--cm-blue) 45%, var(--cm-border));
+}
+
+.cornerman-access-message {
+  width: min(680px, 100%);
+  margin: clamp(32px, 8vh, 88px) auto;
+  padding: clamp(24px, 5vw, 42px);
+  color: var(--cm-text);
+  background: var(--cm-surface);
+  border: 1px solid var(--cm-border);
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(17, 24, 39, 0.1);
+  text-align: center;
+}
+
+.cornerman-access-message h1 {
+  margin: 0 0 12px;
+}
+
+.cornerman-access-message p:not(.eyebrow) {
+  max-width: 54ch;
+  margin: 0 auto 20px;
+  color: var(--cm-muted);
+  line-height: 1.6;
+}
+
+.cornerman-access-message small {
+  display: block;
+  margin-top: 10px;
+  color: var(--cm-muted);
+}
+
+:root[data-theme="night"] body:not(.cm-dark-surface) main :where(.stat-meter, .signal-meter) {
+  background: #08090b;
+  border-color: var(--cm-border);
+}
+
 main.app-shell,
 main.page,
 main.live-shell {
@@ -18,7 +91,7 @@ main :where(h1, h2, h3, p) {
 
 main .hero {
   margin-bottom: 28px;
-  border-color: #d8ceb4;
+  border-color: var(--cm-border);
 }
 
 main .hero h1 {
@@ -37,7 +110,7 @@ main .card:not(a) {
 }
 
 main .card {
-  border-color: #d8ceb4;
+  border-color: var(--cm-border);
 }
 
 main .card:not(a):hover {
@@ -76,12 +149,18 @@ main :where(input, select, textarea, button) {
 }
 
 main :where(input, select, textarea)::placeholder {
-  color: #6b7280;
+  color: var(--cm-muted);
   opacity: 1;
 }
 
 main :where(input, select, button) {
   min-height: 44px;
+}
+
+main :where(input, select, textarea) {
+  color: var(--cm-text);
+  background: var(--cm-surface);
+  border-color: var(--cm-border);
 }
 
 main textarea {
@@ -93,13 +172,59 @@ main :where(button, .button, .viewer-link, a.card) {
   -webkit-tap-highlight-color: transparent;
 }
 
-main :where(button, .button, .viewer-link) {
+main :where(button, .button, .btn, .viewer-link) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   line-height: 1.2;
   text-align: center;
+}
+
+main :where(button, .button, .btn, .viewer-link, a.button, a.btn) {
+  min-height: 44px;
+  padding: 11px 16px;
+  color: #17140b;
+  background: var(--cm-gold-bright);
+  border: 1px solid var(--cm-gold-bright);
+  border-radius: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+main :where(.button.secondary, .btn.secondary, .btn-secondary, button.secondary) {
+  color: var(--cm-text);
+  background: var(--cm-surface-2);
+  border-color: var(--cm-border);
+}
+
+main :where(.button.success, .btn.success, .btn-success, button.success, .green-action) {
+  color: #fff;
+  background: var(--cm-green);
+  border-color: var(--cm-green);
+}
+
+main :where(.button.danger, .btn.danger, .btn-danger, button.danger, .danger-button) {
+  color: #fff;
+  background: var(--cm-red);
+  border-color: var(--cm-red);
+}
+
+main :where(.button.info, .btn.info, .btn-info, .info-action) {
+  color: #fff;
+  background: var(--cm-blue);
+  border-color: var(--cm-blue);
+}
+
+main :where(.button.ghost, .btn.ghost, .btn-ghost) {
+  color: var(--cm-text);
+  background: transparent;
+  border-color: var(--cm-border);
+}
+
+main :where(button, .button, .btn, .viewer-link):hover:not(:disabled) {
+  filter: brightness(0.96);
 }
 
 main .card > a:not(.card) {
@@ -109,9 +234,9 @@ main .card > a:not(.card) {
   min-height: 44px;
   margin-top: 10px;
   padding: 11px 15px;
-  color: #8a6500;
-  background: #fffdf5;
-  border: 1px solid #d4af37;
+  color: var(--cm-gold);
+  background: var(--cm-surface);
+  border: 1px solid var(--cm-gold-bright);
   border-radius: 12px;
   font-weight: 800;
   line-height: 1.2;
@@ -126,14 +251,14 @@ main .card > a:not(.card):hover {
 }
 
 main :where(button, .button, .viewer-link, a.card, .card > a, input, select, textarea):focus-visible {
-  outline: 3px solid rgba(250, 204, 21, 0.42);
+  outline: 3px solid var(--cm-focus);
   outline-offset: 3px;
 }
 
 main button:disabled {
-  color: #4b5563;
-  background: #d1d5db;
-  border-color: #9ca3af;
+  color: var(--cm-muted);
+  background: var(--cm-surface-2);
+  border-color: var(--cm-border);
   cursor: not-allowed;
   opacity: 0.72;
   transform: none;

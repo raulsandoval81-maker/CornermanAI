@@ -1,8 +1,16 @@
-(function () {
+(async function () {
   "use strict";
+
+  const THEME_KEY = "cornerman_theme";
+  const savedTheme = localStorage.getItem(THEME_KEY);
+  const initialTheme = savedTheme === "night" ? "night" : "day";
+  document.documentElement.dataset.theme = initialTheme;
 
   const shellScript = document.currentScript;
   const appRoot = new URL("../", shellScript.src);
+  const entitlements = await import(new URL("./cornerman-entitlements.js", shellScript.src));
+  const workspaceResolver = await import(new URL("./cornerman-workspace.js", shellScript.src));
+  const currentWorkspace = workspaceResolver.getCurrentWorkspace();
 
   const route = (path) => new URL(path, appRoot).href;
   const normalizePath = (value) => {
@@ -45,46 +53,46 @@
     {
       label: "Home / Command",
       items: [
-        ["Console", "console/index.html"],
-        ["Hub", "hub/index.html"]
+        ["Console", "console/index.html", null],
+        ["Hub", "hub/index.html", null]
       ]
     },
     {
       label: "Core",
       items: [
-        ["Match Capture", "console/match-launch.html"],
-        ["Match History", "history/match-history.html"],
-        ["Athlete Dashboard", "athletes/athlete-dashboard.html"],
-        ["Team Dashboard", "events/team-dashboard.html"],
-        ["Tournament Manager", "tournament/tournament-manager.html"]
+        ["Match Capture", "console/match-launch.html", "match_capture"],
+        ["Match History", "history/match-history.html", "match_history"],
+        ["Athlete Dashboard", "athletes/athlete-dashboard.html", "athlete_dashboard"],
+        ["Team Dashboard", "events/team-dashboard.html", "team_dashboard"],
+        ["Tournament Manager", "tournament/tournament-manager.html", "tournament_manager"]
       ]
     },
     {
       label: "Intelligence",
       items: [
-        ["Recon Capture", "recon/recon-notes.html"],
-        ["Opponent Dashboard", "opponents/opponent-dashboard.html"],
-        ["Competition Trends", "patterns/index.html"],
-        ["Recommendations", "recon/index.html"]
+        ["Recon Capture", "recon/recon-notes.html", "recon_capture"],
+        ["Opponent Dashboard", "opponents/opponent-dashboard.html", "opponent_dashboard"],
+        ["Competition Trends", "patterns/index.html", "competition_trends"],
+        ["Recommendations", "recon/index.html", "recommendations"]
       ]
     },
     {
       label: "Media",
       items: [
-        ["Recording", "media/live/index.html"],
-        ["Review", "media/live/viewer.html"],
-        ["YouTube / Evidence", "media/media-index.html"]
+        ["Recording", "media/live/index.html", "media_review"],
+        ["Review", "media/live/viewer.html", "media_review"],
+        ["YouTube / Evidence", "media/media-index.html", "media_library"]
       ]
     },
     {
       label: "Bridge",
-      items: [["Sandman Handoff", "bridge/match-import.html"]]
+      items: [["Sandman Handoff", "bridge/match-import.html", "sandman_handoff"]]
     },
     {
       label: "Utility",
       items: [
-        ["Roster", "roster/athlete-stat-log.html"],
-        ["Reports", "reports/index.html"]
+        ["Roster", "roster/athlete-stat-log.html", "roster"],
+        ["Reports", "reports/index.html", "reports"]
       ]
     }
   ];
@@ -129,19 +137,72 @@
       <button class="cornerman-drawer-close" type="button" aria-label="Close navigation">×</button>
     </div>
     <nav class="cornerman-drawer-nav"></nav>
+    <section class="cornerman-settings" aria-labelledby="cornerman-appearance-label">
+      <span class="cornerman-settings-label" id="cornerman-appearance-label">Settings · Appearance</span>
+      <div class="cornerman-theme-toggle" role="group" aria-label="Appearance theme">
+        <button class="cornerman-theme-option" type="button" data-theme-choice="day">Day</button>
+        <button class="cornerman-theme-option" type="button" data-theme-choice="night">Night</button>
+      </div>
+      <span class="cornerman-settings-label cornerman-access-label">Workspace</span>
+      <div class="cornerman-workspace-summary">
+        <strong></strong>
+        <span></span>
+      </div>
+      <span class="cornerman-settings-label cornerman-access-label">Development Tier</span>
+      <div class="cornerman-tier-toggle" role="group" aria-label="Development Tier">
+        <button class="cornerman-tier-option" type="button" data-tier-choice="free">Free</button>
+        <button class="cornerman-tier-option" type="button" data-tier-choice="basic">Basic</button>
+        <button class="cornerman-tier-option" type="button" data-tier-choice="plus">Plus</button>
+        <button class="cornerman-tier-option" type="button" data-tier-choice="pro">Pro</button>
+      </div>
+      <small class="cornerman-dev-note">Local development override — not billing.</small>
+    </section>
   `;
 
   const nav = drawer.querySelector(".cornerman-drawer-nav");
+  drawer.querySelector(".cornerman-workspace-summary strong").textContent = currentWorkspace.name;
+  drawer.querySelector(".cornerman-workspace-summary span").textContent =
+    `${currentWorkspace.type === "team" ? "Team" : "Individual"} · ${currentWorkspace.tier.toUpperCase()}` +
+    (currentWorkspace.integrations.length ? ` · ${currentWorkspace.integrations.join(", ")}` : "");
+  const themeButtons = Array.from(drawer.querySelectorAll("[data-theme-choice]"));
+  function setTheme(theme, persist) {
+    const nextTheme = theme === "night" ? "night" : "day";
+    document.documentElement.dataset.theme = nextTheme;
+    themeButtons.forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.themeChoice === nextTheme));
+    });
+    if (persist) localStorage.setItem(THEME_KEY, nextTheme);
+  }
+  setTheme(initialTheme, false);
+  themeButtons.forEach((button) => {
+    button.addEventListener("click", () => setTheme(button.dataset.themeChoice, true));
+  });
+  const tierButtons = Array.from(drawer.querySelectorAll("[data-tier-choice]"));
+  function renderTier(tier) {
+    tierButtons.forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.tierChoice === tier));
+    });
+  }
+  renderTier(entitlements.getCurrentTier());
+  tierButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      entitlements.setDevelopmentTier(button.dataset.tierChoice);
+      window.location.reload();
+    });
+  });
   navigation.forEach((group) => {
     const section = document.createElement("section");
     section.className = "cornerman-nav-group";
+    let visibleItemCount = 0;
 
     const heading = document.createElement("h2");
     heading.className = "cornerman-nav-heading";
     heading.textContent = group.label;
     section.appendChild(heading);
 
-    group.items.forEach(([label, path]) => {
+    group.items.forEach(([label, path, feature]) => {
+      if (feature && !entitlements.canUse(feature)) return;
+      visibleItemCount += 1;
       const link = document.createElement("a");
       link.className = "cornerman-nav-link";
       link.href = route(path);
@@ -152,13 +213,43 @@
       section.appendChild(link);
     });
 
-    nav.appendChild(section);
+    if (visibleItemCount) nav.appendChild(section);
   });
 
   document.body.classList.add("has-cornerman-shell");
   document.body.prepend(backdrop);
   document.body.prepend(drawer);
   document.body.prepend(topbar);
+
+  const routePath = new URL(window.location.href).pathname
+    .replace(appRoot.pathname, "")
+    .replace(/^\//, "");
+  const guardedFeature = entitlements.getFeatureForRoute(routePath);
+  if (guardedFeature && !entitlements.canUse(guardedFeature)) {
+    const main = document.querySelector("main");
+    const requiredTier = entitlements.getRequiredTier(guardedFeature);
+    const featureName = pageTitle || guardedFeature.replaceAll("_", " ");
+    if (main) {
+      main.innerHTML = "";
+      const access = document.createElement("section");
+      access.className = "cornerman-access-message";
+      const eyebrow = document.createElement("p");
+      eyebrow.className = "eyebrow";
+      eyebrow.textContent = "Access";
+      const heading = document.createElement("h1");
+      heading.textContent = featureName;
+      const message = document.createElement("p");
+      message.textContent = `This feature is available on ${requiredTier.toUpperCase()}. Your current development tier is ${entitlements.getCurrentTier().toUpperCase()}.`;
+      const upgrade = document.createElement("button");
+      upgrade.type = "button";
+      upgrade.disabled = true;
+      upgrade.textContent = "Upgrade";
+      const note = document.createElement("small");
+      note.textContent = "Billing is not connected yet.";
+      access.append(eyebrow, heading, message, upgrade, note);
+      main.appendChild(access);
+    }
+  }
 
   const menuButton = topbar.querySelector(".cornerman-menu-button");
   const closeButton = drawer.querySelector(".cornerman-drawer-close");

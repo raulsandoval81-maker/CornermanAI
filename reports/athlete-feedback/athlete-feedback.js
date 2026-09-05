@@ -1,6 +1,5 @@
-import {
-  exportToSandman
-} from "../../bridge/export-to-sandman.js";
+import { buildAthleteFeedback } from "../../recon/athlete-feedback.js";
+import { mapPatternsToSkills } from "../../bridge/skill-mapper.js";
 const { escapeHtml } = window.CornermanSafe;
 
 const MATCHES_KEY =
@@ -22,31 +21,21 @@ const latestMatch =
 if (!latestMatch) {
   renderEmpty();
 } else {
-  const payload =
-    exportToSandman({
-      athlete:
-        latestMatch.athlete || "Athlete",
-
-      latestMatch: {
-        opponent:
-          latestMatch.opponent || "Opponent",
-
-        result:
-          latestMatch.result || "Result",
-
-        method:
-          latestMatch.method || "Decision",
-
-        pointsFor:
-          latestMatch.pointsFor || 0,
-
-        pointsAgainst:
-          latestMatch.pointsAgainst || 0
-      },
-
-      patterns:
-        latestMatch.intelligence?.patterns || []
-    });
+  const sourcePatterns = latestMatch.intelligence?.patterns || latestMatch.patterns || [];
+  const patterns = Array.isArray(sourcePatterns) ? sourcePatterns : [];
+  const feedback = latestMatch.intelligence?.athleteFeedback || buildAthleteFeedback(latestMatch, { patterns });
+  const payload = {
+    athlete: latestMatch.athlete || "Athlete",
+    match: {
+      opponent: latestMatch.opponent || "Opponent",
+      result: latestMatch.result || "Result",
+      method: latestMatch.method || "Decision",
+      score: `${Number(latestMatch.pointsFor || 0)}-${Number(latestMatch.pointsAgainst || 0)}`
+    },
+    feedback: feedback.fix || feedback.feedback || "Continue building complete wrestling.",
+    patterns,
+    skills: mapPatternsToSkills(patterns)
+  };
 
   render(payload);
 }
@@ -94,20 +83,20 @@ function render(payload) {
 
   setHtml(
     "cardInfo",
-    (payload.cards || [])
-      .map(card => `
+    (payload.skills || [])
+      .map(skill => `
         <div class="feedback-card">
           <strong>
-            ${escapeHtml(formatCardTitle(card))}
+            ${escapeHtml(formatSkillTitle(skill))}
           </strong>
 
           <p>
-            ${escapeHtml(getCardDescription(card))}
+            Development skill suggested by Cornerman competition evidence. Sandman decides the training assignment.
           </p>
         </div>
       `)
       .join("") ||
-    "<p>No suggested cards yet.</p>"
+    "<p>No suggested skills yet.</p>"
   );
 }
 
@@ -129,7 +118,7 @@ function renderEmpty() {
 
   setHtml(
     "cardInfo",
-    "<p>No suggested cards yet.</p>"
+    "<p>No suggested skills yet.</p>"
   );
 }
 
@@ -169,36 +158,10 @@ function formatList(items = []) {
     .join(", ");
 }
 
-function formatCardTitle(cardId = "") {
-  return String(cardId)
-    .replace(/-\d+$/, "")
+function formatSkillTitle(skillKey = "") {
+  return String(skillKey)
     .replaceAll("-", " ")
     .replace(/\b\w/g, char =>
       char.toUpperCase()
     );
-}
-
-function getCardDescription(cardId = "") {
-  const descriptions = {
-    "neutral-offense-01":
-      "Keep attacking first and building pressure from setups.",
-
-    "neutral-defense-01":
-      "Protect position, manage ties, and defend clean entries.",
-
-    "bottom-escape-01":
-      "Build movement from bottom and turn escapes into points.",
-
-    "back-defense-01":
-      "Fight hands, belly down, and prevent exposure.",
-
-    "top-pressure-01":
-      "Build ride-to-turn chains and convert control into nearfall.",
-
-    "reversal-threat-01":
-      "Use bottom motion and hip heists to create reversal opportunities."
-  };
-
-  return descriptions[cardId] ||
-    "Development card connected to this match pattern.";
 }

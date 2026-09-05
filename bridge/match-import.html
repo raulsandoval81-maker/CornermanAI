@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Match Import Bridge</title>
+  <title>Sandman Handoff</title>
 
   <link rel="stylesheet" href="../app.css" />
   <link rel="stylesheet" href="../shared/cornerman-shell.css" />
@@ -19,10 +19,10 @@
     <section class="hero">
       <p class="eyebrow">CornermanAI</p>
 
-      <h1>Match Import Bridge</h1>
+      <h1>Sandman Handoff</h1>
 
       <p class="sub">
-        Move completed console matches into reports and development systems.
+        Prepare verified competition intelligence for Sandman Academy to evaluate.
       </p>
     </section>
 
@@ -30,47 +30,60 @@
       <span>BRIDGE</span>
 
       <strong>
-        Import Console Match
+        Prepare Development Handoff
       </strong>
 
       <p>
-        This page will handle match movement from live console capture into Cornerman reports.
+        Choose a canonical Cornerman match and the skill its evidence indicates. Sandman decides the training assignment.
       </p>
 
-      <button id="importLastMatchBtn">
-        Import Last Console Match
-      </button>
+      <div class="form-stack">
+        <label for="handoffMatch">Source Match</label>
+        <select id="handoffMatch" disabled><option value="">Loading matches…</option></select>
+        <label for="handoffSkill">Development Skill</label>
+        <select id="handoffSkill" disabled><option value="">Select development skill</option></select>
+        <label for="handoffNotes">Coach Context</label>
+        <textarea id="handoffNotes" placeholder="Optional context for Sandman Academy"></textarea>
+        <button id="prepareHandoffBtn" type="button" disabled>Prepare Handoff</button>
+      </div>
 
       <p
-        id="importStatus"
+        id="handoffStatus"
         class="bridge-status"
       >
-        Waiting for console payload.
+        Loading canonical Cornerman matches…
       </p>
     </section>
 
     <section class="card">
-      <span>LAST CONSOLE MATCH</span>
+      <span>SOURCE EVIDENCE</span>
 
-      <div id="lastConsoleMatch">
-        No console match found.
+      <div id="handoffSourceSummary">
+        Select a match to review its development signals.
       </div>
+    </section>
+
+    <section class="card">
+      <span>VALIDATED PAYLOAD</span>
+      <strong>Receiving Seam</strong>
+      <p>Prepared handoffs remain local until a real Sandman receiving endpoint is connected.</p>
+      <pre id="handoffPreview">No handoff prepared.</pre>
     </section>
 
     <section class="grid">
 
       <a
         class="card"
-        href="../tournament/tournament-manager.html"
+        href="../recon/"
       >
-        <span>BACK</span>
+        <span>INTELLIGENCE</span>
 
         <strong>
-          Tournament Manager
+          Recommendations
         </strong>
 
         <p>
-          Return to event and attendance setup.
+          Review coaching priorities before preparing a handoff.
         </p>
       </a>
 

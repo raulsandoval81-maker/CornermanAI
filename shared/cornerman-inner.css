@@ -143,6 +143,18 @@ main :where(.empty-state, .muted, .status, .bridge-status) {
   line-height: 1.6;
 }
 
+main pre {
+  max-width: 100%;
+  overflow: auto;
+  padding: 14px;
+  color: #e5e7eb;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 main :where(.grid, .stats-grid, .focus-grid) {
   align-items: stretch;
 }

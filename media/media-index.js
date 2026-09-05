@@ -2,10 +2,13 @@ import {
   getMedia,
   saveMedia
 } from "./media-library.js";
-const { escapeHtml, safeUrl } = window.CornermanSafe;
 
-const MATCH_STORAGE_KEY =
-  "cornerman_matches";
+import {
+  listMatches,
+  updateMatchMedia
+} from "../shared/match-repository.js";
+
+const { escapeHtml, safeUrl } = window.CornermanSafe;
 
 const mediaList =
   document.getElementById("mediaList");
@@ -22,28 +25,35 @@ const mediaEventFilter =
 const mediaStatusFilter =
   document.getElementById("mediaStatusFilter");
 
+let currentMatches = [];
+
 render();
 
 /* ==========================
    DATA
 ========================== */
 
-function getMatches() {
-  return JSON.parse(
-    localStorage.getItem(MATCH_STORAGE_KEY) || "[]"
-  );
+async function loadMatches() {
+  const result =
+    await listMatches();
+
+  currentMatches =
+    Array.isArray(result.matches)
+      ? result.matches
+      : [];
+
+  return result;
 }
 
 /* ==========================
    RENDER
 ========================== */
 
-function render() {
+async function render() {
   const media =
     getMedia();
 
-  const matches =
-    getMatches();
+  await loadMatches();
 
   populateEventFilter(media);
 
@@ -51,7 +61,11 @@ function render() {
     getFilteredMedia(media);
 
   renderStats(media);
-  renderMediaList(visibleMedia, matches);
+
+  renderMediaList(
+    visibleMedia,
+    currentMatches
+  );
 }
 
 function getFilteredMedia(media) {
@@ -143,7 +157,9 @@ function renderMediaList(media, matches) {
 }
 
 function renderMediaRow(item, matches) {
-  const videoUrl = safeUrl(item.videoUrl);
+  const videoUrl =
+    safeUrl(item.videoUrl);
+
   const createdAt =
     item.createdAt
       ? new Date(item.createdAt).toLocaleString()
@@ -182,7 +198,7 @@ function renderMediaRow(item, matches) {
 
       ${
         createdAt
-          ? `<p class="muted">${createdAt}</p>`
+          ? `<p class="muted">${escapeHtml(createdAt)}</p>`
           : ""
       }
 
@@ -273,7 +289,7 @@ function renderMatchOptions(matches) {
         ${escapeHtml(match.eventName || "No Event")}
         —
         ${escapeHtml(match.result || "Result")}
-        ${match.pointsFor || 0}-${match.pointsAgainst || 0}
+        ${Number(match.pointsFor) || 0}-${Number(match.pointsAgainst) || 0}
       </option>
     `)
     .join("");
@@ -316,136 +332,210 @@ function populateEventFilter(media) {
 /* ==========================
    ACTIONS
 ========================== */
+async function linkMediaToMatch(mediaId) {
+  const matchId =
+    document
+      .getElementById(`matchSelect-${mediaId}`)
+      ?.value || "";
 
-window.linkMediaToMatch =
-  function linkMediaToMatch(mediaId) {
-    const matchId =
-      document
-        .getElementById(`matchSelect-${mediaId}`)
-        ?.value || "";
+  if (!matchId) {
+    alert("Select a match first.");
+    return;
+  }
 
-    if (!matchId) {
-      alert("Select a match first.");
-      return;
-    }
+  const media =
+    getMedia();
 
-    const media =
-      getMedia();
+  const mediaIndex =
+    media.findIndex(item =>
+      String(item.id) === String(mediaId)
+    );
 
-    const matches =
-      getMatches();
+  const match =
+    currentMatches.find(item =>
+      String(item.id) === String(matchId)
+    );
 
-    const mediaIndex =
-      media.findIndex(item =>
-        String(item.id) === String(mediaId)
-      );
+  if (mediaIndex < 0 || !match) {
+    alert("Media or match not found.");
+    return;
+  }
 
-    const matchIndex =
-      matches.findIndex(match =>
-        String(match.id) === String(matchId)
-      );
+  const selectedMedia =
+    media[mediaIndex];
 
-    if (mediaIndex < 0 || matchIndex < 0) {
-      alert("Media or match not found.");
-      return;
-    }
+  const attachedAt =
+    new Date().toISOString();
 
-    const match =
-      matches[matchIndex];
-
-    const selectedMedia =
-      media[mediaIndex];
-
-    media[mediaIndex] = {
-      ...selectedMedia,
-      linkedMatchId: String(match.id),
-      linkedAthlete: match.athlete || "",
-      linkedOpponent: match.opponent || "",
-      linkedEvent: match.eventName || "",
-      linkedAt: new Date().toISOString()
-    };
-
-    matches[matchIndex] = {
-      ...match,
-      videoUrl: selectedMedia.videoUrl || "",
-      videoHost: "youtube",
-      videoVisibility: "unlisted",
-      videoAttachedAt: new Date().toISOString()
-    };
-
-    saveMedia(media);
-    saveMatches(matches);
-
-    render();
-  };
-
-window.unlinkMedia =
-  function unlinkMedia(mediaId) {
-    const media =
-      getMedia();
-
-    const matches =
-      getMatches();
-
-    const mediaIndex =
-      media.findIndex(item =>
-        String(item.id) === String(mediaId)
-      );
-
-    if (mediaIndex < 0) return;
-
-    const linkedMatchId =
-      media[mediaIndex].linkedMatchId;
-
-    media[mediaIndex] = {
-      ...media[mediaIndex],
-      linkedMatchId: "",
-      linkedAthlete: "",
-      linkedOpponent: "",
-      linkedEvent: "",
-      unlinkedAt: new Date().toISOString()
-    };
-
-    if (linkedMatchId) {
-      const matchIndex =
-        matches.findIndex(match =>
-          String(match.id) === String(linkedMatchId)
-        );
-
-      if (matchIndex >= 0) {
-        matches[matchIndex] = {
-          ...matches[matchIndex],
-          videoUrl: "",
-          videoHost: "",
-          videoVisibility: "",
-          videoAttachedAt: "",
-          videoUnlinkedAt: new Date().toISOString()
-        };
-
-        saveMatches(matches);
+  const result =
+    await updateMatchMedia(
+      match.id,
+      {
+        videoUrl:
+          selectedMedia.videoUrl || "",
+        videoHost:
+          "youtube",
+        videoVisibility:
+          "unlisted",
+        videoAttachedAt:
+          attachedAt,
+        videoUnlinkedAt:
+          ""
       }
-    }
+    );
 
-    saveMedia(media);
-
-    render();
+  /*
+   * Keep the local Media record aligned
+   * with the Match repository.
+   *
+   * If backend sync failed, the repository
+   * already queued the Match in its outbox.
+   */
+  media[mediaIndex] = {
+    ...selectedMedia,
+    linkedMatchId:
+      String(match.id),
+    linkedAthlete:
+      match.athlete || "",
+    linkedOpponent:
+      match.opponent || "",
+    linkedEvent:
+      match.eventName || "",
+    linkedAt:
+      attachedAt,
+    unlinkedAt:
+      ""
   };
 
-function saveMatches(matches) {
-  localStorage.setItem(
-    MATCH_STORAGE_KEY,
-    JSON.stringify(matches)
-  );
+  saveMedia(media);
+
+  if (!result.synced) {
+    if (result.authenticated === false) {
+      alert(
+        "Media linked locally. Sign in to Cornerman to sync the Match."
+      );
+    } else {
+      alert(
+        "Media linked locally. Match sync is pending."
+      );
+    }
+  }
+
+  await render();
 }
 
-mediaList?.addEventListener("click", event => {
-  const button = event.target.closest("[data-media-action]");
-  if (!button || !mediaList.contains(button)) return;
+async function unlinkMedia(mediaId) {
+  const media =
+    getMedia();
 
-  const mediaId = button.dataset.mediaId || "";
-  if (button.dataset.mediaAction === "link") window.linkMediaToMatch(mediaId);
-  if (button.dataset.mediaAction === "unlink") window.unlinkMedia(mediaId);
-});
+  const mediaIndex =
+    media.findIndex(item =>
+      String(item.id) === String(mediaId)
+    );
+
+  if (mediaIndex < 0) return;
+
+  const selectedMedia =
+    media[mediaIndex];
+
+  const linkedMatchId =
+    selectedMedia.linkedMatchId;
+
+  if (!linkedMatchId) return;
+
+  const unlinkedAt =
+    new Date().toISOString();
+
+  const result =
+    await updateMatchMedia(
+      linkedMatchId,
+      {
+        videoUrl: "",
+        videoHost: "",
+        videoVisibility: "",
+        videoAttachedAt: "",
+        videoUnlinkedAt:
+          unlinkedAt
+      }
+    );
+
+  /*
+   * Keep Media's local state aligned
+   * with the repository/outbox state.
+   */
+  media[mediaIndex] = {
+    ...selectedMedia,
+    linkedMatchId: "",
+    linkedAthlete: "",
+    linkedOpponent: "",
+    linkedEvent: "",
+    linkedAt: "",
+    unlinkedAt
+  };
+
+  saveMedia(media);
+
+  if (!result.synced) {
+    if (result.authenticated === false) {
+      alert(
+        "Media unlinked locally. Sign in to Cornerman to sync the Match."
+      );
+    } else {
+      alert(
+        "Media unlinked locally. Match sync is pending."
+      );
+    }
+  }
+
+  await render();
+}
+/* ==========================
+   ACTION DELEGATION
+========================== */
+
+mediaList?.addEventListener(
+  "click",
+  async event => {
+    const button =
+      event.target.closest(
+        "[data-media-action]"
+      );
+
+    if (
+      !button ||
+      !mediaList.contains(button)
+    ) {
+      return;
+    }
+
+    const mediaId =
+      button.dataset.mediaId || "";
+
+    button.disabled = true;
+
+    try {
+      if (
+        button.dataset.mediaAction ===
+        "link"
+      ) {
+        await linkMediaToMatch(
+          mediaId
+        );
+      }
+
+      if (
+        button.dataset.mediaAction ===
+        "unlink"
+      ) {
+        await unlinkMedia(
+          mediaId
+        );
+      }
+    } finally {
+      button.disabled = false;
+    }
+  }
+);
 
 /* ==========================
    EVENTS

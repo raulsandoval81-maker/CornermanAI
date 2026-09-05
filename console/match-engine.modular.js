@@ -17,9 +17,9 @@ import { createManualRoundGuard }
 from "./modules/manual-round-guard.js";
 
 import {
-  getTournamentRoster,
   getTournamentEntry
 } from "../data/tournament-roster.js";
+import { listRoster } from "../shared/roster-repository.js";
 
 import {
   WEIGHT_CLASSES
@@ -274,7 +274,8 @@ let matchContext = {
   redTeam: "",
   tournamentDate: "",
   tournamentLocation: "",
-  bracketRound: ""
+  bracketRound: "",
+  athleteReference: null
 };
 /* HELPERS */
 
@@ -495,10 +496,10 @@ syncSummaryButtons({
 });
 
 }
-function loadTournamentRosterSelect() {
+async function loadTournamentRosterSelect() {
   if (!athleteSelect) return;
 
-  const roster = getTournamentRoster();
+  const { athletes: roster } = await listRoster();
 
   athleteSelect.innerHTML = `
     <option value="">Select Athlete</option>
@@ -507,9 +508,11 @@ function loadTournamentRosterSelect() {
   roster.forEach(entry => {
     const option = document.createElement("option");
 
-    option.value = entry.entryId;
-    option.textContent =
-      `${entry.name} · ${entry.weight} · ${entry.division}`;
+    option.value = entry.sourceAthleteId || entry.entryId;
+    option.textContent = entry.sourceSystem === "sandman"
+      ? `${entry.displayName}${entry.discipline ? ` · ${entry.discipline}` : ""}`
+      : `${entry.name} · ${entry.weight} · ${entry.division}`;
+    option.dataset.rosterEntry = JSON.stringify(entry);
 
     athleteSelect.appendChild(option);
   });
@@ -561,6 +564,8 @@ function buildMatchPayload(videoUrl = "") {
       athleteNameInput?.value.trim() ||
       matchContext.athleteName ||
       "Athlete B",
+
+    ...(matchContext.athleteReference || {}),
 
     opponent:
       opponentNameInput?.value.trim() ||
@@ -789,8 +794,13 @@ weightGroupSelect?.addEventListener("change", () => {
 });
 
 athleteSelect?.addEventListener("change", () => {
-  const entry = getTournamentEntry(athleteSelect.value);
+  const selectedOption = athleteSelect.selectedOptions?.[0];
+  let entry = null;
+  try { entry = JSON.parse(selectedOption?.dataset.rosterEntry || "null"); } catch { entry = null; }
+  entry = entry || getTournamentEntry(athleteSelect.value);
   if (!entry) return;
+  const name = entry.displayName || entry.name;
+  matchContext.athleteReference = entry.sourceSystem === "sandman" ? { sourceSystem: "sandman", sourceAthleteId: entry.sourceAthleteId, sourceTeamId: entry.sourceTeamId } : null;
 
   const side = sandmanColorSelect?.value || "green";
 
@@ -810,14 +820,14 @@ if (formatKey) {
 
 
   if (side === "red") {
-    opponentNameInput.value = entry.name;
-    redTeamInput.value = entry.team;
+    opponentNameInput.value = name;
+    redTeamInput.value = entry.teamName || entry.team || "";
 
     athleteNameInput.value = "";
     greenTeamInput.value = "";
   } else {
-    athleteNameInput.value = entry.name;
-    greenTeamInput.value = entry.team;
+    athleteNameInput.value = name;
+    greenTeamInput.value = entry.teamName || entry.team || "";
 
     opponentNameInput.value = "";
     redTeamInput.value = "";
@@ -1815,5 +1825,5 @@ initYouTubeUploader({
 });
 
 initializeAthleteDetailModal();
-loadTournamentRosterSelect();
+loadTournamentRosterSelect().catch(error => console.warn("Roster unavailable", error));
 initializeMatchConfirmAccordion();

@@ -6,6 +6,7 @@ import {
 import {
   WEIGHT_CLASSES
 } from "../data/weight-classes.js";
+const { escapeHtml } = window.CornermanSafe;
 
 const CONSOLE_MATCH_KEY =
   "coach_console_last_match";
@@ -344,23 +345,23 @@ function renderCurrentTournament() {
 
   currentTournamentEl.innerHTML = `
     <strong>
-      ${currentTournament.name}
+      ${escapeHtml(currentTournament.name)}
     </strong>
 
     <p>
-      ${currentTournament.date || "No date"}
+      ${escapeHtml(currentTournament.date || "No date")}
       ·
-      ${currentTournament.location || "No location"}
+      ${escapeHtml(currentTournament.location || "No location")}
     </p>
 
     <p>
       Bracket:
-      ${currentTournament.bracketRound || "General Event"}
+      ${escapeHtml(currentTournament.bracketRound || "General Event")}
     </p>
 
     <p>
       Console:
-      ${currentTournament.consolePreference || "compact"}
+      ${escapeHtml(currentTournament.consolePreference || "compact")}
     </p>
   `;
 }
@@ -382,15 +383,15 @@ function renderTournamentRoster() {
       .map(entry => `
         <div class="match-preview">
           <strong>
-            ${entry.name} · ${entry.weight}
+            ${escapeHtml(entry.name)} · ${escapeHtml(entry.weight)}
           </strong>
 
           <p>
-            ${entry.team} · ${entry.division}
+            ${escapeHtml(entry.team)} · ${escapeHtml(entry.division)}
           </p>
 
           <p>
-            Event: ${entry.eventName}
+            Event: ${escapeHtml(entry.eventName)}
           </p>
         </div>
       `)
@@ -618,25 +619,25 @@ function renderLastConsoleMatch() {
   lastConsoleMatchEl.innerHTML = `
     <div class="match-preview">
       <strong>
-        ${converted.athlete}
+        ${escapeHtml(converted.athlete)}
         vs
-        ${converted.opponent}
+        ${escapeHtml(converted.opponent)}
       </strong>
 
       <p>
-        ${converted.result}
+        ${escapeHtml(converted.result)}
         by
-        ${converted.method}
+        ${escapeHtml(converted.method)}
         ·
         ${converted.pointsFor}-${converted.pointsAgainst}
       </p>
 
       <p>
         Event:
-        ${converted.eventName || "Not set"}
+        ${escapeHtml(converted.eventName || "Not set")}
         ·
         Weight:
-        ${converted.weightClass || "Not set"}
+        ${escapeHtml(converted.weightClass || "Not set")}
       </p>
     </div>
   `;

@@ -60,6 +60,7 @@ function expandMatchSetup() {
 }
 
 function buildMatchSummaryHTML() {
+  const { escapeHtml } = window.CornermanSafe;
   const eventName =
     document.getElementById("eventNameInput")?.value.trim() || "Event —";
 
@@ -76,8 +77,8 @@ function buildMatchSummaryHTML() {
     document.getElementById("sandmanColor")?.value || "green";
 
   return `
-    <strong>${eventName} · ${weight}</strong>
-    <span>${red} vs ${green}</span>
-    <em>Sandman: ${sandmanSide.toUpperCase()}</em>
+    <strong>${escapeHtml(eventName)} · ${escapeHtml(weight)}</strong>
+    <span>${escapeHtml(red)} vs ${escapeHtml(green)}</span>
+    <em>Sandman: ${escapeHtml(sandmanSide.toUpperCase())}</em>
   `;
 }

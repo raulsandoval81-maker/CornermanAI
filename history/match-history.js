@@ -1,5 +1,6 @@
 const STORAGE_KEY =
   "cornerman_matches";
+const { escapeHtml, safeUrl } = window.CornermanSafe;
 
 const RECENT_LIMIT =
   12;
@@ -55,8 +56,8 @@ function populateEventFilter(matches) {
     <option value="">All Events</option>
     ${events
       .map(event => `
-        <option value="${event}">
-          ${event}
+        <option value="${escapeHtml(event)}">
+          ${escapeHtml(event)}
         </option>
       `)
       .join("")
@@ -141,12 +142,13 @@ function render(matches) {
       .join("");
 }
 
-function renderMatchRow(match) {
+function renderDetailedMatchRow(match) {
+  const videoUrl = safeUrl(match.videoUrl);
   const videoButton =
-    match.videoUrl
+    videoUrl
       ? `
         <a
-          href="${match.videoUrl}"
+          href="${escapeHtml(videoUrl)}"
           target="_blank"
           rel="noopener"
         >
@@ -175,24 +177,24 @@ function renderMatchRow(match) {
 
       <div>
         <strong>
-          ${match.athlete || "Green Wrestler"}
+          ${escapeHtml(match.athlete || "Green Wrestler")}
           vs
-          ${match.opponent || "Red Wrestler"}
+          ${escapeHtml(match.opponent || "Red Wrestler")}
         </strong>
 
         <p>
-          ${eventName}
+          ${escapeHtml(eventName)}
           ·
-          ${weight}
-          ${savedDate ? `· ${savedDate}` : ""}
+          ${escapeHtml(weight)}
+          ${savedDate ? `· ${escapeHtml(savedDate)}` : ""}
         </p>
       </div>
 
       <div>
         <p>
-          ${match.result || "Result"}
+          ${escapeHtml(match.result || "Result")}
           by
-          ${match.method || "Decision"}
+          ${escapeHtml(match.method || "Decision")}
         </p>
 
         <p>
@@ -203,7 +205,7 @@ function renderMatchRow(match) {
       </div>
 
       <div class="match-row-actions">
-        <a href="./match-detail.html?id=${match.id}">
+        <a href="./match-detail.html?id=${encodeURIComponent(String(match.id ?? ""))}">
           Open Match
         </a>
 
@@ -215,10 +217,10 @@ function renderMatchRow(match) {
 }
 function renderMatchRow(match) {
   const videoButton =
-    match.videoUrl
+    safeUrl(match.videoUrl)
       ? `
         <a
-          href="${match.videoUrl}"
+          href="${escapeHtml(safeUrl(match.videoUrl))}"
           target="_blank"
           rel="noopener"
         >
@@ -235,17 +237,17 @@ function renderMatchRow(match) {
     <div class="match-row">
 
       <strong>
-        ${match.athlete}
+        ${escapeHtml(match.athlete)}
       </strong>
 
       <p>
-        vs ${match.opponent}
+        vs ${escapeHtml(match.opponent)}
       </p>
 
       <p>
-        ${match.result || "Result"}
+        ${escapeHtml(match.result || "Result")}
         by
-        ${match.method || "Decision"}
+        ${escapeHtml(match.method || "Decision")}
       </p>
 
       <p>
@@ -255,7 +257,7 @@ function renderMatchRow(match) {
       </p>
 
       <a
-        href="./match-detail.html?id=${match.id}"
+        href="./match-detail.html?id=${encodeURIComponent(String(match.id ?? ""))}"
       >
         Open Match
       </a>

@@ -1,5 +1,6 @@
 const STORAGE_KEY =
   "cornerman_matches";
+const { escapeHtml, safeUrl } = window.CornermanSafe;
 
 const params =
   new URLSearchParams(window.location.search);
@@ -79,12 +80,13 @@ function renderMatch(match) {
      matchTitle.textContent =
     `${match.athlete} vs ${match.opponent}`;
 
+  const safeVideoUrl = safeUrl(match.videoUrl);
   const videoLink =
-    match.videoUrl
+    safeVideoUrl
       ? `
         <p>
           <a
-            href="${match.videoUrl}"
+            href="${escapeHtml(safeVideoUrl)}"
             target="_blank"
             rel="noopener"
           >
@@ -99,9 +101,9 @@ function renderMatch(match) {
       `;
 
   matchDetail.innerHTML = `
-    <p><strong>Event:</strong> ${match.eventName || "—"}</p>
-    <p><strong>Weight:</strong> ${match.weightClass || "—"}</p>
-    <p><strong>Result:</strong> ${match.result || "Result"} by ${match.method || "Decision"}</p>
+    <p><strong>Event:</strong> ${escapeHtml(match.eventName || "—")}</p>
+    <p><strong>Weight:</strong> ${escapeHtml(match.weightClass || "—")}</p>
+    <p><strong>Result:</strong> ${escapeHtml(match.result || "Result")} by ${escapeHtml(match.method || "Decision")}</p>
     <p><strong>Score:</strong> ${match.pointsFor || 0} - ${match.pointsAgainst || 0}</p>
     <p><strong>Takedowns:</strong> ${match.takedowns || 0}</p>
     <p><strong>Escapes:</strong> ${match.escapes || 0}</p>
@@ -110,7 +112,7 @@ function renderMatch(match) {
     ${videoLink}
   `;
 
-  renderTimeline(match.events || [], match.videoUrl || "");
+  renderTimeline(match.events || [], safeVideoUrl);
   renderSummary(match);
   renderCoachTakeaway(match);
   renderMatchNavigation(match);
@@ -139,7 +141,7 @@ function renderTimeline(events, videoUrl = "") {
           videoMomentUrl
             ? `
               <a
-                href="${videoMomentUrl}"
+                href="${escapeHtml(videoMomentUrl)}"
                 target="_blank"
                 rel="noopener"
                 title="Open video at this event"
@@ -152,9 +154,9 @@ function renderTimeline(events, videoUrl = "") {
         return `
           <div class="match-row">
             <strong>
-              ${formatEventTime(event)}
-              · R${event.round || "?"}
-              · ${event.short || event.code || event.type || "Event"}
+              ${escapeHtml(formatEventTime(event))}
+              · R${escapeHtml(event.round || "?")}
+              · ${escapeHtml(event.short || event.code || event.type || "Event")}
               ${videoLink}
             </strong>
 
@@ -202,7 +204,7 @@ function renderSummary(match) {
   matchSummary.innerHTML = `
     <p>
       <strong>First Score:</strong>
-      ${firstScoreText}
+      ${escapeHtml(firstScoreText)}
     </p>
 
     <p>
@@ -213,14 +215,14 @@ function renderSummary(match) {
 
     <p>
       <strong>Winning Factor:</strong>
-      ${winningFactor}
+      ${escapeHtml(winningFactor)}
     </p>
 
     <p>
       <strong>Result:</strong>
-      ${match.result || "Result"}
+      ${escapeHtml(match.result || "Result")}
       by
-      ${match.method || "Decision"}
+      ${escapeHtml(match.method || "Decision")}
     </p>
   `;
 }
@@ -262,7 +264,7 @@ function renderCoachTakeaway(match) {
   coachTakeaway.innerHTML = `
     <p>
       <strong>Key Moment:</strong>
-      ${keyMoment}
+      ${escapeHtml(keyMoment)}
     </p>
 
     <p>
@@ -297,12 +299,12 @@ function renderMatchNavigation(match) {
 
   nav.innerHTML = `
     ${previousMatch
-      ? `<a href="./match-detail.html?id=${previousMatch.id}">← ${previousMatch.athlete} vs ${previousMatch.opponent}</a>`
+      ? `<a href="./match-detail.html?id=${encodeURIComponent(String(previousMatch.id ?? ""))}">← ${escapeHtml(previousMatch.athlete)} vs ${escapeHtml(previousMatch.opponent)}</a>`
       : `<span>← No previous match</span>`
     }
 
     ${nextMatch
-      ? `<a href="./match-detail.html?id=${nextMatch.id}">${nextMatch.athlete} vs ${nextMatch.opponent} →</a>`
+      ? `<a href="./match-detail.html?id=${encodeURIComponent(String(nextMatch.id ?? ""))}">${escapeHtml(nextMatch.athlete)} vs ${escapeHtml(nextMatch.opponent)} →</a>`
       : `<span>No next match →</span>`
     }
   `;

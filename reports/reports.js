@@ -1,4 +1,5 @@
 const STORAGE_KEY = "cornerman_matches";
+const { escapeHtml } = window.CornermanSafe;
 
 const matches =
   JSON.parse(
@@ -80,7 +81,7 @@ function loadAthleteReport(athlete) {
 
   container.innerHTML = `
     <div class="match-row">
-      <strong>${athlete}</strong>
+      <strong>${escapeHtml(athlete)}</strong>
       <p>Record: ${wins}-${losses} · Win %: ${winPct}%</p>
       <p>Points: ${sum(athleteMatches, "pointsFor")}-${sum(athleteMatches, "pointsAgainst")}</p>
       <p>TD: ${sum(athleteMatches, "takedowns")} · ESC: ${sum(athleteMatches, "escapes")} · NF: ${sum(athleteMatches, "nearfall")}</p>
@@ -110,9 +111,9 @@ function loadPatternReport() {
       .sort((a, b) => b.score - a.score)
       .map(pattern => `
         <div class="match-row">
-          <strong>${pattern.label}</strong>
+          <strong>${escapeHtml(pattern.label)}</strong>
           <p>${pattern.count} signal(s) · score ${pattern.score}</p>
-          <p>${pattern.recommendation}</p>
+          <p>${escapeHtml(pattern.recommendation)}</p>
         </div>
       `)
       .join("");
@@ -204,9 +205,9 @@ function loadRecentMatches() {
 
         return `
           <div class="match-row">
-            <strong>${match.athlete || "Unknown"} vs ${match.opponent || "Unknown"}</strong>
-            <p>${match.result || ""} by ${match.method || "Decision"} (${match.pointsFor || 0}-${match.pointsAgainst || 0})</p>
-            <p><strong>Intelligence:</strong> ${summary}</p>
+            <strong>${escapeHtml(match.athlete || "Unknown")} vs ${escapeHtml(match.opponent || "Unknown")}</strong>
+            <p>${escapeHtml(match.result || "")} by ${escapeHtml(match.method || "Decision")} (${match.pointsFor || 0}-${match.pointsAgainst || 0})</p>
+            <p><strong>Intelligence:</strong> ${escapeHtml(summary)}</p>
           </div>
         `;
       })
@@ -220,7 +221,7 @@ function renderList(items) {
 
   return `
     <ul>
-      ${items.map(item => `<li>${item}</li>`).join("")}
+      ${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
     </ul>
   `;
 }

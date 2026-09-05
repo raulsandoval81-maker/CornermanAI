@@ -2,6 +2,7 @@ import {
   getMedia,
   saveMedia
 } from "./media-library.js";
+const { escapeHtml, safeUrl } = window.CornermanSafe;
 
 const MATCH_STORAGE_KEY =
   "cornerman_matches";
@@ -142,6 +143,7 @@ function renderMediaList(media, matches) {
 }
 
 function renderMediaRow(item, matches) {
+  const videoUrl = safeUrl(item.videoUrl);
   const createdAt =
     item.createdAt
       ? new Date(item.createdAt).toLocaleString()
@@ -151,18 +153,18 @@ function renderMediaRow(item, matches) {
     <div class="media-row">
 
       <strong>
-        ${item.title || "Untitled Video"}
+        ${escapeHtml(item.title || "Untitled Video")}
       </strong>
 
       ${
-        item.videoUrl
+        videoUrl
           ? `
             <p class="muted">
-              ${item.videoUrl}
+              ${escapeHtml(videoUrl)}
             </p>
 
             <a
-              href="${item.videoUrl}"
+              href="${escapeHtml(videoUrl)}"
               target="_blank"
               rel="noopener"
             >
@@ -202,14 +204,14 @@ function renderLinkedStatus(item) {
   return `
     <p>
       <strong>Linked Match:</strong>
-      ${item.linkedAthlete || "Athlete"}
+      ${escapeHtml(item.linkedAthlete || "Athlete")}
       vs
-      ${item.linkedOpponent || "Opponent"}
+      ${escapeHtml(item.linkedOpponent || "Opponent")}
     </p>
 
     <p>
       <strong>Event:</strong>
-      ${item.linkedEvent || "—"}
+      ${escapeHtml(item.linkedEvent || "—")}
     </p>
   `;
 }
@@ -220,14 +222,15 @@ function renderMediaActions(item, matches) {
       <div class="media-actions">
 
         <a
-          href="../history/match-detail.html?id=${item.linkedMatchId}"
+          href="../history/match-detail.html?id=${encodeURIComponent(String(item.linkedMatchId))}"
         >
           Open Match
         </a>
 
         <button
           type="button"
-          onclick="unlinkMedia('${item.id}')"
+          data-media-action="unlink"
+          data-media-id="${escapeHtml(item.id)}"
         >
           Unlink
         </button>
@@ -239,7 +242,7 @@ function renderMediaActions(item, matches) {
   return `
     <div class="media-actions">
 
-      <select id="matchSelect-${item.id}">
+      <select id="matchSelect-${escapeHtml(item.id)}">
         <option value="">
           Select Match
         </option>
@@ -249,7 +252,8 @@ function renderMediaActions(item, matches) {
 
       <button
         type="button"
-        onclick="linkMediaToMatch('${item.id}')"
+        data-media-action="link"
+        data-media-id="${escapeHtml(item.id)}"
       >
         Link To Match
       </button>
@@ -261,14 +265,14 @@ function renderMediaActions(item, matches) {
 function renderMatchOptions(matches) {
   return matches
     .map(match => `
-      <option value="${match.id}">
-        ${match.athlete || "Athlete"}
+      <option value="${escapeHtml(match.id)}">
+        ${escapeHtml(match.athlete || "Athlete")}
         vs
-        ${match.opponent || "Opponent"}
+        ${escapeHtml(match.opponent || "Opponent")}
         —
-        ${match.eventName || "No Event"}
+        ${escapeHtml(match.eventName || "No Event")}
         —
-        ${match.result || "Result"}
+        ${escapeHtml(match.result || "Result")}
         ${match.pointsFor || 0}-${match.pointsAgainst || 0}
       </option>
     `)
@@ -297,8 +301,8 @@ function populateEventFilter(media) {
 
     ${events
       .map(event => `
-        <option value="${event}">
-          ${event}
+        <option value="${escapeHtml(event)}">
+          ${escapeHtml(event)}
         </option>
       `)
       .join("")
@@ -433,6 +437,15 @@ function saveMatches(matches) {
     JSON.stringify(matches)
   );
 }
+
+mediaList?.addEventListener("click", event => {
+  const button = event.target.closest("[data-media-action]");
+  if (!button || !mediaList.contains(button)) return;
+
+  const mediaId = button.dataset.mediaId || "";
+  if (button.dataset.mediaAction === "link") window.linkMediaToMatch(mediaId);
+  if (button.dataset.mediaAction === "unlink") window.unlinkMedia(mediaId);
+});
 
 /* ==========================
    EVENTS

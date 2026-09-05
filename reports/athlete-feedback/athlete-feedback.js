@@ -1,6 +1,7 @@
 import {
   exportToSandman
 } from "../../bridge/export-to-sandman.js";
+const { escapeHtml } = window.CornermanSafe;
 
 const MATCHES_KEY =
   "cornerman_matches";
@@ -61,16 +62,16 @@ function render(payload) {
     `
       <div class="feedback-item">
         <strong>
-          ${payload.match.result}
+          ${escapeHtml(payload.match.result)}
           by
-          ${payload.match.method}
+          ${escapeHtml(payload.match.method)}
           vs
-          ${payload.match.opponent}
+          ${escapeHtml(payload.match.opponent)}
         </strong>
 
         <p>
           Score:
-          ${payload.match.score}
+          ${escapeHtml(payload.match.score)}
         </p>
       </div>
     `
@@ -81,12 +82,12 @@ function render(payload) {
     `
       <div class="feedback-item">
         <strong>Feedback</strong>
-        <p>${payload.feedback}</p>
+        <p>${escapeHtml(payload.feedback)}</p>
       </div>
 
       <div class="feedback-item">
         <strong>Patterns</strong>
-        <p>${formatList(payload.patterns)}</p>
+        <p>${escapeHtml(formatList(payload.patterns))}</p>
       </div>
     `
   );
@@ -97,11 +98,11 @@ function render(payload) {
       .map(card => `
         <div class="feedback-card">
           <strong>
-            ${formatCardTitle(card)}
+            ${escapeHtml(formatCardTitle(card))}
           </strong>
 
           <p>
-            ${getCardDescription(card)}
+            ${escapeHtml(getCardDescription(card))}
           </p>
         </div>
       `)

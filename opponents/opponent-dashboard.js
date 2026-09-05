@@ -1,5 +1,6 @@
 const RECON_KEY =
   "cornerman_recon";
+const { escapeHtml } = window.CornermanSafe;
 
 const MATCHES_KEY =
   "cornerman_matches";
@@ -159,7 +160,7 @@ function buildDashboard() {
     ${intelligenceRow("Best Turn", latest.bestTurn || "-")}
   </div>`;
 
-  coachNotes.innerHTML =
+  coachNotes.textContent =
     latest.coachNotes ||
     "No notes available.";
 }
@@ -183,24 +184,24 @@ function renderMatchesVsUs(matchesVsUs) {
         <div class="match-row">
 
           <strong>
-            ${match.athlete || "Athlete"}
+            ${escapeHtml(match.athlete || "Athlete")}
           </strong>
 
           <p>
-            ${match.result || "Result"}
+            ${escapeHtml(match.result || "Result")}
             by
-            ${match.method || "Decision"}
+            ${escapeHtml(match.method || "Decision")}
             (${match.pointsFor || 0}-${match.pointsAgainst || 0})
           </p>
 
           <p>
             <strong>Patterns:</strong>
-            ${formatPatterns(
+            ${escapeHtml(formatPatterns(
               match.intelligence?.patterns || []
-            )}
+            ))}
           </p>
 
-          <a href="../history/match-detail.html?id=${match.id}">
+          <a href="../history/match-detail.html?id=${encodeURIComponent(String(match.id ?? ""))}">
             View Match
           </a>
 
@@ -227,8 +228,8 @@ function renderReconSummary(notes) {
 function intelligenceRow(label, value) {
   return `
     <div class="intelligence-row">
-      <span class="intelligence-label">${label}</span>
-      <strong class="intelligence-value">${value}</strong>
+      <span class="intelligence-label">${escapeHtml(label)}</span>
+      <strong class="intelligence-value">${escapeHtml(value)}</strong>
     </div>
   `;
 }
@@ -249,11 +250,11 @@ function renderReconHistory(notes) {
       .map(note => `
         <div class="match-row">
           <strong>
-            ${formatDate(note.createdAt, note.id)}
+            ${escapeHtml(formatDate(note.createdAt, note.id))}
           </strong>
 
           <p>
-            ${note.coachNotes || "No note."}
+            ${escapeHtml(note.coachNotes || "No note.")}
           </p>
         </div>
       `)
@@ -368,7 +369,7 @@ function renderRecommendations(latest, notes) {
   recommendations.innerHTML = `
     <p>
       <strong>Primary Threat:</strong>
-      ${primaryThreat}
+      ${escapeHtml(primaryThreat)}
     </p>
 
     <p>

@@ -1,5 +1,6 @@
 const STORAGE_KEY =
   "cornerman_matches";
+const { escapeHtml } = window.CornermanSafe;
 
 const athleteSelect =
   document.getElementById("athleteSelect");
@@ -220,18 +221,18 @@ function renderHistory(athleteMatches) {
 <div class="match-row">
 
   <strong>
-    ${match.opponent || "Opponent"}
+    ${escapeHtml(match.opponent || "Opponent")}
   </strong>
 
   <p>
-    ${match.result || "Result"}
+    ${escapeHtml(match.result || "Result")}
     by
-    ${match.method || "Decision"}
+    ${escapeHtml(match.method || "Decision")}
     (${match.pointsFor || 0}-${match.pointsAgainst || 0})
   </p>
 
   <a
-    href="../history/match-detail.html?id=${match.id}"
+    href="../history/match-detail.html?id=${encodeURIComponent(String(match.id ?? ""))}"
   >
     View Match
   </a>
@@ -301,17 +302,17 @@ function renderAthleteInsights(athleteMatches) {
   container.innerHTML = `
     <div class="match-row">
       <strong>Strength</strong>
-      <p>${strength}</p>
+      <p>${escapeHtml(strength)}</p>
     </div>
 
     <div class="match-row">
       <strong>Focus</strong>
-      <p>${focus}</p>
+      <p>${escapeHtml(focus)}</p>
     </div>
 
     <div class="match-row">
       <strong>Feedback Ready</strong>
-      <p>${feedback}</p>
+      <p>${escapeHtml(feedback)}</p>
     </div>
   `;
 }
@@ -358,12 +359,12 @@ function renderAthletePatterns(athleteMatches) {
   container.innerHTML = `
     <div class="match-row">
       <strong>Primary Pattern</strong>
-      <p>${formatPattern(primaryPattern)}</p>
+      <p>${escapeHtml(formatPattern(primaryPattern))}</p>
     </div>
 
     <div class="match-row">
       <strong>Secondary Pattern</strong>
-      <p>${formatPattern(secondaryPattern)}</p>
+      <p>${escapeHtml(formatPattern(secondaryPattern))}</p>
     </div>
 
     <div class="match-row">

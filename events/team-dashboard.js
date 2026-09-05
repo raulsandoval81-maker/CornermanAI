@@ -1,5 +1,6 @@
 
 const STORAGE_KEY = "cornerman_matches";
+const { escapeHtml } = window.CornermanSafe;
 
 const matches = getMatches();
 
@@ -75,17 +76,17 @@ function renderMatches() {
 .map(match => `
   <div class="match-row">
     <strong>
-      ${match.athlete || "Athlete"}
+      ${escapeHtml(match.athlete || "Athlete")}
     </strong>
 
     <p>
-      ${match.result || "Result"}
+      ${escapeHtml(match.result || "Result")}
       by
-      ${match.method || "Decision"}
+      ${escapeHtml(match.method || "Decision")}
       (${match.pointsFor || 0}-${match.pointsAgainst || 0})
     </p>
 
-    <a href="../history/match-detail.html?id=${match.id}">
+    <a href="../history/match-detail.html?id=${encodeURIComponent(String(match.id ?? ""))}">
       View Match
     </a>
   </div>

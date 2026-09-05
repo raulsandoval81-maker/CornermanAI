@@ -289,11 +289,17 @@ if (state.matchFinished && state.resultType && state.winner) {
 
   positionLabelEl.textContent = currentPosition.label;
 
-  timelineEl.innerHTML = state.timeline
+  const timelineItems = state.timeline
     .slice()
     .reverse()
-    .map((item) => `<div class="timeline-item">${item}</div>`)
-    .join("");
+    .map(item => {
+      const row = document.createElement("div");
+      row.className = "timeline-item";
+      row.textContent = item;
+      return row;
+    });
+
+  timelineEl.replaceChildren(...timelineItems);
 }
 
 function syncViewer() {

@@ -1,5 +1,6 @@
 const STORAGE_KEY =
   "cornerman_recon";
+const { escapeHtml } = window.CornermanSafe;
 
 const saveBtn =
   document.getElementById("saveRecon");
@@ -87,34 +88,34 @@ function renderReconNote(note) {
     <div class="match-row">
 
       <strong>
-        ${note.opponent || "Unknown Opponent"}
+        ${escapeHtml(note.opponent || "Unknown Opponent")}
       </strong>
 
       <p>
-        Stance: ${note.preferredStance || "-"}
+        Stance: ${escapeHtml(note.preferredStance || "-")}
       </p>
 
       <p>
-        Tie: ${note.favoriteTie || "-"}
+        Tie: ${escapeHtml(note.favoriteTie || "-")}
       </p>
 
       <p>
-        Shot: ${note.favoriteShot || "-"}
+        Shot: ${escapeHtml(note.favoriteShot || "-")}
       </p>
 
       <p>
-        Escape: ${note.favoriteEscape || "-"}
+        Escape: ${escapeHtml(note.favoriteEscape || "-")}
       </p>
 
       <p>
-        Turn: ${note.bestTurn || "-"}
+        Turn: ${escapeHtml(note.bestTurn || "-")}
       </p>
 
       ${
         note.coachNotes
           ? `
             <p>
-              Notes: ${note.coachNotes}
+              Notes: ${escapeHtml(note.coachNotes)}
             </p>
           `
           : ""

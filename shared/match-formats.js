@@ -1,6 +1,18 @@
 export const MATCH_FORMATS = {
+  novice_45sec: {
+    label: "Novice Standard — 0:45",
+    division: "novice",
+    bracketType: "standard",
+    periods: [
+      { round: "1", seconds: 45, start: "neutral" },
+      { round: "2", seconds: 45, start: "choice" },
+      { round: "3", seconds: 45, start: "choice" }
+    ],
+    overtime: true
+  },
+
   youth_1min: {
-    label: "Youth — 1:00 Rounds",
+    label: "Youth Standard — 1:00",
     division: "youth",
     bracketType: "standard",
     periods: [
@@ -12,7 +24,7 @@ export const MATCH_FORMATS = {
   },
 
   jv_90sec: {
-    label: "JV — 1:30 Rounds",
+    label: "JV Championship — 1:30",
     division: "jv",
     bracketType: "championship",
     periods: [
@@ -24,7 +36,7 @@ export const MATCH_FORMATS = {
   },
 
   jv_consolation: {
-    label: "JV Consolation — 1:00 / 1:30 / 1:30",
+    label: "JV Consolation — 1:00",
     division: "jv",
     bracketType: "consolation",
     periods: [
@@ -36,7 +48,7 @@ export const MATCH_FORMATS = {
   },
 
   varsity_championship: {
-    label: "Varsity Championship — 2:00 Rounds",
+    label: "Varsity Championship — 2:00",
     division: "varsity",
     bracketType: "championship",
     periods: [
@@ -48,7 +60,7 @@ export const MATCH_FORMATS = {
   },
 
   varsity_consolation: {
-    label: "Varsity Consolation — 1:00 / 2:00 / 2:00",
+    label: "Varsity Consolation — 1:00",
     division: "varsity",
     bracketType: "consolation",
     periods: [
@@ -60,7 +72,7 @@ export const MATCH_FORMATS = {
   },
 
   college_3_2_2: {
-    label: "College — 3:00 / 2:00 / 2:00",
+    label: "College — 3:00",
     division: "college",
     bracketType: "standard",
     periods: [

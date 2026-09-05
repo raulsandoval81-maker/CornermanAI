@@ -394,3 +394,108 @@
   padding:12px;
   border-radius:10px;
 }
+
+/* COMPACT LIVE CONTEXT V1 */
+
+body[data-console="compact"] .live-context-strip{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin:0 0 6px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.03em;
+}
+
+body[data-console="compact"] .compact-event-context{
+  display:none;
+}
+
+body[data-console="compact"] #weightGroupDisplay,
+body[data-console="compact"] #weightClassDisplay{
+  display:inline-flex;
+  align-items:center;
+  min-height:22px;
+  padding:3px 8px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:999px;
+  background:rgba(255,255,255,.04);
+  color:#d4d4d8;
+  white-space:nowrap;
+}
+
+/* Keep round / timer persistent in its existing center HUD */
+body[data-console="compact"] .header-round{
+  min-width:58px;
+  gap:1px;
+}
+
+body[data-console="compact"] .header-round #currentRound{
+  font-size:10px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.06em;
+}
+
+body[data-console="compact"] .header-round #clock{
+  font-size:16px;
+  line-height:1;
+  font-weight:1000;
+}
+
+body[data-console="compact"] .header-round #positionIndicator{
+  margin-top:3px;
+  font-size:9px;
+  line-height:1;
+  white-space:nowrap;
+}
+
+@media (max-width:480px){
+  body[data-console="compact"] .live-context-strip{
+    margin-bottom:4px;
+  }
+
+  body[data-console="compact"] #weightGroupDisplay,
+  body[data-console="compact"] #weightClassDisplay{
+    padding:2px 7px;
+  }
+
+  body[data-console="compact"] .header-round{
+    min-width:52px;
+  }
+
+  body[data-console="compact"] .header-round #clock{
+    font-size:15px;
+  }
+}
+
+/* Compact live timer refinement */
+body[data-console="compact"] .header-round{
+  min-width:44px;
+}
+
+body[data-console="compact"] .header-round #currentRound{
+  font-size:9px;
+}
+
+body[data-console="compact"] .header-round #clock{
+  font-size:13px;
+  line-height:1;
+  padding:0;
+}
+
+body[data-console="compact"] .header-round #positionIndicator{
+  margin-top:2px;
+  font-size:8px;
+}
+
+@media (max-width:480px){
+  body[data-console="compact"] .header-round{
+    min-width:40px;
+  }
+
+  body[data-console="compact"] .header-round #clock{
+    font-size:12px;
+  }
+}

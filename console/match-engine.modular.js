@@ -181,6 +181,7 @@ const confirmMatchSetupBtn = document.getElementById("confirmMatchSetup");
 const eventNameInput = document.getElementById("eventNameInput");
 const weightClassInput = document.getElementById("weightClassInput");
 const eventNameDisplay = document.getElementById("eventNameDisplay");
+const weightGroupDisplay = document.getElementById("weightGroupDisplay");
 const weightClassDisplay = document.getElementById("weightClassDisplay");
 const manualEntryToggle = document.getElementById("manualEntryToggle");
 const manualEntryFields = document.getElementById("manualEntryFields");
@@ -246,6 +247,20 @@ const sandmanColorSelect = document.getElementById("sandmanColor");
 
 const connectYouTubeBtn = document.getElementById("connectYouTubeBtn");
 const uploadMatchVideoBtn = document.getElementById("uploadMatchVideoBtn");
+
+
+let matchContext = {
+  eventName: "",
+  weightClass: "",
+  weightGroup: "",
+  athleteName: "",
+  opponentName: "",
+  greenTeam: "",
+  redTeam: "",
+  tournamentDate: "",
+  tournamentLocation: "",
+  bracketRound: ""
+};
 /* HELPERS */
 
 const DEFAULT_FORMAT_BY_WEIGHT_GROUP = {
@@ -346,17 +361,33 @@ function renderAll() {
   updateIdentityStrip({
     greenDisplayName,
     athleteNameInput,
+    athleteName: matchContext.athleteName,
     redDisplayName,
     opponentNameInput,
+    opponentName: matchContext.opponentName,
     greenTeamEl,
     greenTeamInput,
+    greenTeam: matchContext.greenTeam,
     redTeamEl,
     redTeamInput,
+    redTeam: matchContext.redTeam,
     eventNameDisplay,
     eventNameInput,
+    eventName: matchContext.eventName,
     weightClassDisplay,
-    weightClassInput
+    weightClassInput,
+    weightClass: matchContext.weightClass
   });
+
+  if (weightGroupDisplay) {
+    const division =
+      String(matchContext.weightGroup || "").trim();
+
+    weightGroupDisplay.textContent =
+      division
+        ? `Division: ${division}`
+        : "Division: —";
+  }
 
 
 syncAutoResult({
@@ -490,25 +521,53 @@ function buildMatchPayload(videoUrl = "") {
   const method =
     getResultLabel(state.resultType) || "Decision";
   return {
-    id: Date.now(),
-    eventName: eventNameInput?.value.trim() || "",
-    weightClass: weightClassInput?.value.trim() || "",
+    id:
+      persistedMatchId ||
+      (
+        window.crypto?.randomUUID
+          ? window.crypto.randomUUID()
+          : `match-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      ),
+    eventName:
+      eventNameInput?.value.trim() ||
+      matchContext.eventName ||
+      "",
+
+    weightClass:
+      weightClassInput?.value.trim() ||
+      matchContext.weightClass ||
+      "",
     formatKey: state.formatKey,
     formatLabel: state.format.label,
 
     athlete:
-      athleteNameInput?.value.trim()
-      || "Athlete B",
+      athleteNameInput?.value.trim() ||
+      matchContext.athleteName ||
+      "Athlete B",
 
     opponent:
-      opponentNameInput?.value.trim()
-      || "Athlete A",
+      opponentNameInput?.value.trim() ||
+      matchContext.opponentName ||
+      "Athlete A",
 
     greenTeam:
-      greenTeamInput?.value.trim() || "",
+      greenTeamInput?.value.trim() ||
+      matchContext.greenTeam ||
+      "",
 
     redTeam:
-      redTeamInput?.value.trim() || "",
+      redTeamInput?.value.trim() ||
+      matchContext.redTeam ||
+      "",
+
+    tournamentDate:
+      matchContext.tournamentDate || "",
+
+    tournamentLocation:
+      matchContext.tournamentLocation || "",
+
+    bracketRound:
+      matchContext.bracketRound || "",
 
     athleteScore: state.athleteScore,
     opponentScore: state.opponentScore,
@@ -642,6 +701,12 @@ async function saveMatchToHistory() {
       new Date().toISOString()
   });
   persistedMatchId = result.match.id;
+
+  localStorage.setItem(
+    "coach_console_last_match",
+    JSON.stringify(result.match)
+  );
+
   setStatus(result.synced ? "Saved to match log." : "Saved locally — sync pending.");
   return result.match;
 }
@@ -792,17 +857,33 @@ confirmMatchSetupBtn?.addEventListener("click", () => {
   updateIdentityStrip({
     greenDisplayName,
     athleteNameInput,
+    athleteName: matchContext.athleteName,
     redDisplayName,
     opponentNameInput,
+    opponentName: matchContext.opponentName,
     greenTeamEl,
     greenTeamInput,
+    greenTeam: matchContext.greenTeam,
     redTeamEl,
     redTeamInput,
+    redTeam: matchContext.redTeam,
     eventNameDisplay,
     eventNameInput,
+    eventName: matchContext.eventName,
     weightClassDisplay,
-    weightClassInput
+    weightClassInput,
+    weightClass: matchContext.weightClass
   });
+
+  if (weightGroupDisplay) {
+    const division =
+      String(matchContext.weightGroup || "").trim();
+
+    weightGroupDisplay.textContent =
+      division
+        ? `Division: ${division}`
+        : "Division: —";
+  }
 
   lockMatchSetup({
     locked: true,
@@ -1561,56 +1642,60 @@ function loadPendingMatchSetup() {
 
   if (!pendingMatch.source) return;
 
-  const setValue = (element, value) => {
-    if (element) {
-      element.value = value || "";
-    }
+  matchContext = {
+    eventName:
+      pendingMatch.eventName || "",
+
+    weightClass:
+      pendingMatch.weightClass || "",
+
+    weightGroup:
+      pendingMatch.weightGroup || "",
+
+    athleteName:
+      pendingMatch.athleteName || "Athlete B",
+
+    opponentName:
+      pendingMatch.opponentName || "Athlete A",
+
+    greenTeam:
+      pendingMatch.teamA || "",
+
+    redTeam:
+      pendingMatch.opponentTeam || "",
+
+    tournamentDate:
+      pendingMatch.tournamentDate || "",
+
+    tournamentLocation:
+      pendingMatch.tournamentLocation || "",
+
+    bracketRound:
+      pendingMatch.bracketRound || ""
   };
 
-  setValue(
-    eventNameInput,
-    pendingMatch.eventName
-  );
+  const formatKey =
+    pendingMatch.matchFormat ||
+    DEFAULT_FORMAT_BY_WEIGHT_GROUP[
+      pendingMatch.weightGroup
+    ];
 
-  setValue(
-    athleteNameInput,
-    pendingMatch.athleteName || "Athlete B"
-  );
+  if (
+    formatKey &&
+    MATCH_FORMATS[formatKey]
+  ) {
+    matchFormatSelect.value = formatKey;
+    setMatchFormat(state, formatKey);
+  }
 
-  setValue(
-    opponentNameInput,
-    pendingMatch.opponentName || "Athlete A"
-  );
-
-  setValue(
-    redTeamInput,
-    pendingMatch.opponentTeam
-  );
-
-  setValue(
-    weightClassInput,
-    pendingMatch.weightClass
-  );
-
-  setValue(
-    sandmanColorSelect,
-    pendingMatch.athleteSide || "green"
-  );
+  if (sandmanColorSelect) {
+    sandmanColorSelect.value =
+      pendingMatch.athleteSide || "green";
+  }
 
   matchConfirmed = true;
 
   matchSetupEl?.classList.add("hidden");
-
-  lockMatchSetup({
-    locked: true,
-    eventNameInput,
-    weightClassInput,
-    redTeamInput,
-    greenTeamInput,
-    athleteNameInput,
-    opponentNameInput,
-    matchFormatSelect
-  });
 
   updateStartButton({
     startBtn,
@@ -1618,11 +1703,12 @@ function loadPendingMatchSetup() {
     disabled: false
   });
 
+  renderAll();
+
   setStatus(
     "Match loaded from launcher"
   );
 }
-
 loadPendingMatchSetup();
 
 /* INIT */

@@ -80,6 +80,48 @@ function getCurrentTournament() {
   );
 }
 
+function renderTournamentContext() {
+  const el =
+    document.getElementById("currentTournamentContext");
+
+  if (!el) return;
+
+  const tournament =
+    getCurrentTournament();
+
+  if (!tournament.name) {
+    el.textContent =
+      "No active tournament context.";
+    return;
+  }
+
+  el.innerHTML = `
+    <strong>${escapeHtml(tournament.name)}</strong>
+    <p>
+      ${escapeHtml(tournament.date || "No date")}
+      ·
+      ${escapeHtml(tournament.location || "No location")}
+    </p>
+    <p>
+      Bracket:
+      ${escapeHtml(tournament.bracketRound || "General Event")}
+    </p>
+  `;
+
+  if (eventNameInput && !eventNameInput.value) {
+    eventNameInput.value =
+      tournament.name || "";
+  }
+
+  if (
+    consoleViewSelect &&
+    tournament.consolePreference
+  ) {
+    consoleViewSelect.value =
+      tournament.consolePreference;
+  }
+}
+
 function applyTournamentContext(setup) {
   const tournament = getCurrentTournament();
 
@@ -174,8 +216,14 @@ function getAthleteAName() {
     return manualAthleteName?.value.trim() || "";
   }
 
+  if (!athleteSelect?.value) {
+    return "";
+  }
+
   const option =
-    athleteSelect?.options?.[athleteSelect.selectedIndex];
+    athleteSelect.options[
+      athleteSelect.selectedIndex
+    ];
 
   return option?.textContent.trim() || "";
 }
@@ -195,8 +243,14 @@ function syncAthleteMode() {
 
 function getOpponentName() {
   if (opponentMode?.value === "known") {
+    if (!knownOpponentSelect?.value) {
+      return "";
+    }
+
     const option =
-      knownOpponentSelect?.options?.[knownOpponentSelect.selectedIndex];
+      knownOpponentSelect.options[
+        knownOpponentSelect.selectedIndex
+      ];
 
     return option?.textContent.trim() || "";
   }
@@ -264,10 +318,42 @@ syncAthleteMode();
 syncOpponentMode();
 syncColorsFromA();
 syncWeightGroupDefaults();
+renderTournamentContext();
 
 startMatchBtn?.addEventListener("click", () => {
   const weightGroup =
     weightGroupSelect?.value || "";
+
+  const weightClass =
+    customWeightClassInput?.value.trim() ||
+    weightClassInput?.value ||
+    "";
+
+  const athleteName =
+    getAthleteAName();
+
+  const selectedOpponentName =
+    getOpponentName();
+
+  if (!athleteName) {
+    alert("Select or enter Wrestler A.");
+    return;
+  }
+
+  if (!selectedOpponentName) {
+    alert("Select or enter Wrestler B.");
+    return;
+  }
+
+  if (!weightGroup) {
+    alert("Select a weight group.");
+    return;
+  }
+
+  if (!weightClass) {
+    alert("Select or enter a weight.");
+    return;
+  }
 
   launchConsole({
     eventName:
@@ -279,8 +365,7 @@ startMatchBtn?.addEventListener("click", () => {
     athleteMode:
       athleteMode?.value || "roster",
 
-    athleteName:
-      getAthleteAName(),
+    athleteName,
 
     teamA:
       teamAInput?.value.trim() || "",
@@ -292,7 +377,7 @@ startMatchBtn?.addEventListener("click", () => {
       opponentMode?.value || "manual",
 
     opponentName:
-      getOpponentName(),
+      selectedOpponentName,
 
     opponentTeam:
       opponentTeam?.value.trim() || "",
@@ -302,10 +387,7 @@ startMatchBtn?.addEventListener("click", () => {
 
     weightGroup,
 
-    weightClass:
-      customWeightClassInput?.value.trim() ||
-      weightClassInput?.value ||
-      "",
+    weightClass,
 
     matchTime:
       matchTimeInput?.value || "",

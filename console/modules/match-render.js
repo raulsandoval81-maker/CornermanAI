@@ -65,53 +65,81 @@ export function updateRoundDisplay({
 export function updateIdentityStrip({
   greenDisplayName,
   athleteNameInput,
+  athleteName = "",
   redDisplayName,
   opponentNameInput,
+  opponentName = "",
   greenTeamEl,
   greenTeamInput,
+  greenTeam = "",
   redTeamEl,
   redTeamInput,
+  redTeam = "",
   eventNameDisplay,
   eventNameInput,
+  eventName = "",
   weightClassDisplay,
-  weightClassInput
+  weightClassInput,
+  weightClass = ""
 }) {
+  const resolvedAthlete =
+    athleteNameInput?.value.trim() ||
+    athleteName ||
+    "Athlete B";
+
+  const resolvedOpponent =
+    opponentNameInput?.value.trim() ||
+    opponentName ||
+    "Athlete A";
+
+  const resolvedGreenTeam =
+    greenTeamInput?.value.trim() ||
+    greenTeam ||
+    "Team";
+
+  const resolvedRedTeam =
+    redTeamInput?.value.trim() ||
+    redTeam ||
+    "Team";
+
+  const resolvedEvent =
+    eventNameInput?.value.trim() ||
+    eventName ||
+    "—";
+
+  const resolvedWeight =
+    weightClassInput?.value.trim() ||
+    weightClass ||
+    "—";
+
   if (greenDisplayName) {
     greenDisplayName.textContent =
-      athleteNameInput?.value.trim()
-      || "Athlete B";
+      resolvedAthlete;
   }
 
   if (redDisplayName) {
     redDisplayName.textContent =
-      opponentNameInput?.value.trim()
-      || "Athlete A";
+      resolvedOpponent;
   }
 
   if (greenTeamEl) {
     greenTeamEl.textContent =
-      greenTeamInput?.value.trim()
-      || "Team";
+      resolvedGreenTeam;
   }
 
   if (redTeamEl) {
     redTeamEl.textContent =
-      redTeamInput?.value.trim()
-      || "Team";
+      resolvedRedTeam;
   }
 
   if (eventNameDisplay) {
     eventNameDisplay.textContent =
-      `Event: ${
-        eventNameInput?.value.trim() || "—"
-      }`;
+      `Event: ${resolvedEvent}`;
   }
 
   if (weightClassDisplay) {
     weightClassDisplay.textContent =
-      `Weight: ${
-        weightClassInput?.value.trim() || "—"
-      }`;
+      `Weight: ${resolvedWeight}`;
   }
 }
 

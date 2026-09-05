@@ -8,11 +8,13 @@ import {
 } from "../data/weight-classes.js";
 const { escapeHtml } = window.CornermanSafe;
 
+import {
+  saveMatch
+} from "../shared/match-repository.js";
+
 const CONSOLE_MATCH_KEY =
   "coach_console_last_match";
 
-const TOURNAMENT_MATCHES_KEY =
-  "cornerman_matches";
 
 const CURRENT_TOURNAMENT_KEY =
   "cornerman_current_tournament";
@@ -423,8 +425,7 @@ function loadWeightOptions(group) {
     weightInput.appendChild(option);
   });
 }
-
-function importLastConsoleMatch() {
+async function importLastConsoleMatch() {
   const consoleMatch =
     getLastConsoleMatch();
 
@@ -435,35 +436,36 @@ function importLastConsoleMatch() {
     return;
   }
 
-  const matches =
-    getTournamentMatches();
+  const importedMatch =
+    convertConsoleMatch(consoleMatch);
 
-  const alreadyImported =
-    matches.some(match =>
-      String(match.sourceId) ===
-      String(consoleMatch.id)
-    );
+  setImportStatus(
+    "Importing match..."
+  );
 
-  if (alreadyImported) {
+  const result =
+    await saveMatch(importedMatch);
+
+  if (!result.match) {
     setImportStatus(
-      "This console match is already imported."
+      "Could not import match."
     );
     return;
   }
 
-  const importedMatch =
-    convertConsoleMatch(consoleMatch);
-
-  matches.push(importedMatch);
-
-  localStorage.setItem(
-    TOURNAMENT_MATCHES_KEY,
-    JSON.stringify(matches)
-  );
-
-  setImportStatus(
-    `Imported: ${importedMatch.athlete} vs ${importedMatch.opponent} — ${importedMatch.result} by ${importedMatch.method}`
-  );
+  if (result.synced) {
+    setImportStatus(
+      `Imported: ${result.match.athlete} vs ${result.match.opponent} — ${result.match.result} by ${result.match.method}`
+    );
+  } else if (result.authenticated === false) {
+    setImportStatus(
+      "Match imported locally. Sign in to Cornerman to sync."
+    );
+  } else {
+    setImportStatus(
+      "Match imported locally. Backend sync is pending."
+    );
+  }
 
   renderLastConsoleMatch();
 }
@@ -485,22 +487,19 @@ function getLastConsoleMatch() {
   }
 }
 
-function getTournamentMatches() {
-  return JSON.parse(
-    localStorage.getItem(TOURNAMENT_MATCHES_KEY) || "[]"
-  );
-}
-
 function convertConsoleMatch(consoleMatch) {
   const intelligence =
     consoleMatch.intelligence || {};
 
   return {
     id:
-      Date.now(),
+      String(
+        consoleMatch.id ||
+        cryptoFallbackId()
+      ),
 
     sourceId:
-      consoleMatch.id,
+      consoleMatch.id || null,
 
     source:
       "coach-console-import",
@@ -687,6 +686,21 @@ function countNearfall(match, side) {
       String(event.short || "")
         .startsWith("NF")
     ).length;
+}
+
+
+function cryptoFallbackId() {
+  if (window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  return [
+    "tournament-match",
+    Date.now(),
+    Math.random()
+      .toString(36)
+      .slice(2)
+  ].join("-");
 }
 
 function slugify(value) {

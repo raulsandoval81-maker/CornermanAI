@@ -1,5 +1,4 @@
-const STORAGE_KEY =
-  "cornerman_matches";
+import { getMatch, listMatches } from "../shared/match-repository.js";
 const { escapeHtml, safeUrl } = window.CornermanSafe;
 
 const params =
@@ -26,10 +25,8 @@ const matchNotes =
 const matchSummary =
   document.getElementById("matchSummary");
 
-const matches =
-  JSON.parse(
-    localStorage.getItem(STORAGE_KEY) || "[]"
-  );
+const listResult = await listMatches();
+const matches = listResult.matches;
 
 console.log("MATCH DETAIL ID:", matchId);
 console.log(
@@ -37,10 +34,8 @@ console.log(
   matches.map(match => String(match.id))
 );
 
-const match =
-  matches.find(item =>
-    String(item.id) === String(matchId)
-  );
+const matchResult = matchId ? await getMatch(matchId) : { match: null };
+const match = matchResult.match;
 
 console.log("MATCH", match);
 console.log("VIDEO URL", match?.videoUrl);

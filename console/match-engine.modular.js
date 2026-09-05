@@ -1,6 +1,9 @@
 import { createDOM }
 from "./modules/match-dom.js";
 
+import { saveMatch as persistMatch }
+from "../shared/match-repository.js";
+
 import {
   getTournamentRoster,
   getTournamentEntry
@@ -604,11 +607,18 @@ function attachUploadedVideoUrl(videoUrl) {
 window.attachUploadedVideoUrl =
   attachUploadedVideoUrl;
 
-function saveMatchToHistory() {
+let persistedMatchId = "";
+
+async function saveMatchToHistory() {
   console.log("SAVE MATCH TO HISTORY FIRED");
+
+  if (!persistedMatchId) {
+    persistedMatchId = globalThis.crypto?.randomUUID?.() || String(Date.now());
+  }
 
   const match = {
     ...buildMatchPayload(),
+    id: persistedMatchId,
     videoUrl:
       document
         .getElementById("videoUrlInput")
@@ -626,51 +636,14 @@ function saveMatchToHistory() {
       new Date().toISOString()
   };
 
-  const matches = JSON.parse(
-    localStorage.getItem("cornerman_matches") || "[]"
-  );
-
-  const matchIdentity = saved =>
-    saved.athlete === match.athlete &&
-    saved.opponent === match.opponent &&
-    saved.eventName === match.eventName &&
-    saved.weightClass === match.weightClass &&
-    saved.athleteScore === match.athleteScore &&
-    saved.opponentScore === match.opponentScore &&
-    saved.currentRound === match.currentRound;
-
-  const index =
-    matches.findIndex(matchIdentity);
-
-  if (index >= 0) {
-    matches[index] = {
-      ...matches[index],
-      ...matchWithIntelligence,
-      updatedAt:
-        new Date().toISOString()
-    };
-
-    localStorage.setItem(
-      "cornerman_matches",
-      JSON.stringify(matches)
-    );
-
-    setStatus("Match updated.");
-    return matchWithIntelligence;
-  }
-
-  matches.push({
+  const result = await persistMatch({
     ...matchWithIntelligence,
     savedToMatchLogAt:
       new Date().toISOString()
   });
-
-  localStorage.setItem(
-    "cornerman_matches",
-    JSON.stringify(matches)
-  );
-
-  return matchWithIntelligence;
+  persistedMatchId = result.match.id;
+  setStatus(result.synced ? "Saved to match log." : "Saved locally — sync pending.");
+  return result.match;
 }
 
 /* MODE */
@@ -1088,6 +1061,7 @@ resetMatchBtn?.addEventListener("click", () => {
   chunks = [];
 
   events = [];
+  persistedMatchId = "";
 
   state.athleteScore = 0;
   state.opponentScore = 0;
@@ -1453,13 +1427,13 @@ document.querySelectorAll("[data-finish-type]").forEach(btn => {
     saveLocalDraft();
   });
 });
-saveMatchLogBtn?.addEventListener("click", () => {
+saveMatchLogBtn?.addEventListener("click", async () => {
   console.log(
     "VIDEO INPUT BEFORE SAVE:",
     document.getElementById("videoUrlInput")?.value
   );
 
-  const match = saveMatchToHistory();
+  const match = await saveMatchToHistory();
 
   console.log(
     "MATCH VIDEO URL AFTER SAVE:",
@@ -1469,7 +1443,6 @@ saveMatchLogBtn?.addEventListener("click", () => {
   saveMatchLogBtn.disabled = true;
   saveMatchLogBtn.textContent = "Saved";
 
-  setStatus("Saved to match log.");
 });
 connectYouTubeBtn?.addEventListener("click", () => {
   connectYouTubeUpload();
@@ -1514,7 +1487,7 @@ attachLastUploadBtn?.addEventListener("click", () => {
   attachUploadedVideoUrl(videoUrl);
 });
 /* FINISH & SAVE */
-finishBtn?.addEventListener("click", () => {
+finishBtn?.addEventListener("click", async () => {
 stopClock({
   state,
   setStatus,
@@ -1534,7 +1507,7 @@ stopClock({
   }
 
   stopCameraStream();
-const match = saveMatchToHistory();
+const match = await saveMatchToHistory();
   console.log("MATCH PAYLOAD", match);
 
 
@@ -1550,7 +1523,6 @@ localStorage.setItem(
 
   matchSummaryModal?.classList.add("hidden");
 
-setStatus("Match saved.");
 publishLiveState({
   state,
   events,

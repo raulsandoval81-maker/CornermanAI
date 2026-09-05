@@ -6,7 +6,7 @@ export function normalizeMatchPayload(match = {}) {
       match.schemaVersion || MATCH_SCHEMA_VERSION,
 
     id:
-      match.id || crypto.randomUUID?.() || String(Date.now()),
+      match.id || globalThis.crypto?.randomUUID?.() || String(Date.now()),
 
     eventName:
       match.eventName || "Practice",
@@ -54,6 +54,12 @@ export function normalizeMatchPayload(match = {}) {
       match.videoUrl || "",
 
     createdAt:
-      match.createdAt || new Date().toISOString()
+      match.createdAt || match.savedAt || match.savedToMatchLogAt || new Date().toISOString(),
+
+    updatedAt:
+      match.updatedAt || new Date().toISOString(),
+
+    legacyId:
+      match.legacyId ?? match.sourceId ?? null
   };
 }

@@ -1,5 +1,4 @@
-const STORAGE_KEY =
-  "cornerman_matches";
+import { listMatches } from "../shared/match-repository.js";
 const { escapeHtml, safeUrl } = window.CornermanSafe;
 
 const RECENT_LIMIT =
@@ -23,17 +22,13 @@ const videoFilter =
 let showAll =
   false;
 
+let matches = [];
 loadHistory();
 
-function getMatches() {
-  return JSON.parse(
-    localStorage.getItem(STORAGE_KEY) || "[]"
-  );
-}
-
-function loadHistory() {
-  const matches =
-    getMatches();
+async function loadHistory() {
+  const result = await listMatches();
+  matches = result.matches;
+  if (!result.authenticated) console.info("Match backend sign-in required; showing local cache.");
 
   populateEventFilter(matches);
   render(matches);
@@ -271,20 +266,20 @@ function renderMatchRow(match) {
 window.showAllMatches =
   function showAllMatches() {
     showAll = true;
-    render(getMatches());
+    render(matches);
   };
 
 historySearch?.addEventListener("input", () => {
   showAll = true;
-  render(getMatches());
+  render(matches);
 });
 
 eventFilter?.addEventListener("change", () => {
   showAll = true;
-  render(getMatches());
+  render(matches);
 });
 
 videoFilter?.addEventListener("change", () => {
   showAll = true;
-  render(getMatches());
+  render(matches);
 });

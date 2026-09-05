@@ -148,47 +148,16 @@ function buildDashboard() {
     return;
   }
 
-  opponentDetails.innerHTML = `
-    <p>
-      <strong>Record Against Us:</strong>
-      ${winsVsOpponent}-${lossesVsOpponent}
-    </p>
-
-    <p>
-      <strong>Matches Against Us:</strong>
-      ${matchesVsUs.length}
-    </p>
-
-    <p>
-      <strong>Preferred Stance:</strong>
-      ${latest.preferredStance || "-"}
-    </p>
-
-    <p>
-      <strong>Favorite Tie:</strong>
-      ${latest.favoriteTie || "-"}
-    </p>
-
-    <p>
-      <strong>Favorite Shot:</strong>
-      ${latest.favoriteShot || "-"}
-    </p>
-
-    <p>
-      <strong>Favorite Finish:</strong>
-      ${latest.favoriteFinish || "-"}
-    </p>
-
-    <p>
-      <strong>Favorite Escape:</strong>
-      ${latest.favoriteEscape || "-"}
-    </p>
-
-    <p>
-      <strong>Best Turn:</strong>
-      ${latest.bestTurn || "-"}
-    </p>
-  `;
+  opponentDetails.innerHTML = `<div class="intelligence-list">
+    ${intelligenceRow("Record Against Us", `${winsVsOpponent}-${lossesVsOpponent}`)}
+    ${intelligenceRow("Matches Against Us", matchesVsUs.length)}
+    ${intelligenceRow("Preferred Stance", latest.preferredStance || "-")}
+    ${intelligenceRow("Favorite Tie", latest.favoriteTie || "-")}
+    ${intelligenceRow("Favorite Shot", latest.favoriteShot || "-")}
+    ${intelligenceRow("Favorite Finish", latest.favoriteFinish || "-")}
+    ${intelligenceRow("Favorite Escape", latest.favoriteEscape || "-")}
+    ${intelligenceRow("Best Turn", latest.bestTurn || "-")}
+  </div>`;
 
   coachNotes.innerHTML =
     latest.coachNotes ||
@@ -244,41 +213,23 @@ function renderMatchesVsUs(matchesVsUs) {
 function renderReconSummary(notes) {
   if (!reconSummary) return;
 
-  reconSummary.innerHTML = `
-    <p>
-      <strong>Recon Entries:</strong>
-      ${notes.length}
-    </p>
+  reconSummary.innerHTML = `<div class="intelligence-list">
+    ${intelligenceRow("Recon Entries", notes.length)}
+    ${intelligenceRow("Preferred Stance", getMostCommon(notes, "preferredStance"))}
+    ${intelligenceRow("Favorite Tie", getMostCommon(notes, "favoriteTie"))}
+    ${intelligenceRow("Favorite Shot", getMostCommon(notes, "favoriteShot"))}
+    ${intelligenceRow("Favorite Finish", getMostCommon(notes, "favoriteFinish"))}
+    ${intelligenceRow("Favorite Escape", getMostCommon(notes, "favoriteEscape"))}
+    ${intelligenceRow("Best Turn", getMostCommon(notes, "bestTurn"))}
+  </div>`;
+}
 
-    <p>
-      <strong>Preferred Stance:</strong>
-      ${getMostCommon(notes, "preferredStance")}
-    </p>
-
-    <p>
-      <strong>Favorite Tie:</strong>
-      ${getMostCommon(notes, "favoriteTie")}
-    </p>
-
-    <p>
-      <strong>Favorite Shot:</strong>
-      ${getMostCommon(notes, "favoriteShot")}
-    </p>
-
-    <p>
-      <strong>Favorite Finish:</strong>
-      ${getMostCommon(notes, "favoriteFinish")}
-    </p>
-
-    <p>
-      <strong>Favorite Escape:</strong>
-      ${getMostCommon(notes, "favoriteEscape")}
-    </p>
-
-    <p>
-      <strong>Best Turn:</strong>
-      ${getMostCommon(notes, "bestTurn")}
-    </p>
+function intelligenceRow(label, value) {
+  return `
+    <div class="intelligence-row">
+      <span class="intelligence-label">${label}</span>
+      <strong class="intelligence-value">${value}</strong>
+    </div>
   `;
 }
 

@@ -136,13 +136,18 @@ function renderPatterns() {
     Object.values(patterns)
       .sort((a, b) => b.score - a.score);
 
+  const maxScore = Math.max(...ranked.map(pattern => pattern.score), 1);
+
   patternsEl.innerHTML =
     ranked
       .map(pattern => `
         <div class="pattern-row">
-          <strong>${pattern.label}</strong>
-          <div>
-            ${pattern.count} signal(s) · score ${pattern.score}
+          <div class="pattern-heading">
+            <strong>${pattern.label}</strong>
+            <span>${pattern.score} score · ${pattern.count} signal(s)</span>
+          </div>
+          <div class="signal-meter" role="progressbar" aria-label="${pattern.label} score" aria-valuemin="0" aria-valuemax="${maxScore}" aria-valuenow="${pattern.score}">
+            <span style="width:${Math.min(100, (pattern.score / maxScore) * 100)}%"></span>
           </div>
           <p>${pattern.reason}</p>
         </div>

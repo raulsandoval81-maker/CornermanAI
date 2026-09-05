@@ -48,6 +48,7 @@
   padding: 20px;
   color: #fff;
   box-shadow: 0 14px 30px rgba(0,0,0,.35);
+  min-width: 0;
 }
 
 .stat-card span {
@@ -134,7 +135,21 @@
 @media (max-width: 520px) {
 
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px 14px;
+  }
+
+  .stat-card span {
+    font-size: .68rem;
+    letter-spacing: .06em;
+  }
+
+  .stat-card strong {
+    font-size: 1.8rem;
   }
 
 }

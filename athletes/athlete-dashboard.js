@@ -145,6 +145,16 @@ function buildDashboard() {
     sum(athleteMatches, "nearfall")
   );
 
+  renderStatMeters({
+    winPct,
+    pointsFor: sum(athleteMatches, "pointsFor"),
+    pointsAgainst: sum(athleteMatches, "pointsAgainst"),
+    takedowns: sum(athleteMatches, "takedowns"),
+    escapes: sum(athleteMatches, "escapes"),
+    reversals: sum(athleteMatches, "reversals"),
+    nearfall: sum(athleteMatches, "nearfall")
+  });
+
   renderHistory(athleteMatches);
   renderAthleteInsights(athleteMatches);
   renderAthletePatterns(athleteMatches);
@@ -168,6 +178,15 @@ function resetDashboard() {
 
   setText("record", "0-0");
   setText("winPct", "0%");
+  renderStatMeters({
+    winPct: 0,
+    pointsFor: 0,
+    pointsAgainst: 0,
+    takedowns: 0,
+    escapes: 0,
+    reversals: 0,
+    nearfall: 0
+  });
 
   const history =
     document.getElementById("matchHistory");
@@ -509,4 +528,28 @@ function setText(id, value) {
     el.textContent =
       value;
   }
+}
+
+function renderStatMeters(stats) {
+  const pointMax = Math.max(stats.pointsFor, stats.pointsAgainst, 1);
+  const actionMax = Math.max(stats.takedowns, stats.escapes, stats.reversals, stats.nearfall, 1);
+
+  setMeter("winPctBar", stats.winPct, 100);
+  setMeter("pointsForBar", stats.pointsFor, pointMax);
+  setMeter("pointsAgainstBar", stats.pointsAgainst, pointMax);
+  setMeter("takedownsBar", stats.takedowns, actionMax);
+  setMeter("escapesBar", stats.escapes, actionMax);
+  setMeter("reversalsBar", stats.reversals, actionMax);
+  setMeter("nearfallBar", stats.nearfall, actionMax);
+}
+
+function setMeter(id, value, max) {
+  const fill = document.getElementById(id);
+  if (!fill) return;
+  const safeValue = Math.max(0, Number(value) || 0);
+  const safeMax = Math.max(1, Number(max) || 1);
+  const meter = fill.parentElement;
+  fill.style.width = `${Math.min(100, (safeValue / safeMax) * 100)}%`;
+  meter?.setAttribute("aria-valuenow", String(safeValue));
+  meter?.setAttribute("aria-valuemax", String(safeMax));
 }

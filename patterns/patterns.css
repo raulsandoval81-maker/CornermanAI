@@ -1,5 +1,5 @@
 .pattern-row {
-  padding: 14px 0;
+  padding: 18px 0;
   border-top: 1px solid #222;
 }
 
@@ -8,8 +8,35 @@
 }
 
 .pattern-row strong {
-  display: block;
   color: #facc15;
-  margin-bottom: 4px;
   font-size: 1rem;
+  margin:0;
+}
+
+.pattern-heading {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:10px;
+}
+
+.pattern-heading span {
+  flex:0 0 auto;
+  color:#d6d3d1;
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.03em;
+  margin:0;
+}
+
+.pattern-row p {
+  margin:10px 0 0;
+  color:#b5b5b5;
+  line-height:1.45;
+}
+
+@media(max-width:520px){
+  .pattern-heading{gap:10px;}
+  .pattern-heading span{font-size:.7rem;}
 }

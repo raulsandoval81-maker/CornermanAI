@@ -91,6 +91,70 @@ body{
   box-shadow:0 8px 22px rgba(17,24,39,.06);
 }
 
+/* ==========================
+   DASHBOARD INTELLIGENCE
+========================== */
+
+.stat-meter,
+.signal-meter{
+  position:relative;
+  width:100%;
+  height:10px;
+  overflow:hidden;
+  background:#242424;
+  border:1px solid #343434;
+  border-radius:999px;
+}
+
+.stats-grid .stat-card .stat-meter{
+  margin-top:16px;
+}
+
+.stats-grid .stat-card .stat-meter > span,
+.signal-meter > span{
+  display:block;
+  width:0;
+  height:100%;
+  margin:0;
+  background:linear-gradient(90deg,#9a6b00,#facc15);
+  border-radius:inherit;
+  box-shadow:0 0 12px rgba(250,204,21,.22);
+  transition:width .28s ease;
+}
+
+.intelligence-list{
+  display:grid;
+  gap:0;
+}
+
+.intelligence-row{
+  display:grid;
+  grid-template-columns:minmax(140px,.8fr) minmax(0,1.2fr);
+  align-items:baseline;
+  gap:18px;
+  padding:12px 0;
+  border-top:1px solid #ece7d8;
+}
+
+.intelligence-row:first-child{
+  border-top:0;
+}
+
+.intelligence-label{
+  color:#6b7280;
+  font-size:.76rem;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.intelligence-value{
+  color:#111827;
+  font-weight:800;
+  text-align:right;
+  overflow-wrap:anywhere;
+}
+
 .card:hover{
   transform:translateY(-4px);
   border-color:#d4af37;
@@ -212,6 +276,30 @@ footer{
     grid-template-columns:1fr;
   }
 }
+
+@media(max-width:520px){
+  .stat-meter,
+  .signal-meter{
+    height:11px;
+  }
+
+  .intelligence-row{
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:12px;
+    padding:10px 0;
+  }
+
+  .intelligence-label{
+    font-size:.68rem;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .stats-grid .stat-card .stat-meter > span,
+  .signal-meter > span{
+    transition:none;
+  }
+}
 .match-meta-grid{
   display:grid;
   grid-template-columns:repeat(2, 1fr);
@@ -323,4 +411,21 @@ a:hover{
 
 .card{
   margin-bottom:14px;
+}
+
+.card .signal-meter > span{
+  height:100%;
+  margin:0;
+  background:linear-gradient(90deg,#9a6b00,#facc15);
+}
+
+.card .intelligence-label{
+  margin:0;
+  color:#6b7280;
+}
+
+.card .intelligence-value{
+  margin:0;
+  color:#111827;
+  font-size:1rem;
 }

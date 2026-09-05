@@ -34,6 +34,19 @@ function buildDashboard() {
   setText("majors", countBy("method", "Major"));
   setText("decisions", countBy("method", "Decision"));
 
+  const pointsFor = sum("pointsFor");
+  const pointsAgainst = sum("pointsAgainst");
+  const pointMax = Math.max(pointsFor, pointsAgainst, 1);
+  const finishMax = Math.max(total, 1);
+
+  setMeter("winPctBar", winPct, 100);
+  setMeter("pointsForBar", pointsFor, pointMax);
+  setMeter("pointsAgainstBar", pointsAgainst, pointMax);
+  setMeter("pinsBar", countBy("method", "Pin"), finishMax);
+  setMeter("techsBar", countBy("method", "Tech"), finishMax);
+  setMeter("majorsBar", countBy("method", "Major"), finishMax);
+  setMeter("decisionsBar", countBy("method", "Decision"), finishMax);
+
   renderMatches();
   renderTeamInsights();
   renderTeamPatterns();
@@ -358,4 +371,15 @@ function setText(id, value) {
   if (el) {
     el.textContent = value;
   }
+}
+
+function setMeter(id, value, max) {
+  const fill = document.getElementById(id);
+  if (!fill) return;
+  const safeValue = Math.max(0, Number(value) || 0);
+  const safeMax = Math.max(1, Number(max) || 1);
+  const meter = fill.parentElement;
+  fill.style.width = `${Math.min(100, (safeValue / safeMax) * 100)}%`;
+  meter?.setAttribute("aria-valuenow", String(safeValue));
+  meter?.setAttribute("aria-valuemax", String(safeMax));
 }

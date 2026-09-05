@@ -21,7 +21,7 @@
 
 .bridge-status {
   margin-top: 14px;
-  color: #aaa;
+  color: #4b5563;
 }
 
 .match-preview {
@@ -30,12 +30,12 @@
 
 .match-preview strong {
   display: block;
-  color: #fff;
+  color: #111827;
   font-size: 1.2rem;
 }
 
 .match-preview p {
-  color: #aaa;
+  color: #4b5563;
 }
 
 /* ==========================
@@ -76,6 +76,11 @@
   border-color: #facc15;
 }
 
+.setup-grid input::placeholder {
+  color: #a3a3a3;
+  opacity: 1;
+}
+
 /* ==========================
    BUTTONS
 ========================== */
@@ -110,7 +115,7 @@
 
 .bridge-status {
   margin-top: 14px;
-  color: #b5b5b5;
+  color: #4b5563;
   line-height: 1.5;
 }
 
@@ -124,13 +129,13 @@
 
 #currentTournament strong {
   display: block;
-  color: #fff;
+  color: #111827;
   font-size: 1.15rem;
 }
 
 #currentTournament p {
   margin: 6px 0;
-  color: #b5b5b5;
+  color: #4b5563;
 }
 
 /* ==========================
@@ -139,7 +144,7 @@
 
 .match-preview {
   padding: 16px 0;
-  border-top: 1px solid #252525;
+  border-top: 1px solid #e5dcc3;
 }
 
 .match-preview:first-child {
@@ -148,13 +153,13 @@
 
 .match-preview strong {
   display: block;
-  color: #fff;
+  color: #111827;
   font-size: 1.05rem;
 }
 
 .match-preview p {
   margin: 6px 0 0;
-  color: #b5b5b5;
+  color: #4b5563;
   line-height: 1.5;
 }
 

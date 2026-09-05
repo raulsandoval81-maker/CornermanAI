@@ -55,6 +55,40 @@ export function getResultTypeFromMargin({
   })?.key || "decision";
 }
 
+export function validateFinalResult(state, winner = state.winner, resultType = state.resultType) {
+  if (!winner || !resultType) {
+    return { valid: false, message: "Choose winner and win type before saving" };
+  }
+
+  if (["pin", "dq", "forfeit"].includes(resultType)) {
+    return { valid: true, message: "" };
+  }
+
+  const margin = Math.abs(state.athleteScore - state.opponentScore);
+  const scoreWinner = state.athleteScore > state.opponentScore
+    ? "athlete"
+    : state.opponentScore > state.athleteScore
+      ? "opponent"
+      : null;
+
+  if (!scoreWinner) {
+    return { valid: false, message: "A tied score cannot be finalized by decision, major, or tech fall" };
+  }
+
+  if (winner !== scoreWinner) {
+    return { valid: false, message: "Selected winner does not match the score" };
+  }
+
+  const valid =
+    (resultType === "decision" && margin >= 1 && margin <= 7) ||
+    (resultType === "major" && margin >= 8 && margin <= 14) ||
+    (resultType === "tech" && margin >= 15);
+
+  return valid
+    ? { valid: true, message: "" }
+    : { valid: false, message: "Selected result does not match the score margin" };
+}
+
 export function syncAutoResult({
   state,
   getResultTypeFromMargin,

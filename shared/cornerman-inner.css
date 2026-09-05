@@ -1,0 +1,204 @@
+/* Shared inner-page polish. Shell and feature-specific layouts remain canonical. */
+
+main.app-shell,
+main.page,
+main.live-shell {
+  min-width: 0;
+}
+
+main.app-shell > *,
+main.page > *,
+main.live-shell > * {
+  min-width: 0;
+}
+
+main :where(h1, h2, h3, p) {
+  overflow-wrap: break-word;
+}
+
+main .hero {
+  margin-bottom: 28px;
+  border-color: #d8ceb4;
+}
+
+main .hero h1 {
+  text-wrap: balance;
+}
+
+main .hero p {
+  max-width: 62ch;
+  margin-right: auto;
+  margin-left: auto;
+  line-height: 1.65;
+}
+
+main .card:not(a) {
+  cursor: default;
+}
+
+main .card {
+  border-color: #d8ceb4;
+}
+
+main .card:not(a):hover {
+  transform: none;
+}
+
+main .card > :first-child {
+  margin-top: 0;
+}
+
+main .card > :last-child {
+  margin-bottom: 0;
+}
+
+main .card h2,
+main .card h3 {
+  line-height: 1.25;
+}
+
+main :where(.form-stack, form) {
+  min-width: 0;
+}
+
+main .form-stack {
+  display: grid;
+  gap: 16px;
+}
+
+main label {
+  line-height: 1.35;
+}
+
+main :where(input, select, textarea, button) {
+  max-width: 100%;
+  font: inherit;
+}
+
+main :where(input, select, textarea)::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+main :where(input, select, button) {
+  min-height: 44px;
+}
+
+main textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+main :where(button, .button, .viewer-link, a.card) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+main :where(button, .button, .viewer-link) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+main .card > a:not(.card) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 10px;
+  padding: 11px 15px;
+  color: #8a6500;
+  background: #fffdf5;
+  border: 1px solid #d4af37;
+  border-radius: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+}
+
+main .card > a:not(.card):hover {
+  color: #111827;
+  background: #facc15;
+  text-decoration: none;
+}
+
+main :where(button, .button, .viewer-link, a.card, .card > a, input, select, textarea):focus-visible {
+  outline: 3px solid rgba(250, 204, 21, 0.42);
+  outline-offset: 3px;
+}
+
+main button:disabled {
+  color: #4b5563;
+  background: #d1d5db;
+  border-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none;
+}
+
+main :where(.empty-state, .muted, .status, .bridge-status) {
+  line-height: 1.6;
+}
+
+main :where(.grid, .stats-grid, .focus-grid) {
+  align-items: stretch;
+}
+
+main a.card {
+  height: 100%;
+}
+
+@media (max-width: 700px) {
+  main.app-shell,
+  main.page,
+  main.live-shell {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  main .hero {
+    margin-bottom: 20px;
+    padding: 22px 18px;
+  }
+
+  main .hero h1 {
+    font-size: clamp(1.85rem, 9vw, 2.5rem);
+    line-height: 1.08;
+  }
+
+  main .card {
+    padding: 18px;
+  }
+
+  main :where(.form-stack, form) {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 430px) {
+  main.app-shell,
+  main.page,
+  main.live-shell {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  main .hero {
+    padding: 20px 16px;
+  }
+
+  main .card {
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  main form > button:only-of-type,
+  main .card > button:only-of-type,
+  main .card > a:not(.card):only-of-type,
+  main .viewer-link {
+    width: 100%;
+  }
+}

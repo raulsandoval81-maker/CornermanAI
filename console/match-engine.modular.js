@@ -4,6 +4,12 @@ from "./modules/match-dom.js";
 import { saveMatch as persistMatch }
 from "../shared/match-repository.js";
 
+import { pushActionSnapshot, undoAction }
+from "./modules/match-undo.js";
+
+import { createManualRoundGuard }
+from "./modules/manual-round-guard.js";
+
 import {
   getTournamentRoster,
   getTournamentEntry
@@ -86,7 +92,8 @@ import {
   getResultTypeFromMargin,
   checkTechFall,
   syncAutoResult,
-  updateReviewResult
+  updateReviewResult,
+  validateFinalResult
 }
 from "./modules/match-summary.js";
 
@@ -112,7 +119,6 @@ import {
   advanceRound,
   applyRoundChoice,
   applyScore,
-  undoScore,
   getRoundSeconds,
   getVisibleRounds,
   setMatchResult,
@@ -155,6 +161,7 @@ state.position = "neutral";
 const consoleMode = document.body.dataset.console || "classic";
 
 let events = [];
+const actionUndoStack = [];
 let mode = "live";
 let matchConfirmed = false;
 
@@ -230,6 +237,8 @@ const resetMatchBtn = document.getElementById("resetMatch");
 const matchActionsBtn = document.getElementById("toggleMatchActions");
 const matchActionsPanel = document.getElementById("matchActionsPanel");
 const manualNextRoundBtn = document.getElementById("nextRound");
+const manualRoundGuard = createManualRoundGuard();
+let manualRoundResetTimer = null;
 
 const matchSummaryModal = document.getElementById("matchSummaryModal");
 const closeMatchSummaryBtn = document.getElementById("closeMatchSummary");
@@ -275,6 +284,8 @@ const DEFAULT_FORMAT_BY_WEIGHT_GROUP = {
 
 /* ROUND FLOW */
 function handleRoundComplete() {
+  resetManualRoundAdvance();
+  actionUndoStack.length = 0;
 
   handleRoundFlow({
     state,
@@ -909,6 +920,33 @@ confirmMatchSetupBtn?.addEventListener("click", () => {
   saveLocalDraft();
 });
 
+function startActiveMatchClock(statusSuffix = "started") {
+  startClock({
+    state,
+    updateClock: () =>
+      updateClock({ clockEl, formatTime, state }),
+    saveLocalDraft,
+    publishLiveState: () =>
+      publishLiveState({
+        state,
+        events,
+        athleteName: athleteNameInput?.value || "Green",
+        opponentName: opponentNameInput?.value || "Red"
+      }),
+    handleRoundComplete,
+    setStatus,
+    formatRoundLabel
+  });
+
+  updateStartButton({
+    startBtn,
+    text: "Running",
+    disabled: true
+  });
+
+  setStatus(`${formatRoundLabel(state.currentRound)} ${statusSuffix}`);
+}
+
 /* START */
 startBtn?.addEventListener("click", async () => {
 
@@ -977,11 +1015,6 @@ lastVideoBlob = blob;
 
 console.log("video captured", videoUrl);
 
-localStorage.setItem(
-  "coach_console_last_match",
-  JSON.stringify(buildMatchPayload())
-);
-
         setStatus("Recording saved locally.");
 updateStartButton({
   startBtn,
@@ -995,41 +1028,11 @@ mediaRecorder.start(1000);
       setStatus("Camera ready.");
     }
 
-// --- CLOCK (separate, always runs on click) ---
-startClock({
-  state,
-
-  updateClock: () =>
-    updateClock({ clockEl, formatTime, state }),
-
-  saveLocalDraft,
-
-  publishLiveState: () =>
-    publishLiveState({
-      state,
-      events,
-      athleteName:
-        athleteNameInput?.value || "Green",
-      opponentName:
-        opponentNameInput?.value || "Red"
-    }),
-
-  handleRoundComplete,
-  setStatus,
-  formatRoundLabel
-});
-
-updateStartButton({
-  startBtn,
-  text: "Running",
-  disabled: true
-});
-
-setStatus(`${formatRoundLabel(state.currentRound)} started`);
+    startActiveMatchClock();
 
   } catch (err) {
     console.error("Camera error:", err);
-    setStatus("Camera access failed.");
+    startActiveMatchClock("running — camera unavailable");
   }
 });
 greenChooserBtn?.addEventListener("click", () => {
@@ -1093,6 +1096,7 @@ updateStartButton({
 stopBtn?.addEventListener("click", () => {
   clearInterval(state.timer);
   state.timer = null;
+  state.timerEndsAt = null;
 
   if (mediaRecorder && mediaRecorder.state !== "inactive") {
     mediaRecorder.stop();
@@ -1132,6 +1136,7 @@ resetBtn?.addEventListener("click", resetClock);
 resetMatchBtn?.addEventListener("click", () => {
   clearInterval(state.timer);
   state.timer = null;
+  state.timerEndsAt = null;
 
   if (mediaRecorder && mediaRecorder.state !== "inactive") {
     mediaRecorder.stop();
@@ -1142,6 +1147,7 @@ resetMatchBtn?.addEventListener("click", () => {
   chunks = [];
 
   events = [];
+  actionUndoStack.length = 0;
   persistedMatchId = "";
 
   state.athleteScore = 0;
@@ -1202,8 +1208,28 @@ matchActionsBtn?.addEventListener("click", () => {
   matchActionsPanel?.classList.toggle("hidden");
 });
 
+function resetManualRoundAdvance() {
+  manualRoundGuard.reset();
+  clearTimeout(manualRoundResetTimer);
+  manualRoundResetTimer = null;
+  if (manualNextRoundBtn) manualNextRoundBtn.textContent = "Next Round";
+}
+
 /* MANUAL NEXT ROUND */
 manualNextRoundBtn?.addEventListener("click", () => {
+  if (!matchConfirmed) {
+    setStatus("Confirm match before advancing the round");
+    return;
+  }
+
+  if (!manualRoundGuard.request()) {
+    manualNextRoundBtn.textContent = "Tap Again to Advance";
+    setStatus(`Confirm advance from ${formatRoundLabel(state.currentRound)}`);
+    clearTimeout(manualRoundResetTimer);
+    manualRoundResetTimer = setTimeout(resetManualRoundAdvance, 2500);
+    return;
+  }
+
   handleRoundComplete();
 });
 
@@ -1274,6 +1300,13 @@ document.querySelectorAll("[data-adjust-score]").forEach(btn => {
       state.opponentScore = Math.max(0, state.opponentScore + val);
     }
 
+    syncAutoResult({
+      state,
+      getResultTypeFromMargin: diff =>
+        getResultTypeFromMargin({ RESULT_TYPES, diff }),
+      setMatchResult
+    });
+
     renderAll();
     saveLocalDraft();
     setStatus("Score adjusted");
@@ -1310,6 +1343,7 @@ document.querySelectorAll("[data-code]").forEach(btn => {
       return;
     }
 
+    pushActionSnapshot(actionUndoStack, state, events);
     applyScore(state, side, rule.points);
     updatePositionAfterScore(state, side, code);
 
@@ -1387,8 +1421,16 @@ document.querySelectorAll("[data-ref-call]").forEach(btn => {
       return;
     }
 
+    pushActionSnapshot(actionUndoStack, state, events);
     const result = handleRefProgression(state, side, callType);
     updateRefButtonLabels();
+
+    syncAutoResult({
+      state,
+      getResultTypeFromMargin: diff =>
+        getResultTypeFromMargin({ RESULT_TYPES, diff }),
+      setMatchResult
+    });
 
     if (result?.dq) {
       setMatchResult(state, result.winner, "dq", true);
@@ -1447,24 +1489,15 @@ checkTechFall({
 });
 /* UNDO */
 document.getElementById("undoBtn")?.addEventListener("click", () => {
-  const last = events.pop();
-  if (!last) return;
-
-  if (last.type === "score") {
-    undoScore(state, last.side, last.points);
+  if (!undoAction(actionUndoStack, state, events)) {
+    setStatus("No scoring or referee action to undo");
+    return;
   }
 
-  // position rebuild is intentionally simple for v1
-  state.position = events.reduce((pos, e) => {
-    if (e.type !== "score") return pos;
-    if (e.code === "td3") return e.side === "athlete" ? "green_top" : "red_top";
-    if (e.code === "esc1") return "neutral";
-    if (e.code === "rev2") return e.side === "athlete" ? "green_top" : "red_top";
-    return pos;
-  }, "neutral");
-
+  updateRefButtonLabels();
   renderAll();
   saveLocalDraft();
+  setStatus("Last action undone");
 });
 
 /* MATCH SUMMARY */
@@ -1474,6 +1507,13 @@ closeMatchSummaryBtn?.addEventListener("click", () => {
 
 document.querySelectorAll("[data-winner]").forEach(btn => {
   btn.addEventListener("click", () => {
+    if (state.resultType) {
+      const validation = validateFinalResult(state, btn.dataset.winner, state.resultType);
+      if (!validation.valid) {
+        setStatus(validation.message);
+        return;
+      }
+    }
     document.querySelectorAll("[data-winner]").forEach(b => {
       b.classList.remove("active");
     });
@@ -1488,6 +1528,13 @@ document.querySelectorAll("[data-winner]").forEach(btn => {
 
 document.querySelectorAll("[data-finish-type]").forEach(btn => {
   btn.addEventListener("click", () => {
+    if (state.winner) {
+      const validation = validateFinalResult(state, state.winner, btn.dataset.finishType);
+      if (!validation.valid) {
+        setStatus(validation.message);
+        return;
+      }
+    }
     document.querySelectorAll("[data-finish-type]").forEach(b => {
       b.classList.remove("active");
     });
@@ -1577,8 +1624,9 @@ stopClock({
 });
 
 
-  if (!state.winner || !state.resultType) {
-    setStatus("Choose winner and win type before saving");
+  const finalResultValidation = validateFinalResult(state);
+  if (!finalResultValidation.valid) {
+    setStatus(finalResultValidation.message);
     matchSummaryModal?.classList.remove("hidden");
     return;
   }

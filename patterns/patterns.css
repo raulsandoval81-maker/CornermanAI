@@ -1,6 +1,6 @@
 .pattern-row {
   padding: 18px 0;
-  border-top: 1px solid #222;
+  border-top: 1px solid #e5dcc3;
 }
 
 .pattern-row:first-child {
@@ -23,7 +23,7 @@
 
 .pattern-heading span {
   flex:0 0 auto;
-  color:#d6d3d1;
+  color:#6b7280;
   font-size:.78rem;
   font-weight:800;
   letter-spacing:.03em;
@@ -32,7 +32,7 @@
 
 .pattern-row p {
   margin:10px 0 0;
-  color:#b5b5b5;
+  color:#4b5563;
   line-height:1.45;
 }
 

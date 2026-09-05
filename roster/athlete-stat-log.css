@@ -32,6 +32,12 @@
               background .2s ease;
 }
 
+.stat-form input::placeholder,
+.stat-form textarea::placeholder {
+  color: #a3a3a3;
+  opacity: 1;
+}
+
 .stat-form input:focus,
 .stat-form select:focus,
 .stat-form textarea:focus {
@@ -80,7 +86,7 @@
 
 .empty-state {
   margin: 0;
-  color: #777;
+  color: #6b7280;
 }
 
 .match-row {
@@ -89,7 +95,7 @@
   align-items: flex-start;
   gap: 18px;
   padding: 16px 0;
-  border-top: 1px solid #242424;
+  border-top: 1px solid #e5dcc3;
 }
 
 .match-row:first-child {
@@ -98,20 +104,20 @@
 
 .match-row strong {
   display: block;
-  color: #fff;
+  color: #111827;
   font-size: 1rem;
 }
 
 .match-row p {
   margin: 6px 0 0;
-  color: #b5b5b5;
+  color: #4b5563;
   line-height: 1.5;
 }
 
 .match-row small {
   display: block;
   margin-top: 6px;
-  color: #777;
+  color: #6b7280;
 }
 
 .match-row span {

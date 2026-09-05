@@ -7,6 +7,7 @@ export function stopClock({
   clearInterval(state.timer);
 
   state.timer = null;
+  state.timerEndsAt = null;
 
   setStatus(statusText);
   saveLocalDraft();
@@ -22,6 +23,7 @@ export function resetClock({
   clearInterval(state.timer);
 
   state.timer = null;
+  state.timerEndsAt = null;
 
   state.time =
     getRoundSeconds(state, state.currentRound);
@@ -56,12 +58,17 @@ export function startClock({
 }) {
   if (state.timer) return;
 
-  state.timer = setInterval(() => {
-    state.time -= 1;
+  state.timerEndsAt = Date.now() + (state.time * 1000);
+  let lastRenderedSecond = state.time;
 
-    if (state.time < 0) {
-      state.time = 0;
-    }
+  state.timer = setInterval(() => {
+    state.time = Math.max(
+      0,
+      Math.ceil((state.timerEndsAt - Date.now()) / 1000)
+    );
+
+    if (state.time === lastRenderedSecond) return;
+    lastRenderedSecond = state.time;
 
     updateClock();
     saveLocalDraft();
@@ -73,7 +80,7 @@ export function startClock({
     if (state.time === 0) {
       handleRoundComplete();
     }
-  }, 1000);
+  }, 200);
 
   setStatus(
     `${formatRoundLabel(state.currentRound)} running`

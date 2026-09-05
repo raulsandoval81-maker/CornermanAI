@@ -8,7 +8,9 @@
   margin-bottom: 16px;
 }
 .feedback-card {
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #374151;
+  background: #fffdf8;
+  border: 1px solid #d8ceb4;
   border-radius: 14px;
   padding: 14px;
   margin-bottom: 12px;
@@ -20,5 +22,6 @@
 }
 
 .feedback-card small {
-  opacity: 0.7;
+  color: #5b6472;
+  opacity: 1;
 }

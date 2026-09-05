@@ -45,6 +45,14 @@ await repository.saveMatch({ id: "bout-a", athlete: "Same", opponent: "Same", po
 assert.equal(backend.filter(item => item.id === "bout-a").length, 1);
 assert.equal(backend.find(item => item.id === "bout-a").pointsFor, 4);
 
+const consoleSave = await repository.saveMatch({ id: "tournament-flow-id", athlete: "Tournament A", opponent: "Tournament B", winner: "athlete", resultType: "decision", pointsFor: 6, pointsAgainst: 2, events: [] });
+localStorage.setItem("coach_console_last_match", JSON.stringify(consoleSave.match));
+const lastMatch = JSON.parse(localStorage.getItem("coach_console_last_match"));
+assert.equal(lastMatch.id, "tournament-flow-id");
+await repository.saveMatch({ ...lastMatch, sourceId: lastMatch.id, source: "coach-console-import" });
+await repository.saveMatch({ ...lastMatch, sourceId: lastMatch.id, source: "coach-console-import" });
+assert.equal(backend.filter(item => item.id === "tournament-flow-id").length, 1);
+
 available = false;
 result = await repository.saveMatch({ id: "offline", athlete: "Cached", opponent: "Bout" });
 assert.equal(result.synced, false);

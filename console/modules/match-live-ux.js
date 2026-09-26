@@ -2,6 +2,7 @@ const startBtn = document.getElementById("startRecord");
 const pauseBtn = document.getElementById("pauseClock");
 const resetMatchBtn = document.getElementById("resetMatch");
 const finishBtn = document.getElementById("endMatch");
+const matchFormatSelect = document.getElementById("matchFormat");
 const statusEl = document.getElementById("status");
 const connectYouTubeBtn = document.getElementById("connectYouTubeBtn");
 
@@ -10,10 +11,143 @@ let initialArmed = false;
 let matchStarted = false;
 let finalizingMatch = false;
 let allowFinalSave = false;
+let matchTypeConfirmed = false;
+let applyingMatchTypeChoice = false;
 
 function setStatus(message) {
   if (statusEl) statusEl.textContent = message;
 }
+
+function getMatchTypeConfig(formatKey) {
+  if (["jv_90sec", "jv_consolation"].includes(formatKey)) {
+    return {
+      division: "JV",
+      championship: {
+        value: "jv_90sec",
+        label: "Championship",
+        detail: "R1 1:30"
+      },
+      consolation: {
+        value: "jv_consolation",
+        label: "Consolation",
+        detail: "R1 1:00"
+      }
+    };
+  }
+
+  if (["varsity_championship", "varsity_consolation"].includes(formatKey)) {
+    return {
+      division: "Varsity",
+      championship: {
+        value: "varsity_championship",
+        label: "Championship",
+        detail: "R1 2:00"
+      },
+      consolation: {
+        value: "varsity_consolation",
+        label: "Consolation",
+        detail: "R1 1:00"
+      }
+    };
+  }
+
+  return null;
+}
+
+function ensureMatchTypeGate() {
+  let gate = document.getElementById("matchTypeGate");
+  if (gate) return gate;
+
+  gate = document.createElement("section");
+  gate.id = "matchTypeGate";
+  gate.className = "match-summary-modal hidden";
+  gate.setAttribute("role", "dialog");
+  gate.setAttribute("aria-modal", "true");
+  gate.setAttribute("aria-labelledby", "matchTypeGateTitle");
+
+  gate.innerHTML = `
+    <div class="match-summary-card">
+      <h2 id="matchTypeGateTitle">Confirm Match Type</h2>
+      <p id="matchTypeGateDivision" class="muted"></p>
+      <p>Choose the rule set before the camera arms. This sets the correct first-period clock.</p>
+      <div class="winner-row">
+        <button id="confirmChampionshipMatch" type="button" class="winner-btn green"></button>
+        <button id="confirmConsolationMatch" type="button" class="winner-btn red"></button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(gate);
+  return gate;
+}
+
+function hideMatchTypeGate() {
+  document.getElementById("matchTypeGate")?.classList.add("hidden");
+}
+
+function applyMatchTypeChoice(value, label) {
+  if (!matchFormatSelect) return;
+
+  applyingMatchTypeChoice = true;
+  matchFormatSelect.value = value;
+  matchFormatSelect.dispatchEvent(new Event("change", { bubbles: true }));
+  applyingMatchTypeChoice = false;
+
+  matchTypeConfirmed = true;
+  hideMatchTypeGate();
+  setStatus(`${label} confirmed — tap START to prepare camera`);
+}
+
+function showMatchTypeGate(config) {
+  const gate = ensureMatchTypeGate();
+  const divisionEl = gate.querySelector("#matchTypeGateDivision");
+  const championshipBtn = gate.querySelector("#confirmChampionshipMatch");
+  const consolationBtn = gate.querySelector("#confirmConsolationMatch");
+
+  if (divisionEl) {
+    divisionEl.textContent = `${config.division} match`;
+  }
+
+  if (championshipBtn) {
+    championshipBtn.textContent = `${config.championship.label} · ${config.championship.detail}`;
+    championshipBtn.onclick = () =>
+      applyMatchTypeChoice(config.championship.value, config.championship.label);
+  }
+
+  if (consolationBtn) {
+    consolationBtn.textContent = `${config.consolation.label} · ${config.consolation.detail}`;
+    consolationBtn.onclick = () =>
+      applyMatchTypeChoice(config.consolation.value, config.consolation.label);
+  }
+
+  gate.classList.remove("hidden");
+  setStatus("Confirm Championship or Consolation before START");
+}
+
+/*
+ * Required pre-READY gate for divisions where championship and consolation
+ * use different first-period clocks. Capture phase prevents the match engine
+ * from arming the camera until the coach confirms the rule set.
+ */
+startBtn?.addEventListener(
+  "click",
+  event => {
+    if (matchStarted || initialArmed || arming) return;
+
+    const config = getMatchTypeConfig(matchFormatSelect?.value || "");
+    if (!config || matchTypeConfirmed) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    showMatchTypeGate(config);
+  },
+  true
+);
+
+matchFormatSelect?.addEventListener("change", () => {
+  if (applyingMatchTypeChoice || matchStarted || initialArmed || arming) return;
+  matchTypeConfirmed = false;
+});
 
 function armAfterCameraStarts() {
   const startedAt = Date.now();
@@ -191,6 +325,8 @@ resetMatchBtn?.addEventListener("click", () => {
   matchStarted = false;
   finalizingMatch = false;
   allowFinalSave = false;
+  matchTypeConfirmed = false;
+  hideMatchTypeGate();
 
   if (finishBtn) {
     finishBtn.disabled = false;

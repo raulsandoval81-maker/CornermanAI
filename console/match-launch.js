@@ -1,6 +1,11 @@
 import {
   WEIGHT_CLASSES
 } from "../data/weight-classes.js";
+
+import {
+  getTournamentRoster
+} from "../data/tournament-roster.js";
+
 const consoleViewSelect =
   document.getElementById("consoleViewSelect");
 const startMatchBtn =
@@ -103,8 +108,8 @@ function renderTournamentContext() {
       ${escapeHtml(tournament.location || "No location")}
     </p>
     <p>
-      Bracket:
-      ${escapeHtml(tournament.bracketRound || "General Event")}
+      Group / Pool:
+      ${escapeHtml(tournament.bracketRound || "Open event")}
     </p>
   `;
 
@@ -119,6 +124,58 @@ function renderTournamentContext() {
   ) {
     consoleViewSelect.value =
       tournament.consolePreference;
+  }
+}
+
+function populateTournamentRoster() {
+  if (!athleteSelect) return;
+
+  const roster = getTournamentRoster();
+
+  athleteSelect.innerHTML = `
+    <option value="">Select Wrestler A</option>
+  `;
+
+  roster.forEach(entry => {
+    const option = document.createElement("option");
+    option.value = String(entry.entryId || entry.athleteId || entry.name || "");
+    option.textContent = String(entry.name || "Athlete");
+    option.dataset.team = String(entry.team || "");
+    option.dataset.weightGroup = String(entry.weightGroup || "");
+    option.dataset.weight = String(entry.weight || "");
+    athleteSelect.appendChild(option);
+  });
+}
+
+function syncSelectedTournamentAthlete() {
+  if (!athleteSelect?.value) return;
+
+  const option = athleteSelect.options[athleteSelect.selectedIndex];
+  if (!option) return;
+
+  if (teamAInput) {
+    teamAInput.value = option.dataset.team || "";
+  }
+
+  const group = option.dataset.weightGroup || "";
+  if (weightGroupSelect && group) {
+    weightGroupSelect.value = group;
+    syncWeightGroupDefaults();
+  }
+
+  const weight = option.dataset.weight || "";
+  if (weightClassInput && weight) {
+    const listed = [...weightClassInput.options]
+      .some(item => String(item.value) === String(weight));
+
+    if (listed) {
+      weightClassInput.value = String(weight);
+      if (customWeightClassInput) {
+        customWeightClassInput.value = "";
+      }
+    } else if (customWeightClassInput) {
+      customWeightClassInput.value = String(weight);
+    }
   }
 }
 
@@ -294,6 +351,11 @@ athleteMode?.addEventListener(
   syncAthleteMode
 );
 
+athleteSelect?.addEventListener(
+  "change",
+  syncSelectedTournamentAthlete
+);
+
 opponentMode?.addEventListener(
   "change",
   syncOpponentMode
@@ -319,6 +381,7 @@ syncOpponentMode();
 syncColorsFromA();
 syncWeightGroupDefaults();
 renderTournamentContext();
+populateTournamentRoster();
 
 startMatchBtn?.addEventListener("click", () => {
   const weightGroup =

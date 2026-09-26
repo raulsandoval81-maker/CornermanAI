@@ -93,9 +93,15 @@
 
   <section class="arena-card">
 
-    <div class="overlay-arena">
+    <div class="overlay-arena" id="matchViewport">
 
       <video id="preview" autoplay playsinline muted></video>
+
+      <div class="match-zoom-controls" aria-label="Match zoom controls">
+        <button id="zoomOutBtn" type="button" aria-label="Zoom out">−</button>
+        <button id="zoomResetBtn" type="button">1×</button>
+        <button id="zoomInBtn" type="button" aria-label="Zoom in">+</button>
+      </div>
 
       <div class="overlay-rail overlay-left red">
         <button type="button" data-side="opponent" data-code="td3">TD+3</button>
@@ -314,6 +320,10 @@
 <script
   type="module"
   src="./match-engine.modular.js"
+></script>
+<script
+  type="module"
+  src="./modules/match-zoom.js"
 ></script>
 <script src="../shared/cornerman-shell.js"></script>
 

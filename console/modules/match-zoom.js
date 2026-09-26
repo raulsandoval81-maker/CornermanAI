@@ -1,3 +1,5 @@
+import "./post-match-flow.js";
+
 const viewport = document.getElementById("matchViewport");
 const video = document.getElementById("preview");
 const zoomInBtn = document.getElementById("zoomInBtn");

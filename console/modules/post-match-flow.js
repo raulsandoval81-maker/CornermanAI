@@ -8,6 +8,82 @@ let autoLinkSavePending = false;
 let youtubeConnected = false;
 let uploadAfterConnect = false;
 
+const PLACEHOLDER_NAMES = new Set([
+  "wrestler a",
+  "wrestler b",
+  "athlete a",
+  "athlete b",
+  "green wrestler",
+  "red wrestler",
+  "green",
+  "red"
+]);
+
+function isPlaceholderName(value) {
+  return PLACEHOLDER_NAMES.has(String(value || "").trim().toLowerCase());
+}
+
+function getLastSavedMatch() {
+  try {
+    return JSON.parse(localStorage.getItem("coach_console_last_match") || "null");
+  } catch {
+    return null;
+  }
+}
+
+function needsIdentityAssignment(match) {
+  if (!match) return false;
+  return isPlaceholderName(match.athlete) || isPlaceholderName(match.opponent);
+}
+
+function launchNextQuickMatch() {
+  let tournament = {};
+  try {
+    tournament = JSON.parse(localStorage.getItem("cornerman_current_tournament") || "{}");
+  } catch {
+    tournament = {};
+  }
+
+  const pendingMatch = {
+    eventName: tournament.name || "",
+    athleteMode: "manual",
+    athleteName: "Wrestler A",
+    consoleView: "compact",
+    opponentMode: "manual",
+    opponentName: "Wrestler B",
+    athleteSide: "green",
+    opponentSide: "red",
+    teamA: "",
+    opponentTeam: "",
+    weightGroup: "",
+    weightClass: "",
+    matchTime: "",
+    matchFormat: "",
+    tournamentDate: tournament.date || "",
+    tournamentLocation: tournament.location || "",
+    eventFormat: tournament.eventFormat || "",
+    bracketRound: tournament.bracketRound || "",
+    source: "fast-start"
+  };
+
+  localStorage.setItem("cornerman_pending_match", JSON.stringify(pendingMatch));
+  window.location.href = "./compact-console.modular.html";
+}
+
+function refreshIdentityDecision() {
+  const card = document.getElementById("quickMatchIdentityCard");
+  if (!card) return;
+
+  const match = getLastSavedMatch();
+  const needsAssignment = needsIdentityAssignment(match);
+  card.hidden = !needsAssignment;
+
+  const summary = document.getElementById("quickMatchIdentitySummary");
+  if (summary && needsAssignment) {
+    summary.textContent = `${match.athlete || "Wrestler A"} vs ${match.opponent || "Wrestler B"} is saved. Assign the real athlete now or leave it for Match History.`;
+  }
+}
+
 if (postMatchCard) {
   const heading = postMatchCard.querySelector("h2");
   if (heading) heading.textContent = "Finish Match";
@@ -23,11 +99,23 @@ if (postMatchCard) {
     <p>The YouTube link is attached to the saved match automatically after upload.</p>
   `;
 
-  if (heading) {
-    heading.insertAdjacentElement("afterend", guide);
-  } else {
-    postMatchCard.prepend(guide);
-  }
+  if (heading) heading.insertAdjacentElement("afterend", guide);
+  else postMatchCard.prepend(guide);
+
+  const identityCard = document.createElement("div");
+  identityCard.id = "quickMatchIdentityCard";
+  identityCard.className = "quick-match-identity-card";
+  identityCard.hidden = true;
+  identityCard.innerHTML = `
+    <strong>Quick Match · Athlete identity not assigned</strong>
+    <p id="quickMatchIdentitySummary">This match is saved with temporary wrestler names.</p>
+    <div class="quick-match-identity-actions">
+      <button id="assignQuickMatchAthletes" type="button">Assign Athletes Now</button>
+      <button id="nextQuickMatch" type="button">Next Quick Match</button>
+    </div>
+    <a href="../history/match-history.html">Leave for Match History</a>
+  `;
+  guide.insertAdjacentElement("afterend", identityCard);
 
   const localStatus = document.createElement("p");
   localStatus.id = "postMatchFlowStatus";
@@ -39,7 +127,8 @@ if (postMatchCard) {
 
   const style = document.createElement("style");
   style.textContent = `
-    .post-match-guide {
+    .post-match-guide,
+    .quick-match-identity-card {
       margin: 10px 0 14px;
       padding: 12px 14px;
       border: 1px solid rgba(255,255,255,.12);
@@ -47,7 +136,8 @@ if (postMatchCard) {
       background: rgba(255,255,255,.04);
     }
 
-    .post-match-guide strong {
+    .post-match-guide strong,
+    .quick-match-identity-card strong {
       display: block;
       margin-bottom: 8px;
     }
@@ -61,9 +151,25 @@ if (postMatchCard) {
       margin: 7px 0;
     }
 
-    .post-match-guide p {
-      margin: 10px 0 0;
+    .post-match-guide p,
+    .quick-match-identity-card p {
+      margin: 10px 0;
       opacity: .82;
+    }
+
+    .quick-match-identity-card {
+      border-color: rgba(250,204,21,.45);
+    }
+
+    .quick-match-identity-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .quick-match-identity-actions button {
+      min-height: 44px;
     }
 
     #postMatchFlowStatus {
@@ -74,8 +180,29 @@ if (postMatchCard) {
     #connectYouTubeBtn {
       display: none !important;
     }
+
+    @media (max-width: 560px) {
+      .quick-match-identity-actions {
+        grid-template-columns: 1fr;
+      }
+    }
   `;
   document.head.appendChild(style);
+
+  document.getElementById("assignQuickMatchAthletes")?.addEventListener("click", () => {
+    const match = getLastSavedMatch();
+    if (!match?.id) return;
+    window.location.href = `../history/match-detail.html?id=${encodeURIComponent(String(match.id))}&edit=1`;
+  });
+
+  document.getElementById("nextQuickMatch")?.addEventListener("click", launchNextQuickMatch);
+
+  const reviewObserver = new MutationObserver(() => {
+    if (document.body.classList.contains("review-mode")) {
+      setTimeout(refreshIdentityDecision, 0);
+    }
+  });
+  reviewObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 }
 
 if (uploadMatchVideoBtn) {
@@ -104,12 +231,6 @@ function resetUpdateButton() {
   saveMatchLogBtn.textContent = "Update Notes / Match";
 }
 
-/*
- * Keep account authorization out of the normal review UI.
- * If Upload is tapped before YouTube is connected, intercept that tap,
- * launch the existing Google authorization flow, then continue upload
- * automatically once authorization succeeds.
- */
 uploadMatchVideoBtn?.addEventListener(
   "click",
   event => {
@@ -163,14 +284,9 @@ window.addEventListener("cornerman:youtube-status", event => {
   }
 
   if (type === "uploaded") {
-    const videoUrl =
-      detail.detail?.videoUrl ||
-      localStorage.getItem("cornerman_last_uploaded_video_url") ||
-      "";
+    const videoUrl = detail.detail?.videoUrl || localStorage.getItem("cornerman_last_uploaded_video_url") || "";
 
-    if (videoUrlInput && videoUrl) {
-      videoUrlInput.value = videoUrl;
-    }
+    if (videoUrlInput && videoUrl) videoUrlInput.value = videoUrl;
 
     if (uploadMatchVideoBtn) {
       uploadMatchVideoBtn.disabled = false;
@@ -182,14 +298,12 @@ window.addEventListener("cornerman:youtube-status", event => {
       saveMatchLogBtn.disabled = false;
       saveMatchLogBtn.textContent = "Linking Video…";
       setLocalStatus("Video uploaded. Linking it to the saved match…");
-
-      setTimeout(() => {
-        saveMatchLogBtn.click();
-      }, 0);
+      setTimeout(() => saveMatchLogBtn.click(), 0);
     } else {
       setLocalStatus("Video uploaded to YouTube.");
     }
 
+    refreshIdentityDecision();
     return;
   }
 
@@ -207,13 +321,11 @@ window.addEventListener("cornerman:youtube-status", event => {
 
 if (saveMatchLogBtn) {
   const observer = new MutationObserver(() => {
-    if (
-      autoLinkSavePending &&
-      saveMatchLogBtn.textContent.trim().toLowerCase() === "saved"
-    ) {
+    if (autoLinkSavePending && saveMatchLogBtn.textContent.trim().toLowerCase() === "saved") {
       autoLinkSavePending = false;
       setLocalStatus("Done — match saved and YouTube video linked.");
       resetUpdateButton();
+      refreshIdentityDecision();
     }
   });
 
@@ -227,8 +339,8 @@ if (saveMatchLogBtn) {
   saveMatchLogBtn.addEventListener("click", () => {
     if (!autoLinkSavePending) {
       setLocalStatus("Updating the saved match…");
-
       setTimeout(() => {
+        refreshIdentityDecision();
         if (saveMatchLogBtn.disabled) {
           resetUpdateButton();
           setLocalStatus("Match updated.");

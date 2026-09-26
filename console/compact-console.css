@@ -499,3 +499,60 @@ body[data-console="compact"] .header-round #positionIndicator{
     font-size:12px;
   }
 }
+
+/* PHONE MATCH VIEWPORT ZOOM
+   Only the video transforms. HUD and scoring rails stay anchored. */
+body[data-console="compact"] #matchViewport {
+  position: relative;
+  overflow: hidden;
+}
+
+body[data-console="compact"] #matchViewport #preview {
+  position: relative;
+  z-index: 1;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+body[data-console="compact"] #matchViewport #preview.is-zoomed {
+  cursor: grab;
+}
+
+body[data-console="compact"] .match-zoom-controls {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transform: translateX(-50%);
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.62);
+  backdrop-filter: blur(5px);
+}
+
+body[data-console="compact"] .match-zoom-controls button {
+  min-width: 34px;
+  min-height: 34px;
+  padding: 4px 8px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  background: rgba(20,20,20,.92);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+body[data-console="compact"] .match-zoom-controls #zoomResetBtn {
+  min-width: 46px;
+  font-size: 12px;
+}
+
+@media (min-width: 768px) {
+  body[data-console="compact"] .match-zoom-controls {
+    opacity: .72;
+  }
+}

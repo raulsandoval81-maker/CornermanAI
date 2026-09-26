@@ -7,6 +7,42 @@ const SCOPES =
 let accessToken = "";
 let tokenClient = null;
 
+function emitYouTubeStatus(type, message, detail = null) {
+  window.dispatchEvent(
+    new CustomEvent("cornerman:youtube-status", {
+      detail: { type, message, detail }
+    })
+  );
+}
+
+function getYouTubeErrorMessage(error) {
+  if (!error) return "Unknown YouTube error.";
+
+  if (typeof error === "string") return error;
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  const apiMessage =
+    error?.error?.message ||
+    error?.message ||
+    error?.error_description ||
+    error?.type ||
+    error?.error;
+
+  if (typeof apiMessage === "string" && apiMessage.trim()) {
+    return apiMessage.trim();
+  }
+
+  const reason =
+    error?.error?.errors?.[0]?.reason;
+
+  if (reason) return String(reason);
+
+  return "YouTube rejected the request. Reconnect the intended Google account and try again.";
+}
+
 export function isYouTubeConnected() {
   return !!accessToken;
 }
@@ -16,7 +52,9 @@ export function initYouTubeUploader({
   onError
 } = {}) {
   if (!window.google?.accounts?.oauth2) {
-    onError?.("Google Identity Services not loaded.");
+    const message = "Google Identity Services not loaded.";
+    emitYouTubeStatus("error", message);
+    onError?.(message);
     return;
   }
 
@@ -26,20 +64,40 @@ export function initYouTubeUploader({
       scope: SCOPES,
       callback: tokenResponse => {
         if (!tokenResponse.access_token) {
-          onError?.("No access token returned.");
+          const message =
+            getYouTubeErrorMessage(tokenResponse) ||
+            "No access token returned.";
+          emitYouTubeStatus("error", message, tokenResponse);
+          onError?.(message);
           return;
         }
 
         accessToken = tokenResponse.access_token;
+        emitYouTubeStatus(
+          "connected",
+          "YouTube connected for this browser session."
+        );
         onConnected?.();
+      },
+      error_callback: error => {
+        const message = getYouTubeErrorMessage(error);
+        emitYouTubeStatus("error", message, error);
+        onError?.(message);
       }
     });
 }
 
 export function connectYouTubeUpload() {
   if (!tokenClient) {
-    throw new Error("YouTube uploader not initialized.");
+    const error = new Error("YouTube uploader not initialized.");
+    emitYouTubeStatus("error", error.message);
+    throw error;
   }
+
+  emitYouTubeStatus(
+    "connecting",
+    "Choose the Google account whose YouTube channel you want to use."
+  );
 
   tokenClient.requestAccessToken();
 }
@@ -52,11 +110,15 @@ export async function uploadVideoToYouTube({
   privacyStatus = "unlisted"
 }) {
   if (!accessToken) {
-    throw new Error("Connect YouTube first.");
+    const error = new Error("Connect YouTube first, then upload the match.");
+    emitYouTubeStatus("error", error.message);
+    throw error;
   }
 
   if (!videoBlob) {
-    throw new Error("No video blob provided.");
+    const error = new Error("No match video is ready to upload.");
+    emitYouTubeStatus("error", error.message);
+    throw error;
   }
 
   const metadata = {
@@ -86,6 +148,8 @@ export async function uploadVideoToYouTube({
     type: `multipart/related; boundary=${boundary}`
   });
 
+  emitYouTubeStatus("uploading", "Uploading match video to YouTube...");
+
   const res = await fetch(
     "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=multipart&part=snippet,status",
     {
@@ -100,7 +164,9 @@ export async function uploadVideoToYouTube({
   const data = await res.json();
 
   if (!res.ok) {
-    throw data;
+    const message = getYouTubeErrorMessage(data);
+    emitYouTubeStatus("error", message, data);
+    throw new Error(message);
   }
 
   const videoUrl =
@@ -111,6 +177,12 @@ export async function uploadVideoToYouTube({
     videoUrl,
     title
   });
+
+  emitYouTubeStatus(
+    "uploaded",
+    "YouTube upload complete.",
+    { videoId: data.id, videoUrl }
+  );
 
   return {
     videoId: data.id,

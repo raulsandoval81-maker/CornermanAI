@@ -1,0 +1,243 @@
+/* Compact Console — landscape action view
+   Landscape prioritizes the live mat, scoring rails and essential controls.
+   Portrait keeps the standard console layout. */
+
+@media (orientation: landscape) and (max-height: 520px) {
+  body[data-console="compact"] {
+    overflow-x: hidden;
+  }
+
+  body[data-console="compact"] .wrap {
+    max-width: 100vw;
+    padding: 4px max(6px, env(safe-area-inset-right)) 4px max(6px, env(safe-area-inset-left));
+  }
+
+  /* Keep only essential navigation/chrome visible during live landscape use. */
+  body[data-console="compact"]:not(.review-mode) .topbar {
+    min-height: 32px;
+    margin-bottom: 2px;
+    gap: 4px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .mode-switch {
+    gap: 4px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .mode {
+    min-height: 30px;
+    padding: 4px 9px;
+    font-size: 11px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .header-format {
+    display: none;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .top-tools-btn {
+    min-height: 30px;
+    padding: 4px 9px;
+    font-size: 11px;
+    margin-left: auto;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #status {
+    display: none;
+  }
+
+  /* Compress the match HUD into one shallow strip above the action. */
+  body[data-console="compact"]:not(.review-mode) .round-flow-card {
+    margin: 0 0 3px;
+    padding: 3px 6px;
+    gap: 2px;
+    border-radius: 8px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .live-context-strip {
+    display: none;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .match-header {
+    min-height: 38px;
+    margin-top: 0;
+    gap: 4px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .header-side {
+    min-height: 36px;
+    padding: 2px 6px;
+    border-radius: 7px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .team-row {
+    display: none;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .athlete-row {
+    max-width: 30vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 10px;
+    line-height: 1.05;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .header-side > strong {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .header-round {
+    min-width: 54px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .header-round #currentRound {
+    font-size: 8px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .header-round #clock {
+    font-size: 17px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .header-round #positionIndicator {
+    font-size: 7px;
+  }
+
+  /* Mat becomes the primary screen surface. */
+  body[data-console="compact"]:not(.review-mode) .arena-card {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #000;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport,
+  body[data-console="compact"]:not(.review-mode) .overlay-arena {
+    width: 100%;
+    height: min(72vh, calc(100dvh - 112px));
+    min-height: 230px;
+    max-height: none;
+    border-radius: 8px;
+    background: #000;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport #preview,
+  body[data-console="compact"]:not(.review-mode) .overlay-arena video {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+    object-fit: cover;
+  }
+
+  /* Keep score actions reachable without stealing the mat. */
+  body[data-console="compact"]:not(.review-mode) .overlay-rail {
+    top: 7px;
+    bottom: 7px;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .overlay-left {
+    left: 5px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .overlay-right {
+    right: 5px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .overlay-rail button {
+    min-width: 52px;
+    min-height: 30px;
+    padding: 3px 5px;
+    border-radius: 6px;
+    font-size: 10px;
+    opacity: .94;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .match-zoom-controls {
+    top: 5px;
+    gap: 2px;
+    padding: 2px;
+    opacity: .82;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .match-zoom-controls button {
+    min-width: 28px;
+    min-height: 28px;
+    padding: 2px 6px;
+    font-size: 11px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .match-zoom-controls #zoomResetBtn {
+    min-width: 38px;
+    font-size: 10px;
+  }
+
+  /* Essential clock controls remain immediately below the mat. */
+  body[data-console="compact"]:not(.review-mode) .control-dock {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    margin: 3px 0 0;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .control-dock button {
+    min-height: 34px;
+    padding: 3px 2px;
+    border-radius: 7px;
+    font-size: 10px;
+  }
+
+  /* Arena is redundant in automatic landscape action view. */
+  body[data-console="compact"]:not(.review-mode) #arenaModeToggle {
+    display: none;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .control-dock {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* Choice UI must remain visible when the match requires it. */
+  body[data-console="compact"]:not(.review-mode) .choice-panel:not(.hidden) {
+    position: fixed;
+    left: 50%;
+    bottom: calc(42px + env(safe-area-inset-bottom));
+    z-index: 1070;
+    width: min(520px, calc(100vw - 24px));
+    transform: translateX(-50%);
+    grid-template-columns: repeat(4, 1fr);
+    background: rgba(11,16,23,.97);
+    box-shadow: 0 14px 38px rgba(0,0,0,.55);
+  }
+
+  /* Quick correction panels float instead of pushing the mat away. */
+  body[data-console="compact"]:not(.review-mode) .adjust-clock-panel:not(.hidden),
+  body[data-console="compact"]:not(.review-mode) .adjust-score-panel:not(.hidden) {
+    position: fixed;
+    left: 50%;
+    bottom: calc(44px + env(safe-area-inset-bottom));
+    z-index: 1080;
+    width: min(520px, calc(100vw - 24px));
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 8px;
+    border: 1px solid #394358;
+    border-radius: 10px;
+    background: rgba(11,16,23,.97);
+    box-shadow: 0 14px 38px rgba(0,0,0,.55);
+  }
+
+  /* Tools remains an overlay and uses more horizontal space in landscape. */
+  body[data-console="compact"] .match-tools-sheet {
+    left: 50%;
+    right: auto;
+    width: min(760px, calc(100vw - 28px));
+    max-height: 88vh;
+    transform: translateX(-50%);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-radius: 16px 16px 0 0;
+  }
+
+  body[data-console="compact"] .match-tools-header {
+    grid-column: 1 / -1;
+  }
+}

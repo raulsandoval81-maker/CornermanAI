@@ -1,3 +1,5 @@
+import "./post-match-flow.js";
+
 const returnToConsoleBtn = document.getElementById("returnToConsoleBtn");
 const liveModeBtn = document.getElementById("liveMode");
 

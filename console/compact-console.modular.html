@@ -33,6 +33,8 @@
       </select>
     </div>
 
+    <button id="toggleMatchActions" class="top-tools-btn" type="button" aria-haspopup="dialog" aria-expanded="false">⋯ Tools</button>
+
   </header>
 
   <div id="status" class="status-line">
@@ -127,26 +129,47 @@
       <button id="startRecord" class="clock-start" type="button">Start</button>
       <button id="pauseClock" class="clock-pause" type="button">Pause</button>
       <button id="stopRecord" class="clock-stop" type="button">End</button>
-      <button id="toggleMatchActions" type="button">Actions</button>
+      <button id="undoBtn" class="clock-undo" type="button">Undo</button>
       <button id="arenaModeToggle" type="button">Arena</button>
     </div>
 
-    <div id="matchActionsPanel" class="match-actions-panel hidden">
-      <button id="toggleAdjustClock" type="button">Adjust Clock</button>
-      <button id="toggleAdjustScore" type="button">Adjust Score</button>
-      <button id="undoBtn" type="button">Undo Last Action</button>
-      <button id="nextRound" type="button">Next Round</button>
-      <button id="resetClock" type="button">Reset Clock</button>
-      <button id="resetMatch" type="button">Reset Match</button>
+    <div id="matchActionsBackdrop" class="match-tools-backdrop hidden" aria-hidden="true"></div>
 
-      <button type="button" data-ref-call="caution" data-side="opponent" class="btn-red">RED CAU</button>
-      <button type="button" data-ref-call="caution" data-side="athlete" class="btn-green">GRN CAU</button>
+    <div id="matchActionsPanel" class="match-actions-panel match-tools-sheet hidden" role="dialog" aria-modal="true" aria-label="Match tools">
+      <div class="match-tools-header">
+        <div>
+          <strong>Match Tools</strong>
+          <span>Quick fixes and match controls</span>
+        </div>
+        <button id="closeMatchTools" type="button">Done</button>
+      </div>
 
-      <button type="button" data-ref-call="stall" data-side="opponent" class="btn-red">RED STL</button>
-      <button type="button" data-ref-call="stall" data-side="athlete" class="btn-green">GRN STL</button>
+      <div class="match-tools-group">
+        <span class="match-tools-label">Quick Fix</span>
+        <button id="toggleAdjustClock" type="button">Adjust Clock</button>
+        <button id="toggleAdjustScore" type="button">Adjust Score</button>
+      </div>
 
-      <button type="button" data-ref-call="lockedHands" data-side="opponent" class="btn-red">RED LH</button>
-      <button type="button" data-ref-call="lockedHands" data-side="athlete" class="btn-green">GRN LH</button>
+      <div class="match-tools-group">
+        <span class="match-tools-label">Match Control</span>
+        <button id="nextRound" type="button">Next Round</button>
+        <button id="resetClock" type="button">Reset Clock</button>
+      </div>
+
+      <div class="match-tools-group">
+        <span class="match-tools-label">Referee</span>
+        <button type="button" data-ref-call="caution" data-side="opponent" class="btn-red">RED CAU</button>
+        <button type="button" data-ref-call="caution" data-side="athlete" class="btn-green">GRN CAU</button>
+        <button type="button" data-ref-call="stall" data-side="opponent" class="btn-red">RED STL</button>
+        <button type="button" data-ref-call="stall" data-side="athlete" class="btn-green">GRN STL</button>
+        <button type="button" data-ref-call="lockedHands" data-side="opponent" class="btn-red">RED LH</button>
+        <button type="button" data-ref-call="lockedHands" data-side="athlete" class="btn-green">GRN LH</button>
+      </div>
+
+      <div class="match-tools-group match-tools-danger">
+        <span class="match-tools-label">Danger Zone</span>
+        <button id="resetMatch" type="button">Reset Match</button>
+      </div>
     </div>
 
     <div id="adjustClockPanel" class="adjust-clock-panel hidden">
@@ -340,6 +363,10 @@
 <script
   type="module"
   src="./modules/review-return.js"
+></script>
+<script
+  type="module"
+  src="./modules/match-tools.js"
 ></script>
 <script src="../shared/cornerman-shell.js"></script>
 

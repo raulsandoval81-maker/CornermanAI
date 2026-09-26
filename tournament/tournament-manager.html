@@ -38,7 +38,7 @@
         <input
           id="eventNameInput"
           type="text"
-          placeholder="Tournament / Dual"
+          placeholder="Tournament / Dual / Club Event"
         />
       </label>
 
@@ -62,7 +62,25 @@
       </label>
 
       <label>
-        Bracket Round
+        Event Format
+
+        <select id="eventFormatInput">
+          <option value="madison">
+            Madison / Grouped
+          </option>
+
+          <option value="bracket">
+            Traditional Bracket
+          </option>
+
+          <option value="dual">
+            Dual / Match List
+          </option>
+        </select>
+      </label>
+
+      <label id="eventStageLabel">
+        <span id="eventStageText">Group / Pool</span>
 
         <select id="bracketRoundInput">
           <option value="">
@@ -268,18 +286,18 @@
     </div>
 
     <button
-  id="importLastMatchBtn"
-  type="button"
->
-  Import Last Match
-</button>
+      id="importLastMatchBtn"
+      type="button"
+    >
+      Import Last Match
+    </button>
 
-<p
-  id="importStatus"
-  class="bridge-status"
->
-  Waiting for console match.
-</p>
+    <p
+      id="importStatus"
+      class="bridge-status"
+    >
+      Waiting for console match.
+    </p>
   </section>
 
   <section class="grid">

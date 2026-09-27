@@ -1,12 +1,16 @@
+import { isYouTubeConnected } from "../../media/youtube-uploader.js";
+
 const postMatchCard = document.querySelector(".post-match-card");
 const connectYouTubeBtn = document.getElementById("connectYouTubeBtn");
 const uploadMatchVideoBtn = document.getElementById("uploadMatchVideoBtn");
 const videoUrlInput = document.getElementById("videoUrlInput");
 const saveMatchLogBtn = document.getElementById("saveMatchLogBtn");
+const resetMatchBtn = document.getElementById("resetMatch");
 
 let autoLinkSavePending = false;
 let vaultSavePending = false;
 let vaultFailedId = "";
+let uploadEligible = false;
 
 const PLACEHOLDER_NAMES = new Set([
   "wrestler a",
@@ -49,6 +53,28 @@ function setMoveOnEnabled(enabled) {
     button.disabled = !enabled;
     button.setAttribute("aria-disabled", String(!enabled));
   });
+}
+
+function refreshUploadAvailability() {
+  if (!uploadMatchVideoBtn) return;
+
+  const ready = uploadEligible && isYouTubeConnected();
+  uploadMatchVideoBtn.disabled = !ready;
+
+  if (!uploadEligible) {
+    uploadMatchVideoBtn.title = "Finish a new recording before uploading video.";
+    if (uploadMatchVideoBtn.textContent !== "Upload accepted ✓") {
+      uploadMatchVideoBtn.textContent = "3. Upload Video";
+    }
+    return;
+  }
+
+  if (!isYouTubeConnected()) {
+    uploadMatchVideoBtn.title = "Connect YouTube first.";
+    return;
+  }
+
+  uploadMatchVideoBtn.title = "Upload this match video to the connected YouTube channel.";
 }
 
 function launchNextQuickMatch() {
@@ -119,9 +145,9 @@ if (postMatchCard) {
     <ol>
       <li><b>Save Match</b> in Match Summary. Your match data is saved first.</li>
       <li><b>Connect YouTube</b> only if you want the video uploaded.</li>
-      <li><b>Upload Video</b>. Cornerman will attach the YouTube link and update the saved match automatically.</li>
+      <li><b>Upload Video</b>. Cornerman attaches the returned YouTube link while keeping the local Vault copy.</li>
     </ol>
-    <p>YouTube is optional. You do not need it to save the match.</p>
+    <p>YouTube is optional. The local Vault protects the recording independently.</p>
   `;
 
   if (heading) heading.insertAdjacentElement("afterend", guide);
@@ -262,13 +288,26 @@ if (connectYouTubeBtn) {
 
 if (uploadMatchVideoBtn) {
   uploadMatchVideoBtn.textContent = "3. Upload Video";
-  uploadMatchVideoBtn.disabled = true;
-  uploadMatchVideoBtn.title = "Connect YouTube first.";
+  refreshUploadAvailability();
 
-  uploadMatchVideoBtn.addEventListener("click", () => {
+  uploadMatchVideoBtn.addEventListener("click", event => {
+    if (!uploadEligible) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setLocalStatus("No current match video is ready. Record and finish the new match before uploading.");
+      refreshUploadAvailability();
+      return;
+    }
+
     window.dispatchEvent(new CustomEvent("cornerman:youtube-upload-start"));
   }, true);
 }
+
+resetMatchBtn?.addEventListener("click", () => {
+  uploadEligible = false;
+  if (videoUrlInput) videoUrlInput.value = "";
+  refreshUploadAvailability();
+}, true);
 
 if (videoUrlInput) {
   videoUrlInput.readOnly = true;
@@ -289,6 +328,14 @@ function resetUpdateButton() {
   saveMatchLogBtn.disabled = false;
   saveMatchLogBtn.textContent = "Update Notes / Match";
 }
+
+window.addEventListener("cornerman:video-vault-recording-started", () => {
+  uploadEligible = true;
+  if (uploadMatchVideoBtn?.textContent === "Upload accepted ✓") {
+    uploadMatchVideoBtn.textContent = "3. Upload Video";
+  }
+  refreshUploadAvailability();
+});
 
 window.addEventListener("cornerman:video-vault-saving", event => {
   vaultSavePending = true;
@@ -314,6 +361,10 @@ window.addEventListener("cornerman:video-vault-error", event => {
   setLocalStatus(event.detail?.message || "Local video backup failed. Retry the local save or save an emergency copy before leaving this match.");
 });
 
+window.addEventListener("cornerman:video-vault-checkpoint-error", event => {
+  setLocalStatus(event.detail?.message || "Live video checkpoint warning. Keep recording; Cornerman will retry when the match ends.");
+});
+
 window.addEventListener("beforeunload", event => {
   if (!vaultSavePending && !vaultFailedId) return;
   event.preventDefault();
@@ -331,18 +382,16 @@ window.addEventListener("cornerman:youtube-status", event => {
   }
 
   if (type === "connected") {
-    if (uploadMatchVideoBtn) {
-      uploadMatchVideoBtn.disabled = false;
-      uploadMatchVideoBtn.title = "Upload this match video to the connected YouTube channel.";
-    }
-
-    setLocalStatus("YouTube connected. Upload Video is ready.");
+    refreshUploadAvailability();
+    setLocalStatus(uploadEligible
+      ? "YouTube connected. Upload Video is ready."
+      : "YouTube connected. Finish a current match recording before uploading.");
     return;
   }
 
   if (type === "uploading") {
     if (uploadMatchVideoBtn) uploadMatchVideoBtn.disabled = true;
-    setLocalStatus("Uploading video to YouTube…");
+    setLocalStatus("Sending video to YouTube… Local Vault copy remains protected.");
     return;
   }
 
@@ -352,18 +401,18 @@ window.addEventListener("cornerman:youtube-status", event => {
     if (videoUrlInput && videoUrl) videoUrlInput.value = videoUrl;
 
     if (uploadMatchVideoBtn) {
-      uploadMatchVideoBtn.disabled = false;
-      uploadMatchVideoBtn.textContent = "Video Uploaded ✓";
+      uploadMatchVideoBtn.textContent = "Upload accepted ✓";
+      refreshUploadAvailability();
     }
 
     if (saveMatchLogBtn) {
       autoLinkSavePending = true;
       saveMatchLogBtn.disabled = false;
       saveMatchLogBtn.textContent = "Linking Video…";
-      setLocalStatus("Video uploaded. Linking it to the saved match…");
+      setLocalStatus("YouTube accepted the upload. Processing may still be pending. Linking the returned URL while the local Vault copy stays protected…");
       setTimeout(() => saveMatchLogBtn.click(), 0);
     } else {
-      setLocalStatus("Video uploaded to YouTube.");
+      setLocalStatus("YouTube accepted the upload. Processing may still be pending; the local Vault copy remains protected.");
     }
 
     refreshIdentityDecision();
@@ -371,12 +420,12 @@ window.addEventListener("cornerman:youtube-status", event => {
   }
 
   if (type === "error") {
-    if (uploadMatchVideoBtn) {
-      uploadMatchVideoBtn.disabled = false;
+    refreshUploadAvailability();
+    if (uploadMatchVideoBtn && uploadMatchVideoBtn.textContent !== "Upload accepted ✓") {
       uploadMatchVideoBtn.textContent = "3. Upload Video";
     }
 
-    setLocalStatus(message || "YouTube could not complete the request.");
+    setLocalStatus(message || "YouTube could not complete the request. The local Vault copy is still protected.");
   }
 });
 
@@ -384,7 +433,7 @@ if (saveMatchLogBtn) {
   const observer = new MutationObserver(() => {
     if (autoLinkSavePending && saveMatchLogBtn.textContent.trim().toLowerCase() === "saved") {
       autoLinkSavePending = false;
-      setLocalStatus("Done — match saved and YouTube video linked.");
+      setLocalStatus("Match saved and returned YouTube URL linked. Keep the local Vault copy until YouTube finishes processing.");
       resetUpdateButton();
       refreshIdentityDecision();
     }

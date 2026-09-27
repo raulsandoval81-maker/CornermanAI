@@ -134,6 +134,7 @@ let pendingUploadRecordingId = "";
 let recorderReference = window.__cornermanMediaRecorder || null;
 const vaultSavePromises = new Map();
 const failedRecordings = new Map();
+const pendingUploadedUrls = new Map();
 
 function emitSaving(recording) {
   window.dispatchEvent(new CustomEvent("cornerman:video-vault-saving", {
@@ -174,8 +175,15 @@ function persistRecording(recording) {
   const savePromise = saveRecording(recording);
   vaultSavePromises.set(recording.id, savePromise);
 
-  savePromise.then(() => {
+  savePromise.then(async () => {
     failedRecordings.delete(recording.id);
+
+    const pendingUrl = pendingUploadedUrls.get(recording.id) || "";
+    if (pendingUrl) {
+      await markRecordingUploaded(recording.id, pendingUrl);
+      pendingUploadedUrls.delete(recording.id);
+    }
+
     emitSaved(recording);
   }).catch(error => {
     failedRecordings.set(recording.id, recording);
@@ -303,12 +311,15 @@ window.addEventListener("cornerman:youtube-status", event => {
   const id = pendingUploadRecordingId || "";
   if (!id || !videoUrl) return;
 
+  pendingUploadedUrls.set(id, videoUrl);
+
   const savePromise = vaultSavePromises.get(id) || Promise.resolve();
 
   savePromise.then(() => markRecordingUploaded(id, videoUrl)).then(() => {
+    pendingUploadedUrls.delete(id);
     pendingUploadRecordingId = "";
     vaultSavePromises.delete(id);
   }).catch(error => {
-    console.error("Could not mark vault recording uploaded:", error);
+    console.error("Could not mark vault recording uploaded yet; metadata will retry after local save.", error);
   });
 });

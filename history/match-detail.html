@@ -128,6 +128,23 @@
     <a href="../media/media-index.html">
       Open Media Library
     </a>
+
+    <form id="attachYouTubeForm" style="display:grid;gap:10px;margin-top:16px;">
+      <label for="attachYouTubeUrl">
+        <strong>Attach YouTube Video</strong>
+      </label>
+      <input
+        id="attachYouTubeUrl"
+        type="url"
+        inputmode="url"
+        placeholder="Paste YouTube video link"
+        autocomplete="off"
+      />
+      <button id="attachYouTubeBtn" type="submit">
+        Attach YouTube Video
+      </button>
+      <p id="attachYouTubeStatus" class="muted"></p>
+    </form>
   </section>
 
   <section class="card">
@@ -145,6 +162,7 @@
 <script src="../shared/safe-render.js"></script>
 <script type="module" src="./match-detail.js"></script>
 <script type="module" src="./match-identity-editor.js"></script>
+<script type="module" src="./match-media-recovery.js"></script>
 <script src="../shared/cornerman-shell.js"></script>
 
 </body>

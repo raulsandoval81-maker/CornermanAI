@@ -1,4 +1,4 @@
-import { listRecordings } from "./video-vault.js";
+import { listRecordings, getStorageEstimate } from "./video-vault.js";
 
 const host = document.getElementById("videoVaultList");
 const status = document.getElementById("videoVaultStatus");
@@ -22,15 +22,33 @@ function safeFileName(value) {
     .replace(/^-|-$/g, "") || "cornerman-match";
 }
 
+function recordingStateLabel(recording) {
+  if (recording.status === "recording") {
+    return "Recovered checkpoint · recording may be incomplete";
+  }
+  return "Complete local recording";
+}
+
 async function renderVault() {
   if (!host || !status) return;
 
   try {
-    const recordings = await listRecordings();
+    const [recordings, storage] = await Promise.all([
+      listRecordings(),
+      getStorageEstimate()
+    ]);
+
+    const localBytes = recordings.reduce((sum, recording) => sum + Number(recording.size || 0), 0);
+    const storageText = storage
+      ? ` Browser storage: ${formatBytes(storage.usage)} used of ${formatBytes(storage.quota)}.`
+      : "";
+    const pressureText = storage?.ratio >= 0.8
+      ? " Storage is getting tight — keep important Vault copies, but free device/browser space before the next event."
+      : "";
 
     status.textContent = recordings.length
-      ? `${recordings.length} local recording${recordings.length === 1 ? "" : "s"} preserved on this device.`
-      : "No durable local recordings saved yet.";
+      ? `${recordings.length} local recording${recordings.length === 1 ? "" : "s"} preserved on this device (${formatBytes(localBytes)} in the Vault).${storageText}${pressureText}`
+      : `No durable local recordings saved yet.${storageText}${pressureText}`;
 
     if (!recordings.length) {
       host.innerHTML = "";
@@ -41,6 +59,9 @@ async function renderVault() {
       <article class="media-row" data-vault-index="${index}">
         <strong>${window.CornermanSafe.escapeHtml(recording.title || "Match Recording")}</strong>
         <p class="muted">
+          ${window.CornermanSafe.escapeHtml(recordingStateLabel(recording))}
+        </p>
+        <p class="muted">
           ${window.CornermanSafe.escapeHtml(recording.eventName || "No event")}
           ${recording.weightClass ? ` · ${window.CornermanSafe.escapeHtml(recording.weightClass)}` : ""}
         </p>
@@ -48,7 +69,7 @@ async function renderVault() {
           ${window.CornermanSafe.escapeHtml(new Date(recording.createdAt).toLocaleString())}
           · ${formatBytes(recording.size)}
         </p>
-        ${recording.youtubeUrl ? `<p><strong>YouTube:</strong> linked</p>` : `<p class="muted">YouTube not confirmed</p>`}
+        ${recording.youtubeUrl ? `<p><strong>YouTube:</strong> upload accepted / linked</p>` : `<p class="muted">YouTube not linked</p>`}
         <video controls playsinline preload="metadata" data-vault-preview="${index}"></video>
         <div class="media-actions">
           <button type="button" data-vault-save="${index}">Save Recovered Video</button>

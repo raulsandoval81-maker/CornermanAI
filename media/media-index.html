@@ -108,6 +108,30 @@
 
   <section class="card">
     <span>
+      RECOVERY
+    </span>
+
+    <strong>
+      Local Recording Recovery
+    </strong>
+
+    <p>
+      Scan this browser for any surviving Cornerman recording saved as local video data. This scan is read-only and does not delete or change match data.
+    </p>
+
+    <button id="scanLocalRecovery" type="button">
+      Scan This Browser
+    </button>
+
+    <p id="localRecoveryStatus" class="muted">
+      No scan run yet.
+    </p>
+
+    <div id="localRecoveryResults"></div>
+  </section>
+
+  <section class="card">
+    <span>
       LIVE
     </span>
 
@@ -154,6 +178,10 @@
 <script
   type="module"
   src="./media-index.js"
+></script>
+<script
+  type="module"
+  src="./local-video-recovery.js"
 ></script>
 <script src="../shared/cornerman-shell.js"></script>
 

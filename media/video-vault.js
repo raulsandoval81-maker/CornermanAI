@@ -4,6 +4,11 @@ const STORE_NAME = "recordings";
 
 function openVault() {
   return new Promise((resolve, reject) => {
+    if (!globalThis.indexedDB) {
+      reject(new Error("IndexedDB is unavailable on this device."));
+      return;
+    }
+
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = () => {
@@ -25,9 +30,18 @@ export async function saveRecording(recording) {
     const tx = db.transaction(STORE_NAME, "readwrite");
     const store = tx.objectStore(STORE_NAME);
     store.put(recording);
-    tx.oncomplete = () => resolve(recording);
-    tx.onerror = () => reject(tx.error);
-    tx.onabort = () => reject(tx.error || new Error("Video vault write aborted."));
+    tx.oncomplete = () => {
+      db.close?.();
+      resolve(recording);
+    };
+    tx.onerror = () => {
+      db.close?.();
+      reject(tx.error);
+    };
+    tx.onabort = () => {
+      db.close?.();
+      reject(tx.error || new Error("Video vault write aborted."));
+    };
   });
 }
 
@@ -39,9 +53,13 @@ export async function listRecordings() {
     request.onsuccess = () => {
       const rows = Array.isArray(request.result) ? request.result : [];
       rows.sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+      db.close?.();
       resolve(rows);
     };
-    request.onerror = () => reject(request.error);
+    request.onerror = () => {
+      db.close?.();
+      reject(request.error);
+    };
   });
 }
 
@@ -50,8 +68,14 @@ export async function getRecording(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readonly");
     const request = tx.objectStore(STORE_NAME).get(id);
-    request.onsuccess = () => resolve(request.result || null);
-    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      db.close?.();
+      resolve(request.result || null);
+    };
+    request.onerror = () => {
+      db.close?.();
+      reject(request.error);
+    };
   });
 }
 
@@ -71,8 +95,14 @@ export async function deleteRecording(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite");
     tx.objectStore(STORE_NAME).delete(id);
-    tx.oncomplete = () => resolve(true);
-    tx.onerror = () => reject(tx.error);
+    tx.oncomplete = () => {
+      db.close?.();
+      resolve(true);
+    };
+    tx.onerror = () => {
+      db.close?.();
+      reject(tx.error);
+    };
   });
 }
 
@@ -90,11 +120,95 @@ function currentMatchMetadata() {
   };
 }
 
+function safeFileName(value) {
+  return String(value || "cornerman-match")
+    .replace(/[^a-z0-9-_]+/gi, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "") || "cornerman-match";
+}
+
 let observedRecorder = null;
 let vaultChunks = [];
 let vaultRecordingId = "";
 let pendingUploadRecordingId = "";
+let recorderReference = window.__cornermanMediaRecorder || null;
 const vaultSavePromises = new Map();
+const failedRecordings = new Map();
+
+function emitSaving(recording) {
+  window.dispatchEvent(new CustomEvent("cornerman:video-vault-saving", {
+    detail: {
+      id: recording.id,
+      title: recording.title,
+      size: recording.size
+    }
+  }));
+}
+
+function emitSaved(recording) {
+  localStorage.setItem("cornerman_last_vault_recording_id", recording.id);
+  window.dispatchEvent(new CustomEvent("cornerman:video-vault-saved", {
+    detail: {
+      id: recording.id,
+      title: recording.title,
+      size: recording.size
+    }
+  }));
+}
+
+function emitError(recording, error) {
+  console.error("Video vault save failed:", error);
+  window.dispatchEvent(new CustomEvent("cornerman:video-vault-error", {
+    detail: {
+      id: recording.id,
+      title: recording.title,
+      size: recording.size,
+      message: error?.message || "Video vault save failed."
+    }
+  }));
+}
+
+function persistRecording(recording) {
+  emitSaving(recording);
+
+  const savePromise = saveRecording(recording);
+  vaultSavePromises.set(recording.id, savePromise);
+
+  savePromise.then(() => {
+    failedRecordings.delete(recording.id);
+    emitSaved(recording);
+  }).catch(error => {
+    failedRecordings.set(recording.id, recording);
+    emitError(recording, error);
+  });
+
+  return savePromise;
+}
+
+export async function retryFailedRecording(id) {
+  const recording = failedRecordings.get(id);
+  if (!recording) {
+    throw new Error("No failed recording is available to retry.");
+  }
+  return persistRecording(recording);
+}
+
+export function saveEmergencyCopy(id) {
+  const recording = failedRecordings.get(id);
+  if (!recording?.blob) {
+    throw new Error("No emergency video copy is available.");
+  }
+
+  const extension = recording.mimeType?.includes("webm") ? "webm" : "mp4";
+  const url = URL.createObjectURL(recording.blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `${safeFileName(recording.title)}-${String(recording.createdAt || "").slice(0, 10)}.${extension}`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
 
 function attachToRecorder(recorder) {
   if (!recorder || recorder === observedRecorder) return;
@@ -108,7 +222,14 @@ function attachToRecorder(recorder) {
   });
 
   recorder.addEventListener("stop", () => {
-    if (!vaultChunks.length) return;
+    if (!vaultChunks.length) {
+      const error = new Error("Recorder stopped without video chunks.");
+      const metadata = currentMatchMetadata();
+      window.dispatchEvent(new CustomEvent("cornerman:video-vault-error", {
+        detail: { id: vaultRecordingId, title: metadata.title, size: 0, message: error.message }
+      }));
+      return;
+    }
 
     const recordingId = vaultRecordingId;
     const blob = new Blob(vaultChunks, {
@@ -117,12 +238,7 @@ function attachToRecorder(recorder) {
 
     const metadata = currentMatchMetadata();
     const now = new Date().toISOString();
-
-    window.dispatchEvent(new CustomEvent("cornerman:video-vault-saving", {
-      detail: { id: recordingId, title: metadata.title, size: blob.size }
-    }));
-
-    const savePromise = saveRecording({
+    const recording = {
       id: recordingId,
       ...metadata,
       blob,
@@ -133,22 +249,30 @@ function attachToRecorder(recorder) {
       youtubeUrl: "",
       uploadConfirmedAt: "",
       source: "coach-console"
-    });
+    };
 
-    vaultSavePromises.set(recordingId, savePromise);
-
-    savePromise.then(() => {
-      localStorage.setItem("cornerman_last_vault_recording_id", recordingId);
-      window.dispatchEvent(new CustomEvent("cornerman:video-vault-saved", {
-        detail: { id: recordingId, title: metadata.title, size: blob.size }
-      }));
-    }).catch(error => {
-      console.error("Video vault save failed:", error);
-      window.dispatchEvent(new CustomEvent("cornerman:video-vault-error", {
-        detail: { id: recordingId, message: error?.message || "Video vault save failed." }
-      }));
-    });
+    persistRecording(recording);
   });
+}
+
+function installRecorderHook() {
+  try {
+    Object.defineProperty(window, "__cornermanMediaRecorder", {
+      configurable: true,
+      enumerable: false,
+      get() {
+        return recorderReference;
+      },
+      set(value) {
+        recorderReference = value || null;
+        if (value) attachToRecorder(value);
+      }
+    });
+
+    if (recorderReference) attachToRecorder(recorderReference);
+  } catch (error) {
+    console.warn("Could not install immediate recorder hook; using fallback watcher.", error);
+  }
 }
 
 function watchRecorder() {
@@ -156,8 +280,14 @@ function watchRecorder() {
   if (recorder && recorder !== observedRecorder) attachToRecorder(recorder);
 }
 
+installRecorderHook();
 setInterval(watchRecorder, 250);
 watchRecorder();
+
+window.CornermanVideoVault = {
+  retryFailedRecording,
+  saveEmergencyCopy
+};
 
 window.addEventListener("cornerman:youtube-upload-start", () => {
   pendingUploadRecordingId =

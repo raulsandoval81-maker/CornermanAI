@@ -93,6 +93,8 @@ function currentMatchMetadata() {
 let observedRecorder = null;
 let vaultChunks = [];
 let vaultRecordingId = "";
+let pendingUploadRecordingId = "";
+const vaultSavePromises = new Map();
 
 function attachToRecorder(recorder) {
   if (!recorder || recorder === observedRecorder) return;
@@ -105,9 +107,10 @@ function attachToRecorder(recorder) {
     if (event.data?.size > 0) vaultChunks.push(event.data);
   });
 
-  recorder.addEventListener("stop", async () => {
+  recorder.addEventListener("stop", () => {
     if (!vaultChunks.length) return;
 
+    const recordingId = vaultRecordingId;
     const blob = new Blob(vaultChunks, {
       type: recorder.mimeType || vaultChunks[0]?.type || "video/mp4"
     });
@@ -115,30 +118,36 @@ function attachToRecorder(recorder) {
     const metadata = currentMatchMetadata();
     const now = new Date().toISOString();
 
-    try {
-      await saveRecording({
-        id: vaultRecordingId,
-        ...metadata,
-        blob,
-        mimeType: blob.type,
-        size: blob.size,
-        createdAt: now,
-        updatedAt: now,
-        youtubeUrl: "",
-        uploadConfirmedAt: "",
-        source: "coach-console"
-      });
+    window.dispatchEvent(new CustomEvent("cornerman:video-vault-saving", {
+      detail: { id: recordingId, title: metadata.title, size: blob.size }
+    }));
 
-      localStorage.setItem("cornerman_last_vault_recording_id", vaultRecordingId);
+    const savePromise = saveRecording({
+      id: recordingId,
+      ...metadata,
+      blob,
+      mimeType: blob.type,
+      size: blob.size,
+      createdAt: now,
+      updatedAt: now,
+      youtubeUrl: "",
+      uploadConfirmedAt: "",
+      source: "coach-console"
+    });
+
+    vaultSavePromises.set(recordingId, savePromise);
+
+    savePromise.then(() => {
+      localStorage.setItem("cornerman_last_vault_recording_id", recordingId);
       window.dispatchEvent(new CustomEvent("cornerman:video-vault-saved", {
-        detail: { id: vaultRecordingId, title: metadata.title, size: blob.size }
+        detail: { id: recordingId, title: metadata.title, size: blob.size }
       }));
-    } catch (error) {
+    }).catch(error => {
       console.error("Video vault save failed:", error);
       window.dispatchEvent(new CustomEvent("cornerman:video-vault-error", {
-        detail: { message: error?.message || "Video vault save failed." }
+        detail: { id: recordingId, message: error?.message || "Video vault save failed." }
       }));
-    }
+    });
   });
 }
 
@@ -150,12 +159,26 @@ function watchRecorder() {
 setInterval(watchRecorder, 250);
 watchRecorder();
 
+window.addEventListener("cornerman:youtube-upload-start", () => {
+  pendingUploadRecordingId =
+    vaultRecordingId ||
+    localStorage.getItem("cornerman_last_vault_recording_id") ||
+    "";
+});
+
 window.addEventListener("cornerman:youtube-status", event => {
   if (event.detail?.type !== "uploaded") return;
+
   const videoUrl = event.detail?.detail?.videoUrl || "";
-  const id = localStorage.getItem("cornerman_last_vault_recording_id") || "";
+  const id = pendingUploadRecordingId || "";
   if (!id || !videoUrl) return;
-  markRecordingUploaded(id, videoUrl).catch(error => {
+
+  const savePromise = vaultSavePromises.get(id) || Promise.resolve();
+
+  savePromise.then(() => markRecordingUploaded(id, videoUrl)).then(() => {
+    pendingUploadRecordingId = "";
+    vaultSavePromises.delete(id);
+  }).catch(error => {
     console.error("Could not mark vault recording uploaded:", error);
   });
 });

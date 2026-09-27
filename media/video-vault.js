@@ -1,6 +1,7 @@
 const DB_NAME = "cornerman_video_vault";
 const DB_VERSION = 1;
 const STORE_NAME = "recordings";
+const CHECKPOINT_INTERVAL_MS = 5000;
 
 function openVault() {
   return new Promise((resolve, reject) => {
@@ -106,6 +107,23 @@ export async function deleteRecording(id) {
   });
 }
 
+export async function getStorageEstimate() {
+  if (!navigator.storage?.estimate) return null;
+  try {
+    const estimate = await navigator.storage.estimate();
+    const usage = Number(estimate?.usage || 0);
+    const quota = Number(estimate?.quota || 0);
+    return {
+      usage,
+      quota,
+      remaining: Math.max(0, quota - usage),
+      ratio: quota > 0 ? usage / quota : 0
+    };
+  } catch {
+    return null;
+  }
+}
+
 function currentMatchMetadata() {
   const athlete = document.getElementById("athleteName")?.value?.trim() || "Green";
   const opponent = document.getElementById("opponentName")?.value?.trim() || "Red";
@@ -130,6 +148,9 @@ function safeFileName(value) {
 let observedRecorder = null;
 let vaultChunks = [];
 let vaultRecordingId = "";
+let vaultCreatedAt = "";
+let lastCheckpointAt = 0;
+let checkpointPromise = Promise.resolve();
 let pendingUploadRecordingId = "";
 let recorderReference = window.__cornermanMediaRecorder || null;
 const vaultSavePromises = new Map();
@@ -169,10 +190,57 @@ function emitError(recording, error) {
   }));
 }
 
+function buildRecordingSnapshot(recorder, status = "recording") {
+  if (!vaultChunks.length || !vaultRecordingId) return null;
+
+  const blob = new Blob([...vaultChunks], {
+    type: recorder.mimeType || vaultChunks[0]?.type || "video/mp4"
+  });
+  const metadata = currentMatchMetadata();
+  const now = new Date().toISOString();
+
+  return {
+    id: vaultRecordingId,
+    ...metadata,
+    blob,
+    mimeType: blob.type,
+    size: blob.size,
+    createdAt: vaultCreatedAt || now,
+    updatedAt: now,
+    youtubeUrl: "",
+    uploadConfirmedAt: "",
+    source: "coach-console",
+    status,
+    checkpointedAt: status === "recording" ? now : ""
+  };
+}
+
+function queueCheckpoint(recorder) {
+  const recording = buildRecordingSnapshot(recorder, "recording");
+  if (!recording) return;
+
+  checkpointPromise = checkpointPromise
+    .catch(() => undefined)
+    .then(() => saveRecording(recording))
+    .then(() => {
+      window.dispatchEvent(new CustomEvent("cornerman:video-vault-checkpoint", {
+        detail: { id: recording.id, size: recording.size, checkpointedAt: recording.checkpointedAt }
+      }));
+    })
+    .catch(error => {
+      console.warn("Video vault checkpoint failed:", error);
+      window.dispatchEvent(new CustomEvent("cornerman:video-vault-checkpoint-error", {
+        detail: { id: recording.id, message: error?.message || "Live video checkpoint failed." }
+      }));
+    });
+}
+
 function persistRecording(recording) {
   emitSaving(recording);
 
-  const savePromise = saveRecording(recording);
+  const savePromise = checkpointPromise
+    .catch(() => undefined)
+    .then(() => saveRecording(recording));
   vaultSavePromises.set(recording.id, savePromise);
 
   savePromise.then(async () => {
@@ -224,9 +292,23 @@ function attachToRecorder(recorder) {
   observedRecorder = recorder;
   vaultChunks = [];
   vaultRecordingId = globalThis.crypto?.randomUUID?.() || `video-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  vaultCreatedAt = new Date().toISOString();
+  lastCheckpointAt = 0;
+  checkpointPromise = Promise.resolve();
+
+  window.dispatchEvent(new CustomEvent("cornerman:video-vault-recording-started", {
+    detail: { id: vaultRecordingId, createdAt: vaultCreatedAt }
+  }));
 
   recorder.addEventListener("dataavailable", event => {
-    if (event.data?.size > 0) vaultChunks.push(event.data);
+    if (event.data?.size <= 0) return;
+    vaultChunks.push(event.data);
+
+    const now = Date.now();
+    if (!lastCheckpointAt || now - lastCheckpointAt >= CHECKPOINT_INTERVAL_MS) {
+      lastCheckpointAt = now;
+      queueCheckpoint(recorder);
+    }
   });
 
   recorder.addEventListener("stop", () => {
@@ -239,27 +321,8 @@ function attachToRecorder(recorder) {
       return;
     }
 
-    const recordingId = vaultRecordingId;
-    const blob = new Blob(vaultChunks, {
-      type: recorder.mimeType || vaultChunks[0]?.type || "video/mp4"
-    });
-
-    const metadata = currentMatchMetadata();
-    const now = new Date().toISOString();
-    const recording = {
-      id: recordingId,
-      ...metadata,
-      blob,
-      mimeType: blob.type,
-      size: blob.size,
-      createdAt: now,
-      updatedAt: now,
-      youtubeUrl: "",
-      uploadConfirmedAt: "",
-      source: "coach-console"
-    };
-
-    persistRecording(recording);
+    const recording = buildRecordingSnapshot(recorder, "complete");
+    if (recording) persistRecording(recording);
   });
 }
 
@@ -294,7 +357,8 @@ watchRecorder();
 
 window.CornermanVideoVault = {
   retryFailedRecording,
-  saveEmergencyCopy
+  saveEmergencyCopy,
+  getStorageEstimate
 };
 
 window.addEventListener("cornerman:youtube-upload-start", () => {

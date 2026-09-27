@@ -5,8 +5,6 @@ const videoUrlInput = document.getElementById("videoUrlInput");
 const saveMatchLogBtn = document.getElementById("saveMatchLogBtn");
 
 let autoLinkSavePending = false;
-let youtubeConnected = false;
-let uploadAfterConnect = false;
 
 const PLACEHOLDER_NAMES = new Set([
   "wrestler a",
@@ -91,12 +89,13 @@ if (postMatchCard) {
   const guide = document.createElement("div");
   guide.className = "post-match-guide";
   guide.innerHTML = `
-    <strong>Finish the match</strong>
+    <strong>Finish in this order</strong>
     <ol>
-      <li><b>Save Match</b> in Match Summary.</li>
-      <li><b>Upload to YouTube</b>. If YouTube needs authorization, Cornerman will ask you then.</li>
+      <li><b>Save Match</b> in Match Summary. Your match data is saved first.</li>
+      <li><b>Connect YouTube</b> only if you want the video uploaded.</li>
+      <li><b>Upload Video</b>. Cornerman will attach the YouTube link and update the saved match automatically.</li>
     </ol>
-    <p>The YouTube link is attached to the saved match automatically after upload.</p>
+    <p>YouTube is optional. You do not need it to save the match.</p>
   `;
 
   if (heading) heading.insertAdjacentElement("afterend", guide);
@@ -120,7 +119,7 @@ if (postMatchCard) {
   const localStatus = document.createElement("p");
   localStatus.id = "postMatchFlowStatus";
   localStatus.className = "bridge-status";
-  localStatus.textContent = "Save the match, then upload the video to YouTube.";
+  localStatus.textContent = "Match saved first. YouTube upload is optional.";
 
   const mediaActions = postMatchCard.querySelector(".media-actions");
   mediaActions?.insertAdjacentElement("afterend", localStatus);
@@ -177,10 +176,6 @@ if (postMatchCard) {
       font-weight: 800;
     }
 
-    #connectYouTubeBtn {
-      display: none !important;
-    }
-
     @media (max-width: 560px) {
       .quick-match-identity-actions {
         grid-template-columns: 1fr;
@@ -205,10 +200,14 @@ if (postMatchCard) {
   reviewObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 }
 
+if (connectYouTubeBtn) {
+  connectYouTubeBtn.textContent = "2. Connect YouTube (Optional)";
+}
+
 if (uploadMatchVideoBtn) {
-  uploadMatchVideoBtn.textContent = "Upload to YouTube";
-  uploadMatchVideoBtn.disabled = false;
-  uploadMatchVideoBtn.title = "Upload this recorded match to YouTube.";
+  uploadMatchVideoBtn.textContent = "3. Upload Video";
+  uploadMatchVideoBtn.disabled = true;
+  uploadMatchVideoBtn.title = "Connect YouTube first.";
 }
 
 if (videoUrlInput) {
@@ -231,21 +230,6 @@ function resetUpdateButton() {
   saveMatchLogBtn.textContent = "Update Notes / Match";
 }
 
-uploadMatchVideoBtn?.addEventListener(
-  "click",
-  event => {
-    if (youtubeConnected) return;
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-
-    uploadAfterConnect = true;
-    setLocalStatus("Connect the YouTube account you want to use. Upload will continue after authorization.");
-    connectYouTubeBtn?.click();
-  },
-  true
-);
-
 window.addEventListener("cornerman:youtube-status", event => {
   const detail = event.detail || {};
   const type = detail.type || "";
@@ -257,28 +241,17 @@ window.addEventListener("cornerman:youtube-status", event => {
   }
 
   if (type === "connected") {
-    youtubeConnected = true;
-
     if (uploadMatchVideoBtn) {
       uploadMatchVideoBtn.disabled = false;
-      uploadMatchVideoBtn.title = "Upload this match video to YouTube.";
+      uploadMatchVideoBtn.title = "Upload this match video to the connected YouTube channel.";
     }
 
-    if (uploadAfterConnect) {
-      uploadAfterConnect = false;
-      setLocalStatus("YouTube connected. Starting upload…");
-      setTimeout(() => uploadMatchVideoBtn?.click(), 0);
-    } else {
-      setLocalStatus("YouTube connected. Upload to YouTube is ready.");
-    }
+    setLocalStatus("YouTube connected. Upload Video is ready.");
     return;
   }
 
   if (type === "uploading") {
-    if (uploadMatchVideoBtn) {
-      uploadMatchVideoBtn.disabled = true;
-      uploadMatchVideoBtn.textContent = "Uploading to YouTube…";
-    }
+    if (uploadMatchVideoBtn) uploadMatchVideoBtn.disabled = true;
     setLocalStatus("Uploading video to YouTube…");
     return;
   }
@@ -290,7 +263,7 @@ window.addEventListener("cornerman:youtube-status", event => {
 
     if (uploadMatchVideoBtn) {
       uploadMatchVideoBtn.disabled = false;
-      uploadMatchVideoBtn.textContent = "Uploaded to YouTube ✓";
+      uploadMatchVideoBtn.textContent = "Video Uploaded ✓";
     }
 
     if (saveMatchLogBtn) {
@@ -308,11 +281,9 @@ window.addEventListener("cornerman:youtube-status", event => {
   }
 
   if (type === "error") {
-    uploadAfterConnect = false;
-
     if (uploadMatchVideoBtn) {
       uploadMatchVideoBtn.disabled = false;
-      uploadMatchVideoBtn.textContent = "Upload to YouTube";
+      uploadMatchVideoBtn.textContent = "3. Upload Video";
     }
 
     setLocalStatus(message || "YouTube could not complete the request.");

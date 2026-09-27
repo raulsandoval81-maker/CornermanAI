@@ -5,6 +5,7 @@ const videoUrlInput = document.getElementById("videoUrlInput");
 const saveMatchLogBtn = document.getElementById("saveMatchLogBtn");
 
 let autoLinkSavePending = false;
+let vaultSavePending = false;
 
 const PLACEHOLDER_NAMES = new Set([
   "wrestler a",
@@ -34,7 +35,24 @@ function needsIdentityAssignment(match) {
   return isPlaceholderName(match.athlete) || isPlaceholderName(match.opponent);
 }
 
+function setMoveOnEnabled(enabled) {
+  const ids = [
+    "nextQuickMatch",
+    "assignQuickMatchAthletes",
+    "returnToConsoleBtn"
+  ];
+
+  ids.forEach(id => {
+    const button = document.getElementById(id);
+    if (!button) return;
+    button.disabled = !enabled;
+    button.setAttribute("aria-disabled", String(!enabled));
+  });
+}
+
 function launchNextQuickMatch() {
+  if (vaultSavePending) return;
+
   let tournament = {};
   try {
     tournament = JSON.parse(localStorage.getItem("cornerman_current_tournament") || "{}");
@@ -80,6 +98,8 @@ function refreshIdentityDecision() {
   if (summary && needsAssignment) {
     summary.textContent = `${match.athlete || "Wrestler A"} vs ${match.opponent || "Wrestler B"} is saved. Assign the real athlete now or leave it for Match History.`;
   }
+
+  setMoveOnEnabled(!vaultSavePending);
 }
 
 if (postMatchCard) {
@@ -185,6 +205,7 @@ if (postMatchCard) {
   document.head.appendChild(style);
 
   document.getElementById("assignQuickMatchAthletes")?.addEventListener("click", () => {
+    if (vaultSavePending) return;
     const match = getLastSavedMatch();
     if (!match?.id) return;
     window.location.href = `../history/match-detail.html?id=${encodeURIComponent(String(match.id))}&edit=1`;
@@ -208,6 +229,10 @@ if (uploadMatchVideoBtn) {
   uploadMatchVideoBtn.textContent = "3. Upload Video";
   uploadMatchVideoBtn.disabled = true;
   uploadMatchVideoBtn.title = "Connect YouTube first.";
+
+  uploadMatchVideoBtn.addEventListener("click", () => {
+    window.dispatchEvent(new CustomEvent("cornerman:youtube-upload-start"));
+  }, true);
 }
 
 if (videoUrlInput) {
@@ -229,6 +254,30 @@ function resetUpdateButton() {
   saveMatchLogBtn.disabled = false;
   saveMatchLogBtn.textContent = "Update Notes / Match";
 }
+
+window.addEventListener("cornerman:video-vault-saving", () => {
+  vaultSavePending = true;
+  setMoveOnEnabled(false);
+  setLocalStatus("Securing video locally…");
+});
+
+window.addEventListener("cornerman:video-vault-saved", () => {
+  vaultSavePending = false;
+  setMoveOnEnabled(true);
+  setLocalStatus("✓ Video secured locally. Safe to review, upload, or move on.");
+});
+
+window.addEventListener("cornerman:video-vault-error", event => {
+  vaultSavePending = false;
+  setMoveOnEnabled(true);
+  setLocalStatus(event.detail?.message || "Local video backup failed. Do not leave this match until the video is saved another way.");
+});
+
+window.addEventListener("beforeunload", event => {
+  if (!vaultSavePending) return;
+  event.preventDefault();
+  event.returnValue = "";
+});
 
 window.addEventListener("cornerman:youtube-status", event => {
   const detail = event.detail || {};

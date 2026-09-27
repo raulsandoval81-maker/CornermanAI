@@ -108,6 +108,26 @@
 
   <section class="card">
     <span>
+      DEVICE VAULT
+    </span>
+
+    <strong>
+      Local Video Vault
+    </strong>
+
+    <p>
+      Completed match recordings preserved on this device before YouTube upload.
+    </p>
+
+    <p id="videoVaultStatus" class="muted">
+      Checking local vault…
+    </p>
+
+    <div id="videoVaultList"></div>
+  </section>
+
+  <section class="card">
+    <span>
       RECOVERY
     </span>
 
@@ -178,6 +198,10 @@
 <script
   type="module"
   src="./media-index.js"
+></script>
+<script
+  type="module"
+  src="./video-vault-library.js"
 ></script>
 <script
   type="module"

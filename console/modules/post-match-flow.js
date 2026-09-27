@@ -6,6 +6,7 @@ const saveMatchLogBtn = document.getElementById("saveMatchLogBtn");
 
 let autoLinkSavePending = false;
 let vaultSavePending = false;
+let vaultFailedId = "";
 
 const PLACEHOLDER_NAMES = new Set([
   "wrestler a",
@@ -51,7 +52,7 @@ function setMoveOnEnabled(enabled) {
 }
 
 function launchNextQuickMatch() {
-  if (vaultSavePending) return;
+  if (vaultSavePending || vaultFailedId) return;
 
   let tournament = {};
   try {
@@ -99,7 +100,12 @@ function refreshIdentityDecision() {
     summary.textContent = `${match.athlete || "Wrestler A"} vs ${match.opponent || "Wrestler B"} is saved. Assign the real athlete now or leave it for Match History.`;
   }
 
-  setMoveOnEnabled(!vaultSavePending);
+  setMoveOnEnabled(!vaultSavePending && !vaultFailedId);
+}
+
+function setVaultRecoveryVisible(visible) {
+  const host = document.getElementById("vaultRecoveryActions");
+  if (host) host.hidden = !visible;
 }
 
 if (postMatchCard) {
@@ -143,6 +149,16 @@ if (postMatchCard) {
 
   const mediaActions = postMatchCard.querySelector(".media-actions");
   mediaActions?.insertAdjacentElement("afterend", localStatus);
+
+  const recoveryActions = document.createElement("div");
+  recoveryActions.id = "vaultRecoveryActions";
+  recoveryActions.className = "quick-match-identity-actions";
+  recoveryActions.hidden = true;
+  recoveryActions.innerHTML = `
+    <button id="retryVaultSaveBtn" type="button">Retry Local Save</button>
+    <button id="saveEmergencyVideoBtn" type="button">Save Emergency Copy</button>
+  `;
+  localStatus.insertAdjacentElement("afterend", recoveryActions);
 
   const style = document.createElement("style");
   style.textContent = `
@@ -205,13 +221,32 @@ if (postMatchCard) {
   document.head.appendChild(style);
 
   document.getElementById("assignQuickMatchAthletes")?.addEventListener("click", () => {
-    if (vaultSavePending) return;
+    if (vaultSavePending || vaultFailedId) return;
     const match = getLastSavedMatch();
     if (!match?.id) return;
     window.location.href = `../history/match-detail.html?id=${encodeURIComponent(String(match.id))}&edit=1`;
   });
 
   document.getElementById("nextQuickMatch")?.addEventListener("click", launchNextQuickMatch);
+
+  document.getElementById("retryVaultSaveBtn")?.addEventListener("click", async () => {
+    if (!vaultFailedId) return;
+    try {
+      await window.CornermanVideoVault?.retryFailedRecording?.(vaultFailedId);
+    } catch (error) {
+      setLocalStatus(error?.message || "Could not retry the local video save.");
+    }
+  });
+
+  document.getElementById("saveEmergencyVideoBtn")?.addEventListener("click", () => {
+    if (!vaultFailedId) return;
+    try {
+      window.CornermanVideoVault?.saveEmergencyCopy?.(vaultFailedId);
+      setLocalStatus("Emergency copy requested. Confirm the video file appears in your device downloads before leaving this match.");
+    } catch (error) {
+      setLocalStatus(error?.message || "Could not create an emergency video copy.");
+    }
+  });
 
   const reviewObserver = new MutationObserver(() => {
     if (document.body.classList.contains("review-mode")) {
@@ -255,26 +290,32 @@ function resetUpdateButton() {
   saveMatchLogBtn.textContent = "Update Notes / Match";
 }
 
-window.addEventListener("cornerman:video-vault-saving", () => {
+window.addEventListener("cornerman:video-vault-saving", event => {
   vaultSavePending = true;
+  vaultFailedId = "";
+  setVaultRecoveryVisible(false);
   setMoveOnEnabled(false);
   setLocalStatus("Securing video locally…");
 });
 
-window.addEventListener("cornerman:video-vault-saved", () => {
+window.addEventListener("cornerman:video-vault-saved", event => {
   vaultSavePending = false;
+  vaultFailedId = "";
+  setVaultRecoveryVisible(false);
   setMoveOnEnabled(true);
   setLocalStatus("✓ Video secured locally. Safe to review, upload, or move on.");
 });
 
 window.addEventListener("cornerman:video-vault-error", event => {
   vaultSavePending = false;
-  setMoveOnEnabled(true);
-  setLocalStatus(event.detail?.message || "Local video backup failed. Do not leave this match until the video is saved another way.");
+  vaultFailedId = event.detail?.id || "unknown";
+  setMoveOnEnabled(false);
+  setVaultRecoveryVisible(true);
+  setLocalStatus(event.detail?.message || "Local video backup failed. Retry the local save or save an emergency copy before leaving this match.");
 });
 
 window.addEventListener("beforeunload", event => {
-  if (!vaultSavePending) return;
+  if (!vaultSavePending && !vaultFailedId) return;
   event.preventDefault();
   event.returnValue = "";
 });

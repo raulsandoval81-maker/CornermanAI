@@ -1,0 +1,15 @@
+{
+  "name": "Cornerman AI",
+  "short_name": "Cornerman",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "/assets/img/cornerman-ai-app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

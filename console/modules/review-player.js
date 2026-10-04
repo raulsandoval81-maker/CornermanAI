@@ -174,8 +174,9 @@ if (reviewVideo && reviewCard) {
       border-right: 0;
     }
 
-    .review-cinematic-backdrop {
-      display: none;
+    body.review-mode .review-video-card .review-cinematic-backdrop {
+      display: none !important;
+      position: absolute;
       pointer-events: none;
     }
 
@@ -250,7 +251,7 @@ if (reviewVideo && reviewCard) {
       }
 
       body.review-mode.review-landscape .review-video-card.portrait-source .review-cinematic-backdrop {
-        display: block;
+        display: block !important;
         position: absolute;
         inset: -5%;
         z-index: 0;

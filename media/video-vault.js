@@ -80,6 +80,13 @@ export async function getRecording(id) {
   });
 }
 
+export async function getLatestRecording() {
+  const recordings = await listRecordings();
+  return recordings.find(recording => recording?.blob && recording.status === "complete")
+    || recordings.find(recording => recording?.blob)
+    || null;
+}
+
 export async function markRecordingUploaded(id, videoUrl) {
   const existing = await getRecording(id);
   if (!existing) return null;
@@ -358,7 +365,9 @@ watchRecorder();
 window.CornermanVideoVault = {
   retryFailedRecording,
   saveEmergencyCopy,
-  getStorageEstimate
+  getStorageEstimate,
+  getRecording,
+  getLatestRecording
 };
 
 window.addEventListener("cornerman:youtube-upload-start", () => {

@@ -71,6 +71,29 @@ if (reviewVideo && reviewCard) {
     renderFitMode();
   });
 
+  function syncReviewOrientation() {
+    const landscape =
+      window.matchMedia?.("(orientation: landscape)")?.matches ||
+      window.innerWidth > window.innerHeight;
+
+    document.body.classList.toggle(
+      "review-landscape",
+      Boolean(landscape && document.body.classList.contains("review-mode"))
+    );
+  }
+
+  window.addEventListener("orientationchange", () => {
+    setTimeout(syncReviewOrientation, 180);
+  });
+
+  window.addEventListener("resize", syncReviewOrientation);
+
+  const reviewObserver = new MutationObserver(syncReviewOrientation);
+  reviewObserver.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["class"]
+  });
+
   const style = document.createElement("style");
   style.textContent = `
     body.review-mode .review-board {
@@ -122,17 +145,62 @@ if (reviewVideo && reviewCard) {
     }
 
     @media (orientation: landscape) {
-      body.review-mode #reviewPreview {
-        height: calc(100svh - 120px);
-        min-height: 56vh;
+      body.review-mode.review-landscape {
+        overflow: hidden;
+        background: #000;
       }
 
-      body.review-mode .review-video-card h2 {
-        padding: 7px 10px;
+      body.review-mode.review-landscape .review-board {
+        position: fixed;
+        inset: 0;
+        z-index: 1200;
+        margin: 0;
+        padding: 0;
+        background: #000;
       }
 
-      .review-player-toolbar {
-        padding: 6px 8px;
+      body.review-mode.review-landscape .review-board > * {
+        display: none !important;
+      }
+
+      body.review-mode.review-landscape .review-video-card.review-player-enhanced {
+        display: flex !important;
+        position: fixed;
+        inset: 0;
+        z-index: 1210;
+        width: 100vw;
+        height: 100dvh;
+        margin: 0;
+        padding: 0;
+        flex-direction: column;
+        border: 0;
+        border-radius: 0;
+        background: #000;
+      }
+
+      body.review-mode.review-landscape .review-video-card h2 {
+        display: none;
+      }
+
+      body.review-mode.review-landscape .review-player-toolbar {
+        position: absolute;
+        top: max(6px, env(safe-area-inset-top));
+        right: max(8px, env(safe-area-inset-right));
+        z-index: 3;
+        padding: 4px;
+        border: 0;
+        border-radius: 10px;
+        background: rgba(0,0,0,.58);
+      }
+
+      body.review-mode.review-landscape #reviewPreview {
+        flex: 1;
+        width: 100vw;
+        height: 100dvh;
+        min-height: 0;
+        max-height: none;
+        object-position: center;
+        background: #000;
       }
     }
 
@@ -154,4 +222,5 @@ if (reviewVideo && reviewCard) {
   document.head.appendChild(style);
 
   renderFitMode();
+  syncReviewOrientation();
 }

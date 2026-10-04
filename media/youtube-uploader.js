@@ -4,8 +4,49 @@ const CLIENT_ID =
 const SCOPES =
   "https://www.googleapis.com/auth/youtube.upload";
 
+const YOUTUBE_SESSION_TOKEN_KEY = "cornerman_youtube_access_token";
+const YOUTUBE_SESSION_EXPIRY_KEY = "cornerman_youtube_access_token_expires_at";
+
 let accessToken = "";
 let tokenClient = null;
+
+function restoreSessionToken() {
+  try {
+    const token = sessionStorage.getItem(YOUTUBE_SESSION_TOKEN_KEY) || "";
+    const expiresAt = Number(sessionStorage.getItem(YOUTUBE_SESSION_EXPIRY_KEY) || 0);
+
+    if (!token || !expiresAt || Date.now() >= expiresAt - 30000) {
+      sessionStorage.removeItem(YOUTUBE_SESSION_TOKEN_KEY);
+      sessionStorage.removeItem(YOUTUBE_SESSION_EXPIRY_KEY);
+      return "";
+    }
+
+    return token;
+  } catch {
+    return "";
+  }
+}
+
+function storeSessionToken(tokenResponse = {}) {
+  const token = String(tokenResponse.access_token || "");
+  const expiresIn = Number(tokenResponse.expires_in || 3600);
+
+  if (!token) return;
+
+  accessToken = token;
+
+  try {
+    sessionStorage.setItem(YOUTUBE_SESSION_TOKEN_KEY, token);
+    sessionStorage.setItem(
+      YOUTUBE_SESSION_EXPIRY_KEY,
+      String(Date.now() + Math.max(60, expiresIn) * 1000)
+    );
+  } catch {
+    // In-memory token remains usable even when sessionStorage is unavailable.
+  }
+}
+
+accessToken = restoreSessionToken();
 
 function emitYouTubeStatus(type, message, detail = null) {
   window.dispatchEvent(
@@ -72,7 +113,7 @@ export function initYouTubeUploader({
           return;
         }
 
-        accessToken = tokenResponse.access_token;
+        storeSessionToken(tokenResponse);
         emitYouTubeStatus(
           "connected",
           "YouTube connected for this browser session."
@@ -85,6 +126,14 @@ export function initYouTubeUploader({
         onError?.(message);
       }
     });
+
+  if (accessToken) {
+    emitYouTubeStatus(
+      "connected",
+      "YouTube connection restored for this browser session."
+    );
+    onConnected?.();
+  }
 }
 
 export function connectYouTubeUpload() {

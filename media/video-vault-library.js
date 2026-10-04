@@ -150,6 +150,29 @@ async function uploadAndLink(recording, button) {
       JSON.stringify(result.match)
     );
 
+    try {
+      const media = JSON.parse(localStorage.getItem("cornerman_media") || "[]");
+      const mediaIndex = media.findIndex(item =>
+        String(item.videoUrl || "") === String(upload.videoUrl || "")
+      );
+
+      if (mediaIndex >= 0) {
+        media[mediaIndex] = {
+          ...media[mediaIndex],
+          linkedMatchId: String(repairMatch.id),
+          linkedAthlete: repairMatch.athlete || "",
+          linkedOpponent: repairMatch.opponent || "",
+          linkedEvent: repairMatch.eventName || "",
+          linkedAt: attachedAt,
+          unlinkedAt: ""
+        };
+
+        localStorage.setItem("cornerman_media", JSON.stringify(media));
+      }
+    } catch (error) {
+      console.warn("Could not align Media Library link state.", error);
+    }
+
     button.textContent = "Linked ✓";
     setRepairStatus(
       result.synced === false

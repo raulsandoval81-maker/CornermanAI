@@ -93,6 +93,11 @@ function renderMatch(match) {
         <p class="muted">
           No video attached
         </p>
+        <p>
+          <a href="../media/media-index.html?matchId=${encodeURIComponent(String(match.id ?? ""))}#videoVaultList">
+            ↻ Recover / Upload from Local Vault
+          </a>
+        </p>
       `;
 
   matchDetail.innerHTML = `

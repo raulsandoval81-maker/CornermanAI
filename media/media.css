@@ -62,3 +62,98 @@
   color: #5b6472;
   opacity: 1;
 }
+
+
+/* Media Library containment: keep previews and long media data inside the card structure. */
+.page,
+.page > *,
+.card,
+.media-row,
+#mediaList,
+#videoVaultList,
+#localRecoveryResults {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.media-row {
+  overflow: hidden;
+}
+
+.media-row video,
+#videoVaultList video,
+#localRecoveryResults video {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 520px;
+  margin-top: .85rem;
+  border-radius: 10px;
+  background: #000;
+  object-fit: contain;
+}
+
+.media-row p,
+.media-row a,
+#videoVaultStatus,
+#localRecoveryStatus {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.media-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  align-items: stretch;
+  margin-top: .75rem;
+  min-width: 0;
+}
+
+.media-actions > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.media-row select,
+.form-stack input,
+.form-stack select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .page {
+    width: 100%;
+    max-width: 100%;
+    padding: .75rem;
+    overflow-x: hidden;
+  }
+
+  .media-row {
+    width: 100%;
+    padding: .85rem;
+  }
+
+  .media-row video,
+  #videoVaultList video,
+  #localRecoveryResults video {
+    max-height: 68vh;
+  }
+
+  .media-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .media-actions a,
+  .media-actions button,
+  .media-actions select {
+    width: 100%;
+    margin-right: 0;
+    box-sizing: border-box;
+  }
+}

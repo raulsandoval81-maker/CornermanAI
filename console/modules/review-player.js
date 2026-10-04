@@ -5,6 +5,63 @@ if (reviewVideo && reviewCard) {
   reviewCard.classList.add("review-player-enhanced");
   reviewVideo.classList.add("review-video-fill");
 
+  // Review-only cinematic backdrop. This never touches the live console or the
+  // original recording; it simply reuses the same footage as a soft 16:9 fill
+  // when portrait video is viewed on a landscape screen.
+  const cinematicBackdrop = document.createElement("video");
+  cinematicBackdrop.className = "review-cinematic-backdrop";
+  cinematicBackdrop.muted = true;
+  cinematicBackdrop.playsInline = true;
+  cinematicBackdrop.preload = "metadata";
+  cinematicBackdrop.setAttribute("aria-hidden", "true");
+  cinematicBackdrop.tabIndex = -1;
+  reviewVideo.insertAdjacentElement("beforebegin", cinematicBackdrop);
+
+  function syncBackdropSource() {
+    try {
+      if (reviewVideo.srcObject) {
+        if (cinematicBackdrop.srcObject !== reviewVideo.srcObject) {
+          cinematicBackdrop.removeAttribute("src");
+          cinematicBackdrop.srcObject = reviewVideo.srcObject;
+        }
+        return;
+      }
+
+      cinematicBackdrop.srcObject = null;
+      const source = reviewVideo.currentSrc || reviewVideo.src || "";
+      if (source && cinematicBackdrop.src !== source) {
+        cinematicBackdrop.src = source;
+        cinematicBackdrop.load();
+      }
+    } catch (error) {
+      console.warn("Review backdrop unavailable", error);
+    }
+  }
+
+  function syncBackdropPlayback() {
+    if (!Number.isFinite(reviewVideo.currentTime)) return;
+
+    if (Math.abs((cinematicBackdrop.currentTime || 0) - reviewVideo.currentTime) > 0.25) {
+      try {
+        cinematicBackdrop.currentTime = reviewVideo.currentTime;
+      } catch {
+        // Metadata may not be ready yet.
+      }
+    }
+
+    cinematicBackdrop.playbackRate = reviewVideo.playbackRate || 1;
+  }
+
+  reviewVideo.addEventListener("play", () => {
+    syncBackdropSource();
+    syncBackdropPlayback();
+    cinematicBackdrop.play().catch(() => {});
+  });
+
+  reviewVideo.addEventListener("pause", () => cinematicBackdrop.pause());
+  reviewVideo.addEventListener("seeking", syncBackdropPlayback);
+  reviewVideo.addEventListener("ratechange", syncBackdropPlayback);
+
   const toolbar = document.createElement("div");
   toolbar.className = "review-player-toolbar";
   toolbar.innerHTML = `
@@ -65,6 +122,10 @@ if (reviewVideo && reviewCard) {
     const landscape =
       reviewVideo.videoWidth >= reviewVideo.videoHeight;
 
+    reviewCard.classList.toggle("portrait-source", !landscape);
+    reviewCard.classList.toggle("landscape-source", landscape);
+    syncBackdropSource();
+
     // Landscape footage should fill by default. Portrait footage starts in Fit
     // so the athlete is not unexpectedly cropped, but can be switched to Fill.
     fillMode = landscape;
@@ -102,6 +163,7 @@ if (reviewVideo && reviewCard) {
     }
 
     body.review-mode .review-video-card.review-player-enhanced {
+      position: relative;
       grid-column: 1 / -1;
       width: 100%;
       padding: 0;
@@ -110,6 +172,11 @@ if (reviewVideo && reviewCard) {
       border-radius: 0;
       border-left: 0;
       border-right: 0;
+    }
+
+    .review-cinematic-backdrop {
+      display: none;
+      pointer-events: none;
     }
 
     .review-player-toolbar {
@@ -182,11 +249,38 @@ if (reviewVideo && reviewCard) {
         display: none;
       }
 
+      body.review-mode.review-landscape .review-video-card.portrait-source .review-cinematic-backdrop {
+        display: block;
+        position: absolute;
+        inset: -5%;
+        z-index: 0;
+        width: 110%;
+        height: 110%;
+        object-fit: cover;
+        filter: blur(26px) brightness(.42) saturate(.82);
+        transform: scale(1.04);
+      }
+
+      body.review-mode.review-landscape .review-video-card.portrait-source::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: linear-gradient(
+          90deg,
+          rgba(0,0,0,.32),
+          rgba(0,0,0,.08) 34%,
+          rgba(0,0,0,.08) 66%,
+          rgba(0,0,0,.32)
+        );
+      }
+
       body.review-mode.review-landscape .review-player-toolbar {
         position: absolute;
         top: max(6px, env(safe-area-inset-top));
         right: max(8px, env(safe-area-inset-right));
-        z-index: 3;
+        z-index: 4;
         padding: 4px;
         border: 0;
         border-radius: 10px;
@@ -194,13 +288,19 @@ if (reviewVideo && reviewCard) {
       }
 
       body.review-mode.review-landscape #reviewPreview {
+        position: relative;
+        z-index: 2;
         flex: 1;
         width: 100vw;
         height: 100dvh;
         min-height: 0;
         max-height: none;
         object-position: center;
-        background: #000;
+        background: transparent;
+      }
+
+      body.review-mode.review-landscape .review-video-card.portrait-source #reviewPreview.review-video-fit {
+        object-fit: contain;
       }
     }
 

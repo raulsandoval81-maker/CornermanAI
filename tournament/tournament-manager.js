@@ -34,6 +34,7 @@ const weightInput = document.getElementById("weightInput");
 const addTournamentAthleteBtn = document.getElementById("addTournamentAthleteBtn");
 const rosterStatus = document.getElementById("rosterStatus");
 const tournamentRosterList = document.getElementById("tournamentRosterList");
+const tournamentRosterCount = document.getElementById("tournamentRosterCount");
 const tournamentDateInput = document.getElementById("tournamentDateInput");
 const tournamentLocationInput = document.getElementById("tournamentLocationInput");
 const eventFormatInput = document.getElementById("eventFormatInput");
@@ -174,7 +175,25 @@ function addAthleteToTournamentRoster() {
   const weight = weightInput?.value || "";
 
   if (!eventName || !athleteName || !teamName || !weightGroup || !weight) {
-    setRosterStatus("Complete event, athlete, team, weight group, and weight.");
+    const missing = [];
+    if (!eventName) missing.push("saved event");
+    if (!athleteName) missing.push("athlete");
+    if (!teamName) missing.push("team");
+    if (!weightGroup) missing.push("weight group");
+    if (!weight) missing.push("weight");
+    setRosterStatus(`Not added — missing: ${missing.join(", ")}.`);
+    return;
+  }
+
+  const roster = getTournamentRoster();
+  const duplicate = roster.find(entry =>
+    String(entry.name || "").trim().toLowerCase() === athleteName.toLowerCase() &&
+    String(entry.eventName || "") === eventName
+  );
+
+  if (duplicate) {
+    setRosterStatus(`${athleteName} is already on this tournament roster.`);
+    athleteNameInput?.select?.();
     return;
   }
 
@@ -194,13 +213,16 @@ function addAthleteToTournamentRoster() {
     createdAt: new Date().toISOString()
   });
 
-  athleteNameInput.value = "";
-  teamNameInput.value = "";
-  weightGroupSelect.value = "";
-  weightInput.innerHTML = '<option value="">Select Weight</option>';
+  if (athleteNameInput) athleteNameInput.value = "";
+  if (teamNameInput) teamNameInput.value = "";
+  if (weightGroupSelect) weightGroupSelect.value = "";
+  if (weightInput) weightInput.innerHTML = '<option value="">Select Weight</option>';
+
+  athleteNameInput?.blur?.();
+  teamNameInput?.blur?.();
 
   renderTournamentRoster();
-  setRosterStatus(`${athleteName} added to tournament roster.`);
+  setRosterStatus(`✓ ${athleteName} added. Form cleared and ready for the next athlete.`);
 }
 
 function renderCurrentTournament() {
@@ -227,6 +249,10 @@ function renderCurrentTournament() {
 function renderTournamentRoster() {
   if (!tournamentRosterList) return;
   const roster = getTournamentRoster();
+
+  if (tournamentRosterCount) {
+    tournamentRosterCount.textContent = `Roster: ${roster.length} athlete${roster.length === 1 ? "" : "s"}`;
+  }
 
   if (!roster.length) {
     tournamentRosterList.innerHTML = "<p>No athletes added yet.</p>";

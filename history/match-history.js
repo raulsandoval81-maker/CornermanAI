@@ -100,7 +100,12 @@ function renderMatchRow(match) {
   const safeVideo = safeUrl(match.videoUrl);
   const videoButton = safeVideo
     ? `<a href="${escapeHtml(safeVideo)}" target="_blank" rel="noopener">🎥 Watch Video</a>`
-    : `<span class="muted">No video</span>`;
+    : `
+      <span class="muted">No video</span>
+      <a href="../media/media-index.html?matchId=${encodeURIComponent(String(match.id ?? ""))}#videoVaultList">
+        ↻ Recover / Upload from Vault
+      </a>
+    `;
 
   const identityBadge = needsIdentityAssignment(match)
     ? `<p><strong>⚠ Needs Athlete Assignment</strong></p>`

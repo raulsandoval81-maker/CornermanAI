@@ -1,7 +1,7 @@
 import { createDOM }
 from "./modules/match-dom.js";
 
-import { listMatches, saveMatch as persistMatch }
+import { listMatches, saveMatch as persistMatch, updateMatchMedia }
 from "../shared/match-repository.js";
 
 import { canSaveNewMatch, getCurrentTier }
@@ -1602,16 +1602,29 @@ connectYouTubeBtn?.addEventListener("click", () => {
 });
 
 uploadMatchVideoBtn?.addEventListener("click", async () => {
-  if (!lastVideoBlob) {
-    setStatus("No match video ready to upload.");
-    return;
-  }
-
   try {
+    let uploadBlob = lastVideoBlob;
+
+    if (!uploadBlob) {
+      const vaultRecording =
+        await window.CornermanVideoVault?.getLatestRecording?.();
+
+      uploadBlob = vaultRecording?.blob || null;
+
+      if (uploadBlob) {
+        setStatus("Recovered match video from Local Vault. Uploading...");
+      }
+    }
+
+    if (!uploadBlob) {
+      setStatus("No match video is available in Review or Local Vault.");
+      return;
+    }
+
     setStatus("Uploading match video...");
 
     const result = await uploadVideoToYouTube({
-      videoBlob: lastVideoBlob,
+      videoBlob: uploadBlob,
       title: `${athleteNameInput?.value || "Green"} vs ${opponentNameInput?.value || "Red"}`,
       description: "Uploaded from CornermanAI match console",
       tags: ["CornermanAI", "wrestling"]
@@ -1619,10 +1632,61 @@ uploadMatchVideoBtn?.addEventListener("click", async () => {
 
     attachUploadedVideoUrl(result.videoUrl);
 
-    setStatus("YouTube upload complete.");
+    let savedMatch = null;
+    try {
+      savedMatch = JSON.parse(
+        localStorage.getItem("coach_console_last_match") || "null"
+      );
+    } catch {
+      savedMatch = null;
+    }
+
+    const matchId = persistedMatchId || savedMatch?.id || "";
+
+    if (matchId) {
+      const mediaResult = await updateMatchMedia(matchId, {
+        videoUrl: result.videoUrl,
+        videoHost: "youtube",
+        videoVisibility: "unlisted",
+        uploadedAt: new Date().toISOString()
+      });
+
+      const linkedMatch = mediaResult.match || savedMatch;
+
+      if (linkedMatch) {
+        const updatedLastMatch = {
+          ...linkedMatch,
+          videoUrl: result.videoUrl,
+          videoHost: "youtube",
+          videoVisibility: "unlisted",
+          uploadedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem(
+          "coach_console_last_match",
+          JSON.stringify(updatedLastMatch)
+        );
+      }
+
+      window.dispatchEvent(new CustomEvent("cornerman:video-linked", {
+        detail: {
+          matchId,
+          videoUrl: result.videoUrl,
+          synced: mediaResult.synced !== false
+        }
+      }));
+
+      setStatus(
+        mediaResult.synced === false
+          ? "YouTube upload complete. Video linked locally; sync pending."
+          : "YouTube upload complete. Video linked to Match History."
+      );
+    } else {
+      setStatus("YouTube upload complete. Save the match to attach this video to Match History.");
+    }
   } catch (error) {
     console.error("YouTube upload failed:", error);
-    setStatus("YouTube upload failed.");
+    setStatus(error?.message ? `YouTube upload failed: ${error.message}` : "YouTube upload failed.");
   }
 });
 

@@ -1666,6 +1666,29 @@ uploadMatchVideoBtn?.addEventListener("click", async () => {
           "coach_console_last_match",
           JSON.stringify(updatedLastMatch)
         );
+
+        try {
+          const media = JSON.parse(localStorage.getItem("cornerman_media") || "[]");
+          const mediaIndex = media.findIndex(item =>
+            String(item.videoUrl || "") === String(result.videoUrl || "")
+          );
+
+          if (mediaIndex >= 0) {
+            media[mediaIndex] = {
+              ...media[mediaIndex],
+              linkedMatchId: String(updatedLastMatch.id || matchId),
+              linkedAthlete: updatedLastMatch.athlete || "",
+              linkedOpponent: updatedLastMatch.opponent || "",
+              linkedEvent: updatedLastMatch.eventName || "",
+              linkedAt: new Date().toISOString(),
+              unlinkedAt: ""
+            };
+
+            localStorage.setItem("cornerman_media", JSON.stringify(media));
+          }
+        } catch (error) {
+          console.warn("Could not align Media Library link state.", error);
+        }
       }
 
       window.dispatchEvent(new CustomEvent("cornerman:video-linked", {

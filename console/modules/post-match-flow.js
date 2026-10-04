@@ -290,6 +290,20 @@ if (uploadMatchVideoBtn) {
   uploadMatchVideoBtn.textContent = "3. Upload Video";
   refreshUploadAvailability();
 
+  Promise.resolve()
+    .then(() => window.CornermanVideoVault?.getLatestRecording?.())
+    .then(recording => {
+      if (!recording?.blob) return;
+      uploadEligible = true;
+      refreshUploadAvailability();
+      if (isYouTubeConnected()) {
+        setLocalStatus("Local Vault video recovered. YouTube upload is ready.");
+      }
+    })
+    .catch(() => {
+      // A missing or unreadable Vault should not block the normal current-match flow.
+    });
+
   uploadMatchVideoBtn.addEventListener("click", event => {
     if (!uploadEligible) {
       event.preventDefault();
@@ -405,15 +419,7 @@ window.addEventListener("cornerman:youtube-status", event => {
       refreshUploadAvailability();
     }
 
-    if (saveMatchLogBtn) {
-      autoLinkSavePending = true;
-      saveMatchLogBtn.disabled = false;
-      saveMatchLogBtn.textContent = "Linking Video…";
-      setLocalStatus("YouTube accepted the upload. Processing may still be pending. Linking the returned URL while the local Vault copy stays protected…");
-      setTimeout(() => saveMatchLogBtn.click(), 0);
-    } else {
-      setLocalStatus("YouTube accepted the upload. Processing may still be pending; the local Vault copy remains protected.");
-    }
+    setLocalStatus("YouTube accepted the upload. Linking the returned URL to Match History…");
 
     refreshIdentityDecision();
     return;
@@ -427,6 +433,22 @@ window.addEventListener("cornerman:youtube-status", event => {
 
     setLocalStatus(message || "YouTube could not complete the request. The local Vault copy is still protected.");
   }
+});
+
+window.addEventListener("cornerman:video-linked", event => {
+  const detail = event.detail || {};
+  if (videoUrlInput && detail.videoUrl) {
+    videoUrlInput.value = detail.videoUrl;
+  }
+
+  setLocalStatus(
+    detail.synced === false
+      ? "✓ YouTube video linked locally. Match History sync is pending."
+      : "✓ YouTube video linked to Match History."
+  );
+
+  resetUpdateButton();
+  refreshIdentityDecision();
 });
 
 if (saveMatchLogBtn) {

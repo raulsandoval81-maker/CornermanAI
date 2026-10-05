@@ -154,6 +154,7 @@ function launchConsole(setup) {
 
   const consoleRoutes = {
     compact: "./compact-console.modular.html",
+    focus: "./live-focus.html",
     classic: "./classic-console.modular.html",
     overlay: "./overlay-console.modular.html"
   };

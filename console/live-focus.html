@@ -47,11 +47,41 @@
 
   <section class="match-card round-flow-card">
 
-    <div class="match-meta-strip live-context-strip">
-      <span id="eventNameDisplay" class="compact-event-context">Event: —</span>
-      <span id="weightGroupDisplay">Division: —</span>
-      <span id="weightClassDisplay">Weight: —</span>
+    <div id="chooserPanel" class="choice-panel hidden">
+      <strong>WHO HAS CHOICE?</strong>
+      <button id="greenChooserBtn" type="button">GREEN</button>
+      <button id="redChooserBtn" type="button">RED</button>
     </div>
+
+    <div id="choicePanel" class="choice-panel hidden">
+      <strong id="choiceOwnerLabel">CHOICE</strong>
+      <button type="button" data-choice="top">Top</button>
+      <button type="button" data-choice="bottom">Bottom</button>
+      <button type="button" data-choice="neutral">Neutral</button>
+      <button type="button" data-choice="defer">Defer</button>
+    </div>
+
+  </section>
+
+  <section class="arena-card">
+
+    <div class="focus-camera-toolbar">
+      <div class="focus-division">
+        <span id="eventNameDisplay" class="compact-event-context">Event: —</span>
+        <span id="weightGroupDisplay">Division: —</span>
+        <span id="weightClassDisplay">Weight: —</span>
+      </div>
+
+      <div class="match-zoom-controls" aria-label="Match zoom controls">
+        <button id="zoomOutBtn" type="button" aria-label="Zoom out">−</button>
+        <button id="zoomResetBtn" type="button">1×</button>
+        <button id="zoomInBtn" type="button" aria-label="Zoom in">+</button>
+      </div>
+    </div>
+
+    <div class="overlay-arena" id="matchViewport">
+
+      <video id="preview" autoplay playsinline muted></video>
 
     <div class="match-header match-hud">
 
@@ -79,33 +109,6 @@
 
     </div>
 
-    <div id="chooserPanel" class="choice-panel hidden">
-      <strong>WHO HAS CHOICE?</strong>
-      <button id="greenChooserBtn" type="button">GREEN</button>
-      <button id="redChooserBtn" type="button">RED</button>
-    </div>
-
-    <div id="choicePanel" class="choice-panel hidden">
-      <strong id="choiceOwnerLabel">CHOICE</strong>
-      <button type="button" data-choice="top">Top</button>
-      <button type="button" data-choice="bottom">Bottom</button>
-      <button type="button" data-choice="neutral">Neutral</button>
-      <button type="button" data-choice="defer">Defer</button>
-    </div>
-
-  </section>
-
-  <section class="arena-card">
-
-    <div class="overlay-arena" id="matchViewport">
-
-      <video id="preview" autoplay playsinline muted></video>
-
-      <div class="match-zoom-controls" aria-label="Match zoom controls">
-        <button id="zoomOutBtn" type="button" aria-label="Zoom out">−</button>
-        <button id="zoomResetBtn" type="button">1×</button>
-        <button id="zoomInBtn" type="button" aria-label="Zoom in">+</button>
-      </div>
 
       <div class="overlay-rail overlay-left red">
         <button type="button" data-side="opponent" data-code="td3">TD+3</button>

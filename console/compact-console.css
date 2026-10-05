@@ -698,3 +698,142 @@ body[data-console="compact"] .match-tools-danger button {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* MOBILE LIVE CAMERA HUD
+   Phone-only: reuse the existing live HUD and clock controls as overlays
+   inside the camera viewport. Tablet/desktop keep the normal console layout. */
+@media (max-width: 767px) {
+  body[data-console="compact"]:not(.review-mode) .round-flow-card.mobile-hud-active {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) .round-flow-card.mobile-hud-active .live-context-strip {
+    margin-bottom: 0;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay {
+    position: relative;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .match-header {
+    position: absolute;
+    top: 8px;
+    left: 76px;
+    right: 76px;
+    z-index: 8;
+    min-height: 0;
+    margin: 0;
+    padding: 5px 7px;
+    gap: 5px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 11px;
+    background: rgba(3,7,12,.72);
+    box-shadow: 0 8px 24px rgba(0,0,0,.28);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .header-side {
+    min-height: 0;
+    padding: 2px 4px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .team-row {
+    display: none;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .athlete-row {
+    max-width: 25vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 9px;
+    line-height: 1.05;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .header-side > strong {
+    font-size: 17px;
+    line-height: 1;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .header-round {
+    min-width: 48px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .header-round #currentRound {
+    font-size: 8px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .header-round #clock {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .header-round #positionIndicator {
+    margin-top: 2px;
+    font-size: 7px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .control-dock {
+    position: absolute;
+    left: 70px;
+    right: 70px;
+    bottom: 8px;
+    z-index: 8;
+    display: grid;
+    grid-template-columns: repeat(5,minmax(0,1fr));
+    gap: 4px;
+    margin: 0;
+    padding: 5px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 11px;
+    background: rgba(3,7,12,.70);
+    box-shadow: 0 -8px 24px rgba(0,0,0,.24);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .control-dock button {
+    min-width: 0;
+    min-height: 38px;
+    padding: 4px 2px;
+    border-radius: 8px;
+    font-size: 10px;
+    line-height: 1.05;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .match-zoom-controls {
+    top: 66px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .overlay-rail {
+    top: 68px;
+    bottom: 58px;
+  }
+}
+
+@media (max-width: 390px) {
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .match-header {
+    left: 64px;
+    right: 64px;
+    padding-inline: 5px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .control-dock {
+    left: 62px;
+    right: 62px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .athlete-row {
+    font-size: 8px;
+  }
+
+  body[data-console="compact"]:not(.review-mode) #matchViewport.mobile-live-overlay .header-round #clock {
+    font-size: 18px;
+  }
+}

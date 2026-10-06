@@ -22,28 +22,16 @@
 
 <main class="wrap">
 
-  <header class="topbar">
-
-    <div class="mode-switch">
+  <header class="topbar focus-control-bar">
+    <div class="mode-switch" aria-label="Match view">
       <button id="liveMode" class="mode active" type="button">LIVE</button>
       <button id="reviewMode" class="mode" type="button">REVIEW</button>
     </div>
 
-    <div class="header-format">
-      <select id="matchFormat">
-        <option value="">Match Format</option>
-      </select>
-    </div>
-
     <button id="toggleMatchActions" class="top-tools-btn" type="button" aria-haspopup="dialog" aria-expanded="false">⋯ Tools</button>
-
   </header>
 
-  <div id="status" class="status-line">
-    Live mode
-  </div>
-
-  </section>
+  <div id="status" class="status-line" aria-live="polite">Live mode</div>
 
   <section class="match-card round-flow-card">
 
@@ -65,20 +53,6 @@
 
   <section class="arena-card">
 
-    <div class="focus-camera-toolbar">
-      <div class="focus-division">
-        <span id="eventNameDisplay" class="compact-event-context">Event: —</span>
-        <span id="weightGroupDisplay">Division: —</span>
-        <span id="weightClassDisplay">Weight: —</span>
-      </div>
-
-      <div class="match-zoom-controls" aria-label="Match zoom controls">
-        <button id="zoomOutBtn" type="button" aria-label="Zoom out">−</button>
-        <button id="zoomResetBtn" type="button">1×</button>
-        <button id="zoomInBtn" type="button" aria-label="Zoom in">+</button>
-      </div>
-    </div>
-
     <div class="overlay-arena" id="matchViewport">
 
       <video id="preview" autoplay playsinline muted></video>
@@ -94,9 +68,14 @@
       </div>
 
       <div class="header-round">
+        <div class="hud-match-context">
+          <span id="weightGroupDisplay">Division: —</span>
+          <span id="weightClassDisplay">Weight: —</span>
+        </div>
         <span id="currentRound">R1</span>
         <strong id="clock">2:00</strong>
         <div id="positionIndicator">NEUTRAL</div>
+        <span id="eventNameDisplay" class="compact-event-context hud-event">Event: —</span>
       </div>
 
       <div class="header-side green">
@@ -147,6 +126,19 @@
           <span>Quick fixes and match controls</span>
         </div>
         <button id="closeMatchTools" type="button">Done</button>
+      </div>
+
+      <div class="match-tools-group">
+        <span class="match-tools-label">Match Setup</span>
+        <label class="tools-format-label" for="matchFormat">Format</label>
+        <select id="matchFormat">
+          <option value="">Match Format</option>
+        </select>
+        <div class="match-zoom-controls tools-zoom-controls" aria-label="Match zoom controls">
+          <button id="zoomOutBtn" type="button" aria-label="Zoom out">−</button>
+          <button id="zoomResetBtn" type="button">1×</button>
+          <button id="zoomInBtn" type="button" aria-label="Zoom in">+</button>
+        </div>
       </div>
 
       <div class="match-tools-group">

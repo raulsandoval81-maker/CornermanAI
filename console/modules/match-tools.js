@@ -33,7 +33,10 @@ if (toggleBtn && panel && backdrop) {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
 
+    const keepDrawerOpen = document.body.classList.contains("focus-console");
+
     if (
+      !keepDrawerOpen &&
       target.matches("#nextRound, [data-ref-call]")
     ) {
       setTimeout(closeTools, 0);

@@ -552,3 +552,130 @@ body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-group{
     font-size:17px;
   }
 }
+
+
+/* Focus commercial-style experiment: camera-first + narrow live settings rail */
+body.focus-console:not(.review-mode) .focus-settings-btn{
+  width:40px;
+  min-width:40px;
+  padding:0 !important;
+  display:grid;
+  place-items:center;
+  font-size:17px !important;
+  line-height:1;
+}
+
+body.focus-console:not(.review-mode) .focus-tools-drawer{
+  top:calc(var(--cornerman-shell-height) + 56px) !important;
+  right:6px !important;
+  left:auto !important;
+  bottom:auto !important;
+  width:min(300px,46vw) !important;
+  max-height:calc(100dvh - var(--cornerman-shell-height) - 70px) !important;
+  grid-template-columns:1fr !important;
+  gap:7px !important;
+  padding:8px !important;
+  border-radius:12px 0 0 12px !important;
+}
+
+body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-header{
+  margin:-8px -8px 0 !important;
+  padding:9px 8px !important;
+}
+
+body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-header span{
+  font-size:9px;
+}
+
+body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-group{
+  grid-template-columns:1fr !important;
+  gap:6px !important;
+  padding:7px !important;
+}
+
+body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-group button,
+body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-group select{
+  width:100%;
+  min-height:36px;
+}
+
+body.focus-console:not(.review-mode) .focus-tools-drawer .tools-zoom-controls{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+
+body.focus-console:not(.review-mode) .focus-tools-drawer .tools-zoom-controls button{
+  min-height:34px;
+}
+
+body.focus-console:not(.review-mode) .match-header{
+  width:min(94%,680px);
+}
+
+body.focus-console:not(.review-mode) .match-header .header-side{
+  text-align:left;
+}
+
+body.focus-console:not(.review-mode) .match-header .header-side.green{
+  text-align:right;
+}
+
+body.focus-console:not(.review-mode) .match-header .team-row,
+body.focus-console:not(.review-mode) .match-header .athlete-row{
+  max-width:100%;
+}
+
+body.focus-console:not(.review-mode) .overlay-rail{
+  bottom:62px !important;
+}
+
+@media(max-width:600px){
+  body.focus-console:not(.review-mode) .focus-tools-drawer{
+    top:calc(var(--cornerman-shell-height) + 50px) !important;
+    right:0 !important;
+    width:min(52vw,210px) !important;
+    max-height:calc(100dvh - var(--cornerman-shell-height) - 58px) !important;
+    border-radius:12px 0 0 12px !important;
+  }
+
+  body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-header strong{
+    font-size:13px;
+  }
+
+  body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-header span{
+    display:none;
+  }
+
+  body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-group{
+    padding:6px !important;
+  }
+
+  body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-label{
+    font-size:8px;
+  }
+
+  body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-group button,
+  body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-group select{
+    min-height:34px;
+    font-size:9px;
+  }
+
+  body.focus-console:not(.review-mode) .match-header{
+    left:5px;
+    right:5px;
+    width:auto;
+    max-width:none;
+    grid-template-columns:minmax(0,1.25fr) minmax(86px,.72fr) minmax(0,1.25fr);
+  }
+
+  body.focus-console:not(.review-mode) .match-header .team-row{
+    font-size:7px;
+  }
+
+  body.focus-console:not(.review-mode) .match-header .athlete-row{
+    font-size:9.5px;
+  }
+
+  body.focus-console:not(.review-mode) .overlay-rail{
+    bottom:64px !important;
+  }
+}

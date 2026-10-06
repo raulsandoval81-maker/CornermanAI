@@ -511,3 +511,44 @@ body.focus-console:not(.review-mode) .focus-tools-drawer .match-tools-group{
     grid-template-columns:1fr 1fr;
   }
 }
+
+
+/* Mobile capture spacing: keep scoring clear of bottom dock and widen wrestler HUD */
+@media(max-width:600px){
+  body.focus-console:not(.review-mode) .overlay-rail{
+    bottom:58px !important;
+  }
+
+  body.focus-console:not(.review-mode) .overlay-rail button{
+    min-height:32px;
+  }
+
+  body.focus-console:not(.review-mode) .match-header{
+    left:8px;
+    right:8px;
+    width:auto;
+    max-width:none;
+    transform:none;
+    grid-template-columns:minmax(0,1fr) minmax(92px,.9fr) minmax(0,1fr);
+    gap:5px;
+  }
+
+  body.focus-console:not(.review-mode) .match-header .header-side{
+    min-width:0;
+    padding-inline:4px;
+  }
+
+  body.focus-console:not(.review-mode) .match-header .team-row{
+    max-width:100%;
+    font-size:7px;
+  }
+
+  body.focus-console:not(.review-mode) .match-header .athlete-row{
+    max-width:100%;
+    font-size:9px;
+  }
+
+  body.focus-console:not(.review-mode) .match-header .header-side > strong{
+    font-size:17px;
+  }
+}
